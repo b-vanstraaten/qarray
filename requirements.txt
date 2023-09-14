@@ -1,0 +1,4 @@
+numpy==1.25.2
+rusty-capacitance-model-core==1.0.0
+pylint
+mypy
