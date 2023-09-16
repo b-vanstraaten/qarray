@@ -1,9 +1,10 @@
 import numpy as np
+from .classes import (CddInv, Cgd, Cdd, VectorList)
 
 def lorentzian(x, x0, gamma):
     return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
 
-def optimal_Vg(cdd_inv, cgd, n_charges, rcond = 1e-3):
+def optimal_Vg(cdd_inv: CddInv, cgd: Cgd, n_charges: VectorList, rcond: float = 1e-3):
     '''
     calculate voltage that mminimises charge state energy
 
