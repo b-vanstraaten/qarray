@@ -1,0 +1,101 @@
+"""
+defining matrix classes to store the capacitance matrices. They inherit
+from numpy.ndarray so that they can be interacted with identically to numpy arrays.
+
+However, they have a validator method which is called when they are instantiated, this allows us to
+check that the matrices are for example symmetric or positive definite.
+"""
+
+import numpy as np
+
+
+class Matrix(np.ndarray):
+    """
+    Base class for matrices. This class is not intended to be instantiated directly.
+    This is just a 2d numpy ndarray with a validator method.
+    """
+
+    def __new__(cls, a):
+        obj = np.asarray(a).view(cls)
+        obj.validate()
+        return obj
+
+    def validate(self):
+        assert self.ndim == 2, f'Array not of rank 2 -\n{self}'
+
+
+class VectorList(Matrix):
+    """
+    Base class which is a list of vectors, which is therefore a matrix.
+    """
+    pass
+
+
+class SquareMatrix(Matrix):
+    """
+    Base class for square matrices. This class is not intended to be instantiated directly.
+    """
+
+    def validate(self):
+        super().validate()
+        if self.shape[0] != self.shape[1]:
+            raise ValueError(f'Matrix not square - {self.shape}')
+
+
+class SymmetricMatrix(SquareMatrix):
+    """
+    Base class for symmetric matrices. This class is not intended to be instantiated directly.
+    """
+
+    def validate(self):
+        super().validate()
+        if not np.allclose(self, self.T):
+            raise ValueError(f'Matrix not symmetric -\n{self}')
+
+
+class PositiveValuedMatrix(Matrix):
+    """
+    Base class for positive valued matrices. This class is not intended to be instantiated directly.
+    """
+
+    def validate(self):
+        super().validate()
+        if not np.all(self >= 0):
+            raise ValueError(f'Matrix not positive valued -\n{self}')
+
+class NegativeValuedMatrix(Matrix):
+    def validate(self):
+        super().validate()
+        if not np.all(self <= 0):
+            raise ValueError(f'Matrix not negative valued -\n{self}')
+
+class PositiveDefiniteSymmetricMatrix(SymmetricMatrix):
+    """
+    Base class for positive definite square symmetric matrices. This class is not intended to be instantiated directly.
+    """
+
+    def validate(self):
+        super().validate()
+        if not np.all(np.linalg.eigvals(self) > 0):
+            raise ValueError(f'Matrix is not positive definite - eigenvals {np.linalg.eigvals(self)}')
+
+
+class Cgd(NegativeValuedMatrix):
+    """
+    Class for the gate-dot capacitance matrix.
+    """
+    pass
+
+
+class Cdd(PositiveDefiniteSymmetricMatrix):
+    """
+    Class for the dot-dot capacitance matrix.
+    """
+    pass
+
+
+class CddInv(PositiveDefiniteSymmetricMatrix):
+    """
+    Class for the inverse of the dot-dot capacitance matrix.
+    """
+    pass
