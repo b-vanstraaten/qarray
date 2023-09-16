@@ -10,9 +10,10 @@ import numpy as np
 
 from ..classes import (CddInv, Cgd, Cdd, VectorList)
 
+
 def ground_state_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
-        A wrapper for the rust ground state function that takes in numpy arrays and returns numpy arrays.
+        A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
         :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at  
         :param cgd: the gate to dot capacitance matrix
         :param cdd_inv: the inverse of the dot to dot capacitance matrix
@@ -28,7 +29,7 @@ def ground_state_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: fl
 def ground_state_isolated_python(vg: VectorList, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
                                  threshold: float) -> VectorList:
     """
-     A wrapper for the python ground state isolated function that takes in numpy arrays and returns numpy arrays.
+     A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
      :param n_charge: the number of changes in the array
      :param cgd: the gate to dot capacitance matrix
@@ -73,6 +74,14 @@ def compute_argmin(n_continuous, threshold, cdd_inv, n_charge=None):
 
 
 def _ground_state_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, threshold: float) -> np.ndarray:
+    """
+
+    :param vg:
+    :param cgd:
+    :param cdd_inv:
+    :param threshold:
+    :return:
+    """
     n_continuous = cgd @ vg
     # eliminating the possibly of negative numbers of change carriers
     n_continuous = np.clip(n_continuous, 0, None)
@@ -81,6 +90,15 @@ def _ground_state_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, thres
 
 def _ground_state_0d_isolated(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
                               threshold: float) -> np.ndarray:
+    """
+    :param vg:
+    :param n_charge:
+    :param cgd:
+    :param cdd:
+    :param cdd_inv:
+    :param threshold:
+    :return:
+    """
     n_continuous = cgd @ vg
     # computing the Lagranian multiplier correction due to the array being closed
     isolation_correction = (n_charge - n_continuous.sum()) * cdd.sum(axis=0) / cdd.sum()
