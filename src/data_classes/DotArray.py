@@ -10,6 +10,9 @@ from src.functions import convert_to_maxwell, compute_threshold
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
 class DotArray(BaseDataClass):
+    """
+    This class holds the capacitance matrices for the dot array and provides methods to compute the ground state.
+    """
     cdd_non_maxwell: CddNonMaxwell
     cgd_non_maxwell: CgdNonMaxwell
     core: str = 'rust'
@@ -22,10 +25,19 @@ class DotArray(BaseDataClass):
 
 
     def _validate_vg(self, vg):
+        """
+        This function is used to validate the shape of the gate voltage array.
+        :param vg: the gate voltage array
+        """
         if vg.shape[-1] != self.n_gate:
             raise ValueError(f'The shape of vg is in correct it should be of shape (..., n_gate) = (...,{self.n_gate})')
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
+        """
+        This function is used to compute the ground state for an open system.
+        :param vg: the gate voltages to compute the ground state at
+        :return: the lowest energy charge configuration for each gate voltage coordinate vector
+        """
         self._validate_vg(vg)
         vg_shape = vg.shape
         nd_shape = (*vg_shape[:-1], self.n_dot)
@@ -40,7 +52,13 @@ class DotArray(BaseDataClass):
                 raise ValueError(f'Incorrect core {self.core}, it must be either rust or python')
         return result.reshape(nd_shape)
 
-    def ground_state_closed(self, vg: VectorList | np.ndarray, n_change: NonNegativeInt) -> np.ndarray:
+    def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
+        """
+        This function is used to compute the ground state for a closed system, with a given number of changes.
+        :param vg: the gate voltages to compute the ground state at
+        :param n_charge: the number of changes in the system
+        :return: the lowest energy charge configuration for each gate voltage coordinate vector
+        """
         self._validate_vg(vg)
         vg_shape = vg.shape
         nd_shape = (*vg_shape[:-1], self.n_dot)
@@ -48,9 +66,9 @@ class DotArray(BaseDataClass):
             vg = VectorList(vg.reshape(-1, self.n_gate))
         match self.core:
             case 'rust':
-                result = ground_state_closed_rust(vg=vg, n_charge = n_change, cgd=self.cgd, cdd = self.cdd, cdd_inv=self.cdd_inv, threshold=self.threshold)
+                result = ground_state_closed_rust(vg=vg, n_charge = n_charge, cgd=self.cgd, cdd = self.cdd, cdd_inv=self.cdd_inv, threshold=self.threshold)
             case 'python':
-                result = ground_state_closed_python(vg=vg, cgd=self.cgd, cdd = self.cdd, cdd_inv=self.cdd_inv, threshold=self.threshold)
+                result = ground_state_closed_python(vg=vg, n_charge = n_charge, cgd=self.cgd, cdd = self.cdd, cdd_inv=self.cdd_inv, threshold=self.threshold)
             case _:
                 raise ValueError(f'Incorrect core {self.core}, it must be either rust or python')
         return result.reshape(nd_shape)

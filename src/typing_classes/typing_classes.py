@@ -38,6 +38,19 @@ class Matrix(np.ndarray):
     def validate(self):
         assert self.ndim == 2, f'Array not of rank 2 -\n{self}'
 
+class Tetrad(np.ndarray):
+    """
+    Base class for tetrad. This class is not intended to be instantiated directly.
+    This is just a 3d numpy ndarray with a validator method.
+    """
+
+    def __new__(cls, a):
+        obj = np.asarray(a).view(cls)
+        obj.validate()
+        return obj
+
+    def validate(self):
+        assert self.ndim == 3, f'Array not of rank 3 -\n{self}'
 
 class VectorList(Matrix):
     """

@@ -7,6 +7,9 @@ from src.typing_classes import Vector
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
 class GateVoltageComposer(BaseDataClass):
+    """
+    This class is used to compose gate voltages for the dot array.
+    """
     n_gate: int
     gate_voltages: Vector | None = None
     gate_names: dict[str, int] | None = None
@@ -19,6 +22,11 @@ class GateVoltageComposer(BaseDataClass):
             self.gate_names = {}
 
     def fetch_gate(self, gate: str | int) -> float:
+        """
+        This function is used to fetch the gate index from the gate name.
+        :param gate:
+        :return:
+        """
         if isinstance(gate, str):
             if gate not in self.gate_names.keys():
                 raise ValueError(f'Gate {gate} not found in dac_names')
@@ -26,6 +34,14 @@ class GateVoltageComposer(BaseDataClass):
         return gate
 
     def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int) -> np.ndarray:
+        """
+        This function is used to compose a 1d gate voltage array.
+        :param x_gate:
+        :param x_min:
+        :param x_max:
+        :param x_resolution:
+        :return:
+        """
         x_gate = self.fetch_gate(x_gate)
 
         x = np.linspace(x_min, x_max, x_resolution)
@@ -39,6 +55,18 @@ class GateVoltageComposer(BaseDataClass):
 
     def do2d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int,
              y_gate: str | int, y_min: float, y_max: float, y_resolution: int) -> np.ndarray:
+        """
+        This function is used to compose a 2d gate voltage array.
+        :param x_gate:
+        :param x_min:
+        :param x_max:
+        :param x_resolution:
+        :param y_gate:
+        :param y_min:
+        :param y_max:
+        :param y_resolution:
+        :return:
+        """
         x_gate = self.fetch_gate(x_gate)
         y_gate = self.fetch_gate(y_gate)
 

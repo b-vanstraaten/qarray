@@ -1,8 +1,23 @@
 import numpy as np
-from .typing_classes import (CddInv, Cgd, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell)
+from .typing_classes import (CddInv, Cgd, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad)
 
 def lorentzian(x, x0, gamma):
     return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
+
+
+def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
+    """
+    This function is used to compute the number of dot occupation changes.
+    :param n: the dot occupation vector
+    :param threshold: the threshold to use for the ground state calculation
+    :return: the number of dot occupation changes
+    """
+    if not isinstance(n, Tetrad):
+        n = Tetrad(n)
+
+    change_in_x = np.logical_not(np.isclose(n[1:,:-1,], n[:-1, :-1, :], atol=1e-3)).any(axis=(-1))
+    change_in_y = np.logical_not(np.isclose(n[:-1, 1:, :], n[:-1, :-1, :], atol=1e-3)).any(axis=(-1))
+    return np.logical_or(change_in_x, change_in_y)
 
 def optimal_Vg(cdd_inv: CddInv, cgd: Cgd, n_charges: VectorList, rcond: float = 1e-3):
     '''

@@ -9,7 +9,7 @@ from pydantic.dataclasses import dataclass
 class BaseDataClass:
     @model_validator(mode='before')
     @classmethod
-    def check_card_number_omitted(cls, data: Any) -> Any:
+    def attempt_type_coercion(cls, data: Any) -> Any:
         validate_data = {}
         if data.args is not None:
             for (name, parameter_type), value in zip(cls.__annotations__.items(), data.args):
