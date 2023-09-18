@@ -1,5 +1,5 @@
 import numpy as np
-from .classes import (CddInv, Cgd, Cdd, VectorList)
+from .typing_classes import (CddInv, Cgd, Cdd, VectorList)
 
 def lorentzian(x, x0, gamma):
     return np.reciprocal((((x - x0) / gamma) ** 2 + 1))

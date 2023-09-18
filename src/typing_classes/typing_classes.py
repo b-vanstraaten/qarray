@@ -1,5 +1,5 @@
 """
-defining matrix classes to store the capacitance matrices. They inherit
+defining matrix typing_classes to store the capacitance matrices. They inherit
 from numpy.ndarray so that they can be interacted with identically to numpy arrays.
 
 However, they have a validator method which is called when they are instantiated, this allows us to
@@ -7,6 +7,7 @@ check that the matrices are for example symmetric or positive definite.
 """
 
 import numpy as np
+from pydantic import BaseModel
 
 
 class Matrix(np.ndarray):
@@ -63,6 +64,16 @@ class PositiveValuedMatrix(Matrix):
         if not np.all(self >= 0):
             raise ValueError(f'Matrix not positive valued -\n{self}')
 
+class PositiveValuedSquareMatrix(SquareMatrix):
+    """
+    Base class for positive valued matrices. This class is not intended to be instantiated directly.
+    """
+
+    def validate(self):
+        super().validate()
+        if not np.all(self >= 0):
+            raise ValueError(f'Matrix not positive valued -\n{self}')
+
 class NegativeValuedMatrix(Matrix):
     def validate(self):
         super().validate()
@@ -77,7 +88,7 @@ class PositiveDefiniteSymmetricMatrix(SymmetricMatrix):
     def validate(self):
         super().validate()
         if not np.all(np.linalg.eigvals(self) > 0):
-            raise ValueError(f'Matrix is not positive definite - eigenvals {np.linalg.eigvals(self)}')
+            raise ValueError(f'Matrix is not positive definite symmetric - eigenvals {np.linalg.eigvals(self)} \n\n')
 
 
 class Cgd(NegativeValuedMatrix):

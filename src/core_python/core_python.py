@@ -8,7 +8,7 @@ from itertools import product
 
 import numpy as np
 
-from ..classes import (CddInv, Cgd, Cdd, VectorList)
+from ..typing_classes import (CddInv, Cgd, Cdd, VectorList)
 
 
 def ground_state_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
@@ -50,7 +50,7 @@ def compute_argmin(n_continuous, threshold, cdd_inv, n_charge=None):
 
     # computing which dot changes needed to be floor and ceiled, and which can just be rounded
     args = np.arange(0, n_continuous.size)
-    floor_ceil_args = np.argwhere(np.abs(n_remainder - 0.5) < threshold)
+    floor_ceil_args = np.argwhere(np.abs(n_remainder - 0.5) < threshold / 2.)
     round_args = args[np.logical_not(np.isin(args, floor_ceil_args))]
 
     # populating a list of all dot occupations which need to be considered

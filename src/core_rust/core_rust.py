@@ -4,7 +4,7 @@ Type hinted wrappers for the rust core functions.
 
 from rusty_capacitance_model_core import (ground_state, ground_state_isolated)
 
-from ..classes import (
+from ..typing_classes import (
     Cdd, CddInv, Cgd, VectorList
 )
 
