@@ -1,1 +1,1 @@
-from .core_rust import (ground_state_rust, ground_state_isolated_rust)
+from .core_rust import (ground_state_open_rust, ground_state_closed_rust)

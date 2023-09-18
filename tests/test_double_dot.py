@@ -6,8 +6,8 @@ import unittest
 
 import numpy as np
 
-from src import (CddInv, Cgd, ground_state_rust, ground_state_isolated_rust, ground_state_python,
-                 ground_state_isolated_python, Cdd, optimal_Vg)
+from src import (CddInv, Cgd, ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
+                 ground_state_closed_python, Cdd, optimal_Vg)
 
 N_VOLTAGES = 100
 N_ITERATIONS = 10
@@ -35,8 +35,8 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = double_dot_matrices()
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_rust(vg, cgd, cdd_inv, 1)
-            n_python = ground_state_python(vg, cgd, cdd_inv, 1)
+            n_rust = ground_state_open_rust(vg, cgd, cdd_inv, 1)
+            n_python = ground_state_open_python(vg, cgd, cdd_inv, 1)
             self.assertTrue(np.allclose(n_rust, n_python))
 
     def test_python_vs_rust_one_charge(self):
@@ -50,8 +50,8 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = double_dot_matrices()
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_isolated_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
-            n_python = ground_state_isolated_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
+            n_rust = ground_state_closed_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
+            n_python = ground_state_closed_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             self.assertTrue(np.allclose(n_rust, n_python))
 
     def test_python_vs_rust_two_charge(self):
@@ -64,8 +64,8 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = double_dot_matrices()
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_isolated_rust(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1.)
-            n_python = ground_state_isolated_python(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1.)
+            n_rust = ground_state_closed_rust(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1.)
+            n_python = ground_state_closed_python(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1.)
             self.assertTrue(np.allclose(n_rust, n_python))
 
     def test_python_vs_rust_three_charge(self):
@@ -78,8 +78,8 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = double_dot_matrices()
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_isolated_rust(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1.)
-            n_python = ground_state_isolated_python(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1.)
+            n_rust = ground_state_closed_rust(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1.)
+            n_python = ground_state_closed_python(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1.)
             self.assertTrue(np.allclose(n_rust, n_python))
 
     def test_optimal_vg(self):
@@ -94,7 +94,7 @@ class DoubleDotTests(unittest.TestCase):
             cdd, cdd_inv, cgd = double_dot_matrices()
             n_charges = np.random.choice(np.arange(0, 10), size=(N_VOLTAGES, 2)).astype(int)
             vg = optimal_Vg(cdd_inv=cdd_inv, cgd=cgd, n_charges=n_charges)
-            n_rust = ground_state_rust(vg, cgd, cdd_inv, 1).astype(int)
+            n_rust = ground_state_open_rust(vg, cgd, cdd_inv, 1).astype(int)
             self.assertTrue(np.allclose(n_rust, n_charges))
 
 

@@ -11,7 +11,7 @@ import numpy as np
 from ..typing_classes import (CddInv, Cgd, Cdd, VectorList)
 
 
-def ground_state_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
+def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
         :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at  
@@ -21,13 +21,13 @@ def ground_state_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: fl
         :return: the lowest energy charge configuration for each gate voltage coordinate vector
         """
 
-    f = partial(_ground_state_0d, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold)
+    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold)
     N = map(f, vg)
     return VectorList(list(N))
 
 
-def ground_state_isolated_python(vg: VectorList, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
-                                 threshold: float) -> VectorList:
+def ground_state_closed_python(vg: VectorList, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
+                               threshold: float) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -39,7 +39,7 @@ def ground_state_isolated_python(vg: VectorList, n_charge: int, cgd: Cgd, cdd: C
      :return: the lowest energy charge configuration for each gate voltage coordinate vector
      """
     vg = np.atleast_2d(vg)
-    f = partial(_ground_state_0d_isolated, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, threshold=threshold)
+    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, threshold=threshold)
     N = map(f, vg)
     return VectorList(list(N))
 
@@ -73,7 +73,7 @@ def compute_argmin(n_continuous, threshold, cdd_inv, n_charge=None):
     return n_list[np.argmin(F), :]
 
 
-def _ground_state_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, threshold: float) -> np.ndarray:
+def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, threshold: float) -> np.ndarray:
     """
 
     :param vg:
@@ -88,8 +88,8 @@ def _ground_state_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, thres
     return compute_argmin(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold)
 
 
-def _ground_state_0d_isolated(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
-                              threshold: float) -> np.ndarray:
+def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
+                            threshold: float) -> np.ndarray:
     """
     :param vg:
     :param n_charge:

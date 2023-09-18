@@ -8,7 +8,7 @@ from ..typing_classes import (
     Cdd, CddInv, Cgd, VectorList
 )
 
-def ground_state_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
+def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
     A wrapper for the rust ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -20,7 +20,7 @@ def ground_state_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: floa
     return VectorList(ground_state(vg, cgd, cdd_inv, threshold))
 
 
-def ground_state_isolated_rust(vg: VectorList, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, threshold: float) -> VectorList:
+def ground_state_closed_rust(vg: VectorList, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
     A wrapper for the rust ground state isolated function that takes in numpy arrays and returns numpy arrays.
     :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at

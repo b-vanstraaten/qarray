@@ -91,6 +91,18 @@ class PositiveDefiniteSymmetricMatrix(SymmetricMatrix):
             raise ValueError(f'Matrix is not positive definite symmetric - eigenvals {np.linalg.eigvals(self)} \n\n')
 
 
+class CgdNonMaxwell(PositiveValuedMatrix):
+    """
+    Class for the gate-dot capacitance matrix, in its non Maxwell form
+    """
+    pass
+
+class CddNonMaxwell(SymmetricMatrix):
+    """
+    Class for the dot-dot capacitance matrix its non Maxwell form
+    """
+    pass
+
 class Cgd(NegativeValuedMatrix):
     """
     Class for the gate-dot capacitance matrix.
