@@ -6,7 +6,7 @@ from src.typing_classes import Vector
 
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
-class GateVoltages(BaseDataClass):
+class GateVoltageComposer(BaseDataClass):
     n_gate: int
     gate_voltages: Vector | None = None
     gate_names: dict[str, int] | None = None

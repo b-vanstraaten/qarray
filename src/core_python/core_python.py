@@ -6,6 +6,7 @@ rusty_capacitance_model_core.
 from functools import partial
 from itertools import product
 
+from pydantic import NonNegativeInt
 import numpy as np
 
 from ..typing_classes import (CddInv, Cgd, Cdd, VectorList)
@@ -26,7 +27,7 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
     return VectorList(list(N))
 
 
-def ground_state_closed_python(vg: VectorList, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
+def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
                                threshold: float) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.

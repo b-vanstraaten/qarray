@@ -1,5 +1,6 @@
 import numpy as np
 from pydantic.dataclasses import dataclass
+from pydantic import NonNegativeInt
 
 from src.core_python import ground_state_open_python, ground_state_closed_python
 from src.core_rust import ground_state_open_rust, ground_state_closed_rust
@@ -39,7 +40,7 @@ class DotArray(BaseDataClass):
                 raise ValueError(f'Incorrect core {self.core}, it must be either rust or python')
         return result.reshape(nd_shape)
 
-    def ground_state_closed(self, vg: VectorList | np.ndarray, n_change: int) -> np.ndarray:
+    def ground_state_closed(self, vg: VectorList | np.ndarray, n_change: NonNegativeInt) -> np.ndarray:
         self._validate_vg(vg)
         vg_shape = vg.shape
         nd_shape = (*vg_shape[:-1], self.n_dot)
