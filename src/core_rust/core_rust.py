@@ -2,7 +2,7 @@
 Type hinted wrappers for the rust core functions.
 """
 
-from rusty_capacitance_model_core import (ground_state, ground_state_isolated)
+from rusty_capacitance_model_core import (ground_state_open, ground_state_closed)
 
 from ..typing_classes import (
     Cdd, CddInv, Cgd, VectorList
@@ -17,7 +17,7 @@ def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold:
     :param threshold: the threshold to use for the ground state calculation
     :return: the lowest energy charge configuration for each gate voltage coordinate vector
     """
-    return VectorList(ground_state(vg, cgd, cdd_inv, threshold))
+    return VectorList(ground_state_open(vg, cgd, cdd_inv, threshold))
 
 
 def ground_state_closed_rust(vg: VectorList, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, threshold: float) -> VectorList:
@@ -31,4 +31,4 @@ def ground_state_closed_rust(vg: VectorList, n_charge: int, cgd: Cgd, cdd: Cdd, 
     :param threshold: the threshold to use for the ground state calculation
     :return: the lowest energy charge configuration for each gate voltage coordinate vector
     """
-    return VectorList(ground_state_isolated(vg, n_charge, cgd, cdd, cdd_inv, threshold))
+    return VectorList(ground_state_closed(vg, n_charge, cgd, cdd, cdd_inv, threshold))
