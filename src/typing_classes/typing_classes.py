@@ -9,6 +9,20 @@ check that the matrices are for example symmetric or positive definite.
 import numpy as np
 from pydantic import BaseModel
 
+class Vector(np.ndarray):
+    """
+    Base class for vectors. This class is not intended to be instantiated directly.
+    This is just a 1d numpy ndarray with a validator method.
+    """
+
+    def __new__(cls, a):
+        obj = np.asarray(a).view(cls)
+        obj.validate()
+        return obj
+
+    def validate(self):
+        assert self.ndim == 1, f'Array not of rank 1 -\n{self}'
+
 
 class Matrix(np.ndarray):
     """
