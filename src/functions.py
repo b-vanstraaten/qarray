@@ -1,5 +1,5 @@
 import numpy as np
-from .typing_classes import (CddInv, Cgd, Cdd, VectorList)
+from .typing_classes import (CddInv, Cgd, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell)
 
 def lorentzian(x, x0, gamma):
     return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
@@ -17,20 +17,21 @@ def optimal_Vg(cdd_inv: CddInv, cgd: Cgd, n_charges: VectorList, rcond: float = 
     M = np.linalg.pinv(cgd.T @ cdd_inv @ cgd, rcond=rcond) @ cgd.T @ cdd_inv
     return np.einsum('ij, ...j', M, n_charges)
 
-def positive_semidefinite(A):
-    greater_than_zero = np.linalg.eigvals(A) >= 0
-    approx_zero = np.isclose(np.linalg.eigvals(A), 0)
-    return np.all(np.logical_or(greater_than_zero, approx_zero))
+def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (Cdd, Cgd):
+    """
+    Function to convert the non Maxwell capacitance matrices to their maxwell form.
+    :param cdd_non_maxwell:
+    :param cgd_non_maxwell:
+    :return:
+    """
+    cdd_sum = cdd_non_maxwell.sum(axis=0)
+    cgd_sum = cgd_non_maxwell.sum(axis=0)
+    cdd = Cdd(np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell)
+    cdd_inv = CddInv(np.linalg.inv(cdd))
+    cgd = Cgd(-cgd_non_maxwell)
+    return cdd, cdd_inv, cgd
 
-
-def convert_to_maxwell_matrix(C, n_dot, n_gate):
-    assert C.shape[0] == C.shape[1], "C must be square"
-    assert C.shape[0] == n_dot + n_gate, "C must be of shape (n_dot + n_gate, n_dot + n_gate)"
-
-    # creating a diagonal matrix with the sum of each row of C of shape (n_dot, n_dot)
-    C_sum = np.sum(C, axis=1)
-    C_diag = np.diag(C_sum)
-
-    C_maxwell = C_diag - C
-    assert positive_semidefinite(C_maxwell), f'C_maxwell must be positive semidefinite C_maxwell: {C_maxwell}'
-    return C_maxwell
+def compute_threshold(cdd: Cdd) -> float:
+    cdd_diag = np.diag(cdd)
+    c = (cdd - np.diag(cdd_diag)) / cdd_diag[:, np.newaxis]
+    return np.abs(c).max()

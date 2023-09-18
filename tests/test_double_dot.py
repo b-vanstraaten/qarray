@@ -7,7 +7,7 @@ import unittest
 import numpy as np
 
 from src import (CddInv, Cgd, ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
-                 ground_state_closed_python, Cdd, optimal_Vg)
+                 ground_state_closed_python, Cdd, optimal_Vg, compute_threshold)
 
 N_VOLTAGES = 100
 N_ITERATIONS = 10
@@ -38,6 +38,23 @@ class DoubleDotTests(unittest.TestCase):
             n_rust = ground_state_open_rust(vg, cgd, cdd_inv, 1)
             n_python = ground_state_open_python(vg, cgd, cdd_inv, 1)
             self.assertTrue(np.allclose(n_rust, n_python))
+
+    def test_threshold(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+
+        for _ in range(N_ITERATIONS):
+            cdd, cdd_inv, cgd = double_dot_matrices()
+            vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
+            n_threshold_of_1 = ground_state_open_rust(vg, cgd, cdd_inv, 1.)
+
+            threshold = compute_threshold(cdd)
+            n_threshold_not_of_1 = ground_state_open_rust(vg, cgd, cdd_inv, threshold)
+
+            self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
 
     def test_python_vs_rust_one_charge(self):
         """

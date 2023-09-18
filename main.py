@@ -7,7 +7,7 @@ from src import (
 
 cdd_non_maxwell = np.array([
     [0, 0.1],
-    [0.2, 0]
+    [0.1, 0]
 ])
 cgd_non_maxwell = np.eye(2)
 
@@ -18,8 +18,8 @@ model = DotArray(
 
 vg = np.stack(
     np.meshgrid(
-        np.linspace(-2, 1, 1000),
-        np.linspace(-2, 1, 1000)
+        np.linspace(-2, 1, 100),
+        np.linspace(-2, 1, 100)
     ), axis=-1
 )
 
