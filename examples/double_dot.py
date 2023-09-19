@@ -1,45 +1,60 @@
 import matplotlib
 import matplotlib.pyplot as plt
-import numpy as np
+from functools import partial
 
 from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
-cdd_non_maxwell = [
-    [0, 0.1],
-    [0.1, 0]
-]
-cgd_non_maxwell = [
-    [1, 0.2],
-    [0.2, 1]
-]
-
+# setting up the constant capacitance model
 model = DotArray(
-    cdd_non_maxwell = cdd_non_maxwell,
-    cgd_non_maxwell = cgd_non_maxwell,
-)
-voltage_composer = GateVoltageComposer(n_gate = 2)
+    cdd_non_maxwell=[
+        [0., 0.1],
+        [0.1, 0.]
+    ],
+    cgd_non_maxwell=[
+        [1., 0.2],
+        [0.2, 1.]
+    ])
 
-vx_min, vx_max = -3, 1
-vy_min, vy_max = -3, 1
+# creating the gate voltage composer, which helps us to create the gate voltage array
+# for sweeping in 1d and 2d
+voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
-fig, ax = plt.subplots(1, 4, sharex=True, sharey=True)
-fig.set_size_inches(6, 4)
-
-funcs = [
-    lambda vg: model.ground_state_open(vg),
-    lambda vg: model.ground_state_closed(vg, 1),
-    lambda vg: model.ground_state_closed(vg, 2),
-    lambda vg: model.ground_state_closed(vg, 3),
+# defining the functions to compute the ground state for the different cases
+ground_state_funcs = [
+    model.ground_state_open,
+    partial(model.ground_state_closed, n_charge=1),
+    partial(model.ground_state_closed, n_charge=2),
+    partial(model.ground_state_closed, n_charge=3),
 ]
 
-ax[0].set_ylabel(f'$V_y$')
-for i, func in enumerate(funcs):
-    vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 1, vy_min, vy_max, 1000)
-    n = func(vg)
-    z = dot_occupation_changes(n)
+# defining the min and max values for the gate voltage sweep
+vx_min, vx_max = -3, 0.7
+vy_min, vy_max = -3, 0.7
+# using the gate voltage composer to create the gate voltage array for the 2d sweep
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 1, vy_min, vy_max, 1000)
 
+# creating the figure and axes
+fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
+fig.set_size_inches(3, 3)
+# looping over the functions and axes, computing the ground state and plot the results
+for (func, ax) in zip(ground_state_funcs, axes.flatten()):
+    n = func(vg) # computing the ground state by calling the function
+    # passing the ground state to the dot occupation changes function to compute when the dot occupation changes
+    z = dot_occupation_changes(n)
+    # plotting the result
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
-    ax[i].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,
+    ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,
                  interpolation='antialiased')
-    ax[i].set_aspect('equal')
-    ax[i].set_xlabel(f'$V_x$')
+    ax.set_aspect('equal')
+fig.tight_layout()
+
+# setting the labels and titles
+axes[0, 0].set_ylabel(r'$V_y$')
+axes[1, 0].set_ylabel(r'$V_y$')
+axes[1, 0].set_xlabel(r'$V_x$')
+axes[1, 1].set_xlabel(r'$V_x$')
+
+axes[0, 0].set_title(r'Open')
+axes[0, 1].set_title(r'$n_{charge} = 1$')
+axes[1, 0].set_title(r'$n_{charge} = 2$')
+axes[1, 1].set_title(r'$n_{charge} = 3$')
