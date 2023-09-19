@@ -1,8 +1,13 @@
-import matplotlib
-import matplotlib.pyplot as plt
+"""
+Double dot example
+"""
 from functools import partial
 
+import matplotlib
+import matplotlib.pyplot as plt
+
 from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
+
 
 # setting up the constant capacitance model
 model = DotArray(
@@ -39,7 +44,8 @@ fig.set_size_inches(3, 3)
 # looping over the functions and axes, computing the ground state and plot the results
 for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     n = func(vg) # computing the ground state by calling the function
-    # passing the ground state to the dot occupation changes function to compute when the dot occupation changes
+    # passing the ground state to the dot occupation changes function to compute when
+    # the dot occupation changes
     z = dot_occupation_changes(n)
     # plotting the result
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
@@ -58,3 +64,4 @@ axes[0, 0].set_title(r'Open')
 axes[0, 1].set_title(r'$n_{charge} = 1$')
 axes[1, 0].set_title(r'$n_{charge} = 2$')
 axes[1, 1].set_title(r'$n_{charge} = 3$')
+plt.show()
