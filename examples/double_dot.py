@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
-
 # setting up the constant capacitance model
 model = DotArray(
     cdd_non_maxwell=[
