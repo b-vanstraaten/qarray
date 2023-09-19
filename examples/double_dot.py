@@ -64,4 +64,6 @@ axes[0, 0].set_title(r'Open')
 axes[0, 1].set_title(r'$n_{charge} = 1$')
 axes[1, 0].set_title(r'$n_{charge} = 2$')
 axes[1, 1].set_title(r'$n_{charge} = 3$')
-plt.show()
+
+if __name__ == '__main__':
+    plt.show()
