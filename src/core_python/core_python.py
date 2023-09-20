@@ -11,7 +11,7 @@ import osqp
 from pydantic import NonNegativeInt
 from scipy import sparse
 
-from ..functions import compute_charge_configurations
+from ..charge_configuration_combinatations import compute_charge_configuration_brute_force
 from ..typing_classes import (CddInv, Cgd, Cdd, VectorList)
 
 
@@ -42,6 +42,7 @@ def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None
     prob = osqp.OSQP()
     prob.setup(P, q, A, l, u, alpha=1., verbose=False, polish=False)
     return prob
+
 
 def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
@@ -105,7 +106,7 @@ def compute_argmin_closed(n_continuous, threshold, cdd_inv, n_charge=None):
     else:
         lower_limits = np.floor(n_continuous).astype(int)
         upper_limits = np.ceil(n_continuous).astype(int)
-        n_list = compute_charge_configurations(n_charge, cdd_inv.shape[0], lower_limits, upper_limits)
+        n_list = compute_charge_configuration_brute_force(n_charge, cdd_inv.shape[0], lower_limits)
 
     # computing the free energy of the change configurations
     F = np.einsum('...i, ij, ...j', n_list - n_continuous, cdd_inv, n_list - n_continuous)

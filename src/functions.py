@@ -1,7 +1,4 @@
-from itertools import permutations
-
 import numpy as np
-import subsetsum
 
 from .typing_classes import (CddInv, Cgd, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad)
 
@@ -10,18 +7,6 @@ def lorentzian(x, x0, gamma):
     return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
 
 
-def compute_charge_configurations(n_charge: int, n_dot: int, lower_values: np.ndarray, upper_values: np.ndarray):
-    nums = np.concatenate([lower_values, upper_values]).astype(int)
-    solutions = []
-    for solution in subsetsum.solutions(nums, n_charge):
-        # `solution` contains indices of elements in `nums`
-        if len(solution) == n_dot:
-            subset = [nums[i] for i in solution]
-            for perm in permutations(subset):
-                perm = np.array(perm)
-                if np.logical_or(perm == lower_values, perm == upper_values).all():
-                    solutions.append(perm)
-    return np.unique(np.stack(solutions), axis=0)
 
 def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     """

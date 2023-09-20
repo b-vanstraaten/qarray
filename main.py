@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from src import (
-    CddInv, Cgd, DotArray, GateVoltageComposer
+    DotArray, GateVoltageComposer
 )
 
 cdd_non_maxwell = np.array([
@@ -22,5 +22,5 @@ voltage_composer = GateVoltageComposer(n_gate = 2)
 vg = voltage_composer.do2d(0, -10, 1, 1000, 1, -10, 1, 1000)
 a = model.ground_state_closed(vg, 1)
 
-plt.imshow(a[:, :, 0], origin='lower')
+plt.imshow(a[:, :, 0], origin='floor')
 plt.show()
