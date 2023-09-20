@@ -4,7 +4,8 @@ from time import perf_counter_ns
 
 import numpy as np
 
-from src import compute_charge_configuration_brute_force, compute_charge_configurations_dynamic
+from src import closed_charge_configurations_brute_force, closed_charge_configurations_dynamic, \
+    closed_charge_configurations_brute_force_rust
 
 
 def to_set(a):
@@ -20,8 +21,9 @@ class ChargeCombinationsTests(unittest.TestCase):
     def loop_over_answer_and_floor_values(self, n_charge, n_dot, floor_value_answer_pairs):
 
         functions = [
-            partial(compute_charge_configuration_brute_force, n_charge, n_dot),
-            partial(compute_charge_configurations_dynamic, n_charge, n_dot),
+            partial(closed_charge_configurations_brute_force, n_charge, n_dot),
+            partial(closed_charge_configurations_dynamic, n_charge, n_dot),
+            partial(closed_charge_configurations_brute_force_rust, n_charge, n_dot),
         ]
 
         for floor_values, answers in floor_value_answer_pairs:
@@ -354,9 +356,9 @@ class ChargeCombinationsTests(unittest.TestCase):
                 floor_values = np.random.randint(0, n_charge, size=n_dot)
 
                 t0 = perf_counter_ns()
-                brute_force = compute_charge_configuration_brute_force(n_charge, n_dot, floor_values)
+                brute_force = closed_charge_configurations_brute_force(n_charge, n_dot, floor_values)
                 t1 = perf_counter_ns()
-                dynamic = compute_charge_configurations_dynamic(n_charge, n_dot, floor_values)
+                dynamic = closed_charge_configurations_dynamic(n_charge, n_dot, floor_values)
                 t2 = perf_counter_ns()
                 self.assertTrue(compare_for_equality(brute_force, dynamic))
 

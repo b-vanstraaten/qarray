@@ -9,7 +9,7 @@ def sum_eq(array, sum):
     return np.sum(array) == sum
 
 
-def compute_charge_configuration_brute_force(n_charge, n_dot, floor_values):
+def closed_charge_configurations_brute_force(n_charge, n_dot, floor_values):
     if floor_values.sum() > n_charge:
         return np.empty((0, n_dot))
     if (floor_values + 1).sum() < n_charge:
@@ -21,7 +21,7 @@ def compute_charge_configuration_brute_force(n_charge, n_dot, floor_values):
     return np.stack(list(combinations), axis=0) + floor_values
 
 
-def compute_charge_configurations_dynamic(n_charge: int, n_dot: int, floor_values: np.ndarray):
+def closed_charge_configurations_dynamic(n_charge: int, n_dot: int, floor_values: np.ndarray):
     if floor_values.sum() > n_charge:
         return np.empty((0, n_dot))
     if (floor_values + 1).sum() < n_charge:

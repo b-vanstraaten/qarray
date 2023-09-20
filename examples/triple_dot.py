@@ -17,11 +17,11 @@ model = DotArray(
         [0.0, 0.1, 0]
     ],
     cgd_non_maxwell=[
-        [1., 0., 0.0],
-        [0., 1., 0.],
-        [0.0, 0., 1]
+        [1., 0.2, 0.05],
+        [0.2, 1., 0.2],
+        [0.05, 0.2, 1]
     ],
-    core='python',
+    core='rust',
 )
 
 # creating the gate voltage composer, which helps us to create the gate voltage array
@@ -40,7 +40,7 @@ ground_state_funcs = [
 vx_min, vx_max = -3, 5
 vy_min, vy_max = -3, 5
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 2, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 2, vy_min, vy_max, 1000)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
@@ -54,6 +54,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     # the dot occupation changes
     z = dot_occupation_changes(n)
     # plotting the result
+
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     ax.imshow((n * c[np.newaxis, np.newaxis, :]).sum(axis=-1), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
               aspect='auto', cmap=cmap,

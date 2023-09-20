@@ -1,1 +1,0 @@
-from .closed_dot_configurations import compute_charge_configurations_dynamic, compute_charge_configuration_brute_force

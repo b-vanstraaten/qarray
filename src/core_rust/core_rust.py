@@ -2,12 +2,24 @@
 Type hinted wrappers for the rust core functions.
 """
 
-from rusty_capacitance_model_core import (ground_state_open, ground_state_closed)
 from pydantic import NonNegativeInt
+from rusty_capacitance_model_core import (ground_state_open, ground_state_closed,
+                                          closed_charge_configurations_brute_force)
 
 from ..typing_classes import (
-    Cdd, CddInv, Cgd, VectorList
+    Cdd, CddInv, Cgd, VectorList, Vector
 )
+
+
+def closed_charge_configurations_brute_force_rust(n_charge: NonNegativeInt, n_dot: NonNegativeInt,
+                                                  floor_list: Vector) -> VectorList:
+    """
+    A wrapper for the rust closed charge configurations function that takes in numpy arrays and returns numpy arrays.
+    :param n_charge: the number of charges in the dot array
+    :param n_dot: the number of dots in the dot array
+    :return: the list of charge configurations
+    """
+    return VectorList(closed_charge_configurations_brute_force(n_charge, n_dot, floor_list))
 
 def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
