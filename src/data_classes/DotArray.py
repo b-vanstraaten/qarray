@@ -1,12 +1,13 @@
 import numpy as np
-from pydantic.dataclasses import dataclass
 from pydantic import NonNegativeInt
+from pydantic.dataclasses import dataclass
 
 from src.core_python import ground_state_open_python, ground_state_closed_python
 from src.core_rust import ground_state_open_rust, ground_state_closed_rust
 from src.data_classes.BaseDataClass import BaseDataClass
-from src.typing_classes import (Cdd, CddInv, Cgd, CgdNonMaxwell, CddNonMaxwell, VectorList, Vector)
 from src.functions import convert_to_maxwell, compute_threshold
+from src.typing_classes import (CgdNonMaxwell, CddNonMaxwell, VectorList)
+
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
 class DotArray(BaseDataClass):
@@ -16,12 +17,14 @@ class DotArray(BaseDataClass):
     cdd_non_maxwell: CddNonMaxwell
     cgd_non_maxwell: CgdNonMaxwell
     core: str = 'rust'
+    threshold: float | None = None
 
     def __post_init__(self):
         self.n_dot = self.cdd_non_maxwell.shape[0]
         self.n_gate = self.cgd_non_maxwell.shape[1]
         self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.cdd_non_maxwell, self.cgd_non_maxwell)
-        self.threshold = compute_threshold(self.cdd)
+        if self.threshold is None:
+            self.threshold = compute_threshold(self.cdd)
 
 
     def _validate_vg(self, vg):

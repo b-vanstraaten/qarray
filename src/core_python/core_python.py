@@ -6,11 +6,41 @@ rusty_capacitance_model_core.
 from functools import partial
 from itertools import product
 
-from pydantic import NonNegativeInt
 import numpy as np
+import osqp
+from pydantic import NonNegativeInt
+from scipy import sparse
 
 from ..typing_classes import (CddInv, Cgd, Cdd, VectorList)
 
+
+def init_osqp_solver(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None = None) -> osqp.OSQP:
+    """
+    Initializes the OSQP solver for the closed dot array model
+    :param cdd_inv: the inverse of the dot to dot capacitance matrix
+    :param n_charge: the number of charges in the dot array
+    :return: the initialized OSQP solver
+    """
+    dim = cdd_inv.shape[0]
+
+    P = sparse.csc_matrix(cdd_inv)
+    q = -cdd_inv @ cgd @ np.zeros(cgd.shape[-1])
+
+    # setting up the constraints
+    if n_charge is not None:
+        # if n_charge is not None then the array is in the closed configuration
+        l = np.concatenate(([n_charge], np.zeros(dim)))
+        u = np.full(dim + 1, n_charge)
+        A = sparse.csc_matrix(np.concatenate((np.ones((1, dim)), np.eye(dim)), axis=0))
+    else:
+        # if n_charge is None then the array is in the open configuration, which means one fewer constraint
+        l = np.zeros(dim)
+        u = np.full(dim, fill_value=100)
+        A = sparse.csc_matrix(np.eye(dim))
+
+    prob = osqp.OSQP()
+    prob.setup(P, q, A, l, u, alpha=1., verbose=False, polish=False)
+    return prob
 
 def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
@@ -21,8 +51,9 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
         :param threshold: the threshold to use for the ground state calculation
         :return: the lowest energy charge configuration for each gate voltage coordinate vector
         """
+    prob = init_osqp_solver(cdd_inv=cdd_inv, cgd=cgd)
 
-    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold)
+    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold, prob=prob)
     N = map(f, vg)
     return VectorList(list(N))
 
@@ -39,8 +70,10 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
      :param threshold: the threshold to use for the ground state calculation
      :return: the lowest energy charge configuration for each gate voltage coordinate vector
      """
+    prob = init_osqp_solver(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge)
+
     vg = np.atleast_2d(vg)
-    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, threshold=threshold)
+    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold, prob=prob)
     N = map(f, vg)
     return VectorList(list(N))
 
@@ -67,6 +100,9 @@ def compute_argmin(n_continuous, threshold, cdd_inv, n_charge=None):
     if n_charge is not None:  # this is only necessary if the array is in the isolated coniguration
         n_list = n_list[n_list.sum(axis=-1) == n_charge]
 
+    if n_list.size == 0:
+        pass
+
     # computing the free energy of the change configurations
     F = np.einsum('...i, ij, ...j', n_list - n_continuous, cdd_inv, n_list - n_continuous)
 
@@ -74,7 +110,7 @@ def compute_argmin(n_continuous, threshold, cdd_inv, n_charge=None):
     return n_list[np.argmin(F), :]
 
 
-def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, threshold: float) -> np.ndarray:
+def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, threshold: float, prob) -> np.ndarray:
     """
 
     :param vg:
@@ -83,14 +119,16 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
     :param threshold:
     :return:
     """
-    n_continuous = cgd @ vg
+
+    prob.update(q=-cdd_inv @ cgd @ vg)
+    res = prob.solve()
+    n_continuous = np.clip(res.x, 0, None)
     # eliminating the possibly of negative numbers of change carriers
-    n_continuous = np.clip(n_continuous, 0, None)
     return compute_argmin(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold)
 
 
-def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
-                            threshold: float) -> np.ndarray:
+def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd_inv: CddInv,
+                            threshold: float, prob) -> np.ndarray:
     """
     :param vg:
     :param n_charge:
@@ -100,10 +138,7 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, c
     :param threshold:
     :return:
     """
-    n_continuous = cgd @ vg
-    # computing the Lagranian multiplier correction due to the array being closed
-    isolation_correction = (n_charge - n_continuous.sum()) * cdd.sum(axis=0) / cdd.sum()
-    n_continuous = n_continuous + isolation_correction
-    # eliminating the possibly of negative numbers of change carriers and too mang changes
-    n_continuous = np.clip(n_continuous, 0, n_charge)
-    return compute_argmin(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold)
+    prob.update(q=-cdd_inv @ cgd @ vg)
+    res = prob.solve()
+    n_continuous = np.clip(res.x, 0, n_charge)
+    return compute_argmin(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, n_charge=n_charge)

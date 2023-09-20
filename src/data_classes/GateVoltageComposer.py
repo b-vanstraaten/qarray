@@ -77,7 +77,7 @@ class GateVoltageComposer(BaseDataClass):
         vg = np.zeros(shape=(x_resolution, y_resolution, self.n_gate))
         for gate in range(self.n_gate):
             if not gate == x_gate and not gate == y_gate:
-                vg[..., gate] = self.voltages[gate]
+                vg[..., gate] = self.gate_voltages[gate]
             if gate == x_gate:
                 vg[..., gate] = X
             if gate == y_gate:
