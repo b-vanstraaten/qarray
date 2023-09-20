@@ -1,23 +1,28 @@
+from itertools import permutations
+
 import numpy as np
+import subsetsum
 
 
-def find_combinations(n_dot, n_charge):
-    if n_dot == 1:
-        yield (n_charge,)
-    else:
-        for value in range(n_charge + 1):
-            for permutation in find_combinations(n_dot - 1, n_charge - value):
-                yield (value,) + permutation
+def compute_charge_configurations(n_charge, n_dot, lower_values, upper_values):
+    nums = np.concatenate((lower_values, upper_values))
+    solutions = []
+    for solution in subsetsum.solutions(nums, n_charge):
+        # `solution` contains indices of elements in `nums`
+        if len(solution) == n_dot:
+            subset = [nums[i] for i in solution]
+            for perm in permutations(subset):
+                perm = np.array(perm)
+                if np.logical_or(perm == lower_values, perm == upper_values).all():
+                    solutions.append(perm)
+
+    return np.unique(np.stack(solutions), axis=0)
 
 
-def find_permutations(n_dot, n_charge):
-    combinations = np.stack(list(find_combinations(n_dot, n_charge)), axis=0)
-    return np.concatenate([np.roll(combinations, i, axis=-1) for i in range(0, n_dot)])
+n_dot = 3
 
+lower_values = np.array([0, 0, 1])
+upper_values = np.array([1, 1, 2])
 
-# Example usage:
-result = np.array(list(find_combinations(3, 3)))
-result_permutations = np.array(list(find_permutations(3, 3)))
-print(result)
-
-print(result_permutations)
+solutions = compute_charge_configurations(n_charge=3, n_dot=3, lower_values=lower_values, upper_values=upper_values)
+print(solutions)

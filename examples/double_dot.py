@@ -5,8 +5,9 @@ from functools import partial
 
 import matplotlib
 import matplotlib.pyplot as plt
+import numpy as np
 
-from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from src import (DotArray, GateVoltageComposer)
 
 # setting up the constant capacitance model
 model = DotArray(
@@ -15,9 +16,10 @@ model = DotArray(
         [0.1, 0.]
     ],
     cgd_non_maxwell=[
-        [1., 0.2],
-        [0.2, 1.]
-    ], core='python')
+        [1., 0.],
+        [0., 1.]
+    ], core='python'
+)
 
 # creating the gate voltage composer, which helps us to create the gate voltage array
 # for sweeping in 1d and 2d
@@ -32,8 +34,8 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the gate voltage sweep
-vx_min, vx_max = -3, 0.7
-vy_min, vy_max = -3, 0.7
+vx_min, vx_max = -3, 5
+vy_min, vy_max = -3, 5
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 1, vy_min, vy_max, 200)
 
@@ -45,7 +47,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     n = func(vg) # computing the ground state by calling the function
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
-    z = dot_occupation_changes(n)
+    z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
     # plotting the result
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,
