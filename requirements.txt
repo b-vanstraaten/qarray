@@ -1,6 +1,6 @@
-numpy~=1.25.2
-pydantic~=2.3.0
-scipy~=1.11.2
-rusty_capacitance_model_core>=1.1.0
-matplotlib~=3.4.2
+numpy>=1.26
+pydantic>=2.3
+scipy>=1.11
+rusty_capacitance_model_core>=1.1
+matplotlib>=3.8
 osqp~=0.6.2
