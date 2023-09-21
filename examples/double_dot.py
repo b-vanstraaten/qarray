@@ -1,6 +1,7 @@
 """
 Double dot example
 """
+import time
 from functools import partial
 
 import matplotlib
@@ -44,7 +45,10 @@ fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
 fig.set_size_inches(3, 3)
 # looping over the functions and axes, computing the ground state and plot the results
 for (func, ax) in zip(ground_state_funcs, axes.flatten()):
+    t0 = time.time()
     n = func(vg) # computing the ground state by calling the function
+    t1 = time.time()
+    print(f'{t1 - t0} seconds')
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
     z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)

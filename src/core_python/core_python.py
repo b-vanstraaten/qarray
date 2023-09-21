@@ -60,8 +60,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold)
 
 
-def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd_inv: CddInv,
-                            threshold: float, prob) -> np.ndarray:
+def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd_inv: CddInv, prob) -> np.ndarray:
     """
     :param vg:
     :param n_charge:
@@ -74,7 +73,7 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd_inv: Cd
     prob.update(q=-cdd_inv @ cgd @ vg)
     res = prob.solve()
     n_continuous = np.clip(res.x, 0, n_charge)
-    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, n_charge=n_charge)
+    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, n_charge=n_charge)
 
 
 def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
@@ -92,8 +91,7 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
     return VectorList(list(N))
 
 
-def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd_inv: CddInv,
-                               threshold: float) -> VectorList:
+def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd_inv: CddInv) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -105,7 +103,7 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
      :return: the lowest energy charge configuration for each gate voltage coordinate vector
      """
     prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge)
-    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold, prob=prob)
+    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd_inv=cdd_inv, prob=prob)
     N = map(f, vg)
     return VectorList(list(N))
 
@@ -134,7 +132,8 @@ def compute_argmin_open(n_continuous, threshold, cdd_inv):
     # returning the lowest energy change configuration
     return n_list[np.argmin(F), :]
 
-def compute_argmin_closed(n_continuous, threshold, cdd_inv, n_charge=None):
+
+def compute_argmin_closed(n_continuous, cdd_inv, n_charge=None):
     lower_limits = np.floor(n_continuous).astype(int)
     n_list = closed_charge_configurations_brute_force(n_charge, cdd_inv.shape[0], lower_limits)
 
