@@ -7,7 +7,6 @@ import numpy as np
 def sum_eq(array, sum):
     return np.sum(array) == sum
 
-
 def closed_charge_configurations_brute_force(n_charge, n_dot, floor_values):
     if floor_values.sum() > n_charge:
         return np.empty((0, n_dot))

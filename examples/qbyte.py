@@ -1,6 +1,3 @@
-"""
-Double dot example
-"""
 import time
 from functools import partial
 
@@ -8,25 +5,17 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from src import (DotArray, GateVoltageComposer)
 
-# setting up the constant capacitance model
-cdd_non_maxwell = [
-    [0., 0.1, 0.05, 0.01],
-    [0.1, 0., 0.1, 0.05],
-    [0.05, 0.1, 0., 0.1],
-    [0.01, 0.05, 0.1, 0]
-]
-cgd_non_maxwell = [
-    [1., 0.2, 0.05, 0.01],
-    [0.2, 1., 0.2, 0.05],
-    [0.05, 0.2, 1., 0.2],
-    [0.01, 0.05, 0.2, 1]
-]
+N = 14
+
+cdd = np.random.uniform(0, 0.1, size=N ** 2).reshape(N, N)
+cdd = (cdd + cdd.T) / 2.
+cgd = np.eye(N) + np.random.uniform(0, 0.1, size=N ** 2).reshape(N, N)
 
 model = DotArray(
-    cdd_non_maxwell=cdd_non_maxwell,
-    cgd_non_maxwell=cgd_non_maxwell,
+    cdd_non_maxwell=cdd,
+    cgd_non_maxwell=cgd,
     core='rust'
 )
 
@@ -37,36 +26,32 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
     model.ground_state_open,
-    partial(model.ground_state_closed, n_charge=2),
-    partial(model.ground_state_closed, n_charge=3),
     partial(model.ground_state_closed, n_charge=4),
+    partial(model.ground_state_closed, n_charge=15),
+    partial(model.ground_state_closed, n_charge=16),
 ]
 
 # defining the min and max values for the gate voltage sweep
-vx_min, vx_max = -5, 10
-vy_min, vy_max = -5, 10
+vx_min, vx_max = -5, 5
+vy_min, vy_max = -5, 5
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 1, vy_min, vy_max, 400)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
 fig.set_size_inches(3, 3)
-c = np.linspace(0.9, 1.1, 4)
-
 # looping over the functions and axes, computing the ground state and plot the results
 for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     t0 = time.time()
     n = func(vg)  # computing the ground state by calling the function
     t1 = time.time()
-    print(f'{t1 - t0:.3f} seconds')
+    print(f'Computing took {t1 - t0: .3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
-    z = dot_occupation_changes(n)
+    z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
     # plotting the result
-
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
-    ax.imshow((n * c[np.newaxis, np.newaxis, :]).sum(axis=-1), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
-              aspect='auto', cmap=cmap,
+    ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,
               interpolation='antialiased')
     ax.set_aspect('equal')
 fig.tight_layout()

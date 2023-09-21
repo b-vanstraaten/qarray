@@ -18,7 +18,6 @@ model = DotArray(
 voltage_composer = GateVoltageComposer(n_gate = 2)
 
 
-
 vg = voltage_composer.do2d(0, -10, 1, 1000, 1, -10, 1, 1000)
 a = model.ground_state_closed(vg, 1)
 
