@@ -39,6 +39,17 @@ jobs:
         python-version: [ '3.10', '3.11' ]
         target: [ x86_64, aarch64 ]
     steps:
+
+      -   name: Debug Environment
+          run: |
+            env
+            cat CMakeLists.txt
+            which clang
+            clang --version
+
+      -   name: Set C++ Standard Library
+          run: export CXXFLAGS="-stdlib=libc++"
+
       -   name: Checkout code
           uses: actions/checkout@v2
 
