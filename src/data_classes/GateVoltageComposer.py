@@ -1,3 +1,5 @@
+import builtins
+
 import numpy as np
 from pydantic.dataclasses import dataclass
 
@@ -21,17 +23,24 @@ class GateVoltageComposer(BaseDataClass):
         if self.gate_names is None:
             self.gate_names = {}
 
-    def fetch_gate(self, gate: str | int) -> float:
+    def _fetch_and_check_gate(self, gate: str | int) -> int:
         """
         This function is used to fetch the gate index from the gate name.
         :param gate:
         :return:
         """
-        if isinstance(gate, str):
-            if gate not in self.gate_names.keys():
-                raise ValueError(f'Gate {gate} not found in dac_names')
-            gate = self.gate_names[gate]
-        return gate
+        match type(gate):
+            case builtins.int:
+                if gate < - self.n_gate or self.n_gate < gate:
+                    raise ValueError(f'Invalid gate {gate}')
+                return gate
+            case builtins.str:
+                if gate not in self.gate_names.keys():
+                    raise ValueError(f'Gate {gate} not found in dac_names')
+                return self.gate_names[gate]
+            case _:
+                raise ValueError(f'Gate not of type int of string {type(gate)}')
+
 
     def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int) -> np.ndarray:
         """
@@ -42,8 +51,7 @@ class GateVoltageComposer(BaseDataClass):
         :param x_resolution:
         :return:
         """
-        x_gate = self.fetch_gate(x_gate)
-
+        x_gate = self._fetch_and_check_gate(x_gate)
         x = np.linspace(x_min, x_max, x_resolution)
         vg = np.zeros(shape=(x_resolution, self.n_gate))
         for gate in range(self.n_gate):
@@ -67,8 +75,8 @@ class GateVoltageComposer(BaseDataClass):
         :param y_resolution:
         :return:
         """
-        x_gate = self.fetch_gate(x_gate)
-        y_gate = self.fetch_gate(y_gate)
+        x_gate = self._fetch_and_check_gate(x_gate)
+        y_gate = self._fetch_and_check_gate(y_gate)
 
         x = np.linspace(x_min, x_max, x_resolution)
         y = np.linspace(y_min, y_max, y_resolution)
