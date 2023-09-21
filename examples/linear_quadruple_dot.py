@@ -11,18 +11,23 @@ import numpy as np
 from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model
+cdd_non_maxwell = [
+    [0., 0.1, 0.05, 0.01],
+    [0.1, 0., 0.1, 0.05],
+    [0.05, 0.1, 0., 0.1],
+    [0.01, 0.05, 0.1, 0]
+]
+cgd_non_maxwell = [
+    [1., 0.2, 0.05, 0.01],
+    [0.2, 1., 0.2, 0.05],
+    [0.05, 0.2, 1., 0.2],
+    [0.01, 0.05, 0.2, 1]
+]
+
 model = DotArray(
-    cdd_non_maxwell=[
-        [0., 0.1, 0.0],
-        [0.1, 0., 0.1],
-        [0.0, 0.1, 0]
-    ],
-    cgd_non_maxwell=[
-        [1., 0.2, 0.05],
-        [0.2, 1., 0.2],
-        [0.05, 0.2, 1]
-    ],
-    core='rust',
+    cdd_non_maxwell=cdd_non_maxwell,
+    cgd_non_maxwell=cgd_non_maxwell,
+    core='rust'
 )
 
 # creating the gate voltage composer, which helps us to create the gate voltage array
@@ -38,15 +43,15 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the gate voltage sweep
-vx_min, vx_max = -3, 5
-vy_min, vy_max = -3, 5
+vx_min, vx_max = -5, 10
+vy_min, vy_max = -5, 10
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 2, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
 fig.set_size_inches(3, 3)
-c = np.linspace(0.9, 1.1, 3)
+c = np.linspace(0.9, 1.1, 4)
 
 # looping over the functions and axes, computing the ground state and plot the results
 for (func, ax) in zip(ground_state_funcs, axes.flatten()):
