@@ -4,13 +4,14 @@ Tests to check the capacitance model works for double dot arrays
 
 import unittest
 
+import matplotlib.pyplot as plt
 import numpy as np
 
 from src import (CddInv, Cgd, ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
                  ground_state_closed_python, Cdd, optimal_Vg, compute_threshold)
 
 N_VOLTAGES = 100
-N_ITERATIONS = 10
+N_ITERATIONS = 100
 
 
 def double_dot_matrices():
@@ -37,6 +38,17 @@ class DoubleDotTests(unittest.TestCase):
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
             n_rust = ground_state_open_rust(vg, cgd, cdd_inv, 1)
             n_python = ground_state_open_python(vg, cgd, cdd_inv, 1)
+
+            debug = False
+            if debug:
+                if not np.allclose(n_rust, n_python):
+                    print(cdd_inv)
+
+                    fig, ax = plt.subplots(1, 3)
+                    ax[0].imshow(n_rust, aspect='auto')
+                    ax[1].imshow(n_python, aspect='auto')
+                    ax[2].imshow(n_rust - n_python, aspect='auto')
+                    plt.show()
             self.assertTrue(np.allclose(n_rust, n_python))
 
     def test_threshold(self):

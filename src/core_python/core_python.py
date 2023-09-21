@@ -36,7 +36,7 @@ def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None
     else:
         # if n_charge is None then the array is in the open configuration, which means one fewer constraint
         l = np.zeros(dim)
-        u = np.full(dim, fill_value=100)
+        u = np.full(dim, fill_value=1000)
         A = sparse.csc_matrix(np.eye(dim))
 
     prob = osqp.OSQP()
@@ -55,7 +55,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
 
     prob.update(q=-cdd_inv @ cgd @ vg)
     res = prob.solve()
-    n_continuous = np.clip(res.x, 0, None)
+    n_continuous = np.clip(res.x, 0., None)
     # eliminating the possibly of negative numbers of change carriers
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold)
 
