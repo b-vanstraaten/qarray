@@ -4,4 +4,4 @@ scipy~=1.11.2
 rusty_capacitance_model_core>=1.1.0
 matplotlib~=3.4.2
 osqp~=0.6.2
-
+subsetsum==0.0.2
