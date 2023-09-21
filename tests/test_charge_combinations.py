@@ -1,11 +1,9 @@
 import unittest
 from functools import partial
-from time import perf_counter_ns
 
 import numpy as np
 
-from src import closed_charge_configurations_brute_force, closed_charge_configurations_dynamic, \
-    closed_charge_configurations_brute_force_rust
+from src import closed_charge_configurations_brute_force, closed_charge_configurations_brute_force_rust
 
 
 def to_set(a):
@@ -22,7 +20,6 @@ class ChargeCombinationsTests(unittest.TestCase):
 
         functions = [
             partial(closed_charge_configurations_brute_force, n_charge, n_dot),
-            partial(closed_charge_configurations_dynamic, n_charge, n_dot),
             partial(closed_charge_configurations_brute_force_rust, n_charge, n_dot),
         ]
 
@@ -347,22 +344,3 @@ class ChargeCombinationsTests(unittest.TestCase):
         ]
         self.loop_over_answer_and_floor_values(4, 4, floor_value_answer_pairs)
 
-    def test_dynamic_vs_brute_force(self):
-        for n_dot in range(1, 5):
-            t_dymanic = 0
-            t_brute_force = 0
-
-            for n_charge in range(1, 20):
-                floor_values = np.random.randint(0, n_charge, size=n_dot)
-
-                t0 = perf_counter_ns()
-                brute_force = closed_charge_configurations_brute_force(n_charge, n_dot, floor_values)
-                t1 = perf_counter_ns()
-                dynamic = closed_charge_configurations_dynamic(n_charge, n_dot, floor_values)
-                t2 = perf_counter_ns()
-                self.assertTrue(compare_for_equality(brute_force, dynamic))
-
-                t_brute_force += t1 - t0
-                t_dymanic += t2 - t1
-
-            print(f"brute force: {t_brute_force / 1e6:.3f}ms, dynamic: {t_dymanic / 1e6:.3f}ms")
