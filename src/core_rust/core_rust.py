@@ -19,7 +19,7 @@ def closed_charge_configurations_brute_force_rust(n_charge: NonNegativeInt, n_do
     :param n_dot: the number of dots in the dot array
     :return: the list of charge configurations
     """
-    floor_list = floor_list.astype(np.int_)
+    floor_list = floor_list.astype(np.uint64)
     return VectorList(closed_charge_configurations_brute_force(n_charge, n_dot, floor_list))
 
 def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
