@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.10', '3.11' ]
-        target: [ x86_64, x86, aarch64, armv7, s390x, ppc64le ]
+        target: [ x86, x64 ]
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -38,7 +38,7 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.10', '3.11' ]
-        target: [ aarch64 ]
+        target: [ x86, x64 ]
     steps:
 
       -   name: Checkout code
@@ -64,7 +64,7 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.10', '3.11' ]
-        target: [ x86_64, x86 ]
+        target: [ x86, x64 ]
     steps:
       -   name: Checkout code
           uses: actions/checkout@v2
