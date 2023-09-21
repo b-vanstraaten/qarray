@@ -10,6 +10,18 @@ import numpy as np
 
 from src import (DotArray, GateVoltageComposer)
 
+
+class Timer:
+
+    def __enter__(self):
+        self.start = time.time()
+        return self
+
+    def __exit__(self, *args):
+        self.end = time.time()
+        self.interval = self.end - self.start
+        print(f'{self.interval:3f} seconds')
+
 # setting up the constant capacitance model
 model = DotArray(
     cdd_non_maxwell=[
@@ -38,17 +50,15 @@ ground_state_funcs = [
 vx_min, vx_max = -5, 5
 vy_min, vy_max = -5, 5
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 1, vy_min, vy_max, 1000)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
 fig.set_size_inches(3, 3)
 # looping over the functions and axes, computing the ground state and plot the results
 for (func, ax) in zip(ground_state_funcs, axes.flatten()):
-    t0 = time.time()
-    n = func(vg) # computing the ground state by calling the function
-    t1 = time.time()
-    print(f'{t1 - t0} seconds')
+    with Timer() as t:
+        n = func(vg)  # computing the ground state by calling the function
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
     z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
