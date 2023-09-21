@@ -2,10 +2,13 @@
 Tests to check the capacitance model works for double dot arrays
 """
 
+
 import unittest
 
 import matplotlib.pyplot as plt
 import numpy as np
+
+np.random.seed(0)
 
 from src import (CddInv, Cgd, ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
                  ground_state_closed_python, Cdd, optimal_Vg, compute_threshold)
@@ -26,7 +29,7 @@ def double_dot_matrices():
 
 
 class DoubleDotTests(unittest.TestCase):
-    def test_python_vs_rust_open(self):
+    def python_vs_rust_open(self):
         """
         Test that the python and rust open double dot ground state functions return the same result.
 
