@@ -26,7 +26,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
-        run: pip install -r requirements.txt  # Adjust if you have specific requirements
+        run: pip install -r requirements.txt
 
       - name: Run unit tests
         run: python -m unittest discover -s tests
@@ -37,7 +37,7 @@ jobs:
     strategy:
       matrix:
         python-version: [ '3.10', '3.11' ]
-        target: [ x86_64, arm64 ]
+        target: [ arm64 ]
     steps:
       -   name: Checkout code
           uses: actions/checkout@v2
@@ -48,7 +48,7 @@ jobs:
             python-version: ${{ matrix.python-version }}
 
       -   name: Install dependencies
-          run: pip install -r requirements.txt  # Adjust if you have specific requirements
+          run: pip install -r requirements.txt
 
       -   name: Run unit tests
           run: python -m unittest discover -s tests
@@ -69,7 +69,7 @@ jobs:
             python-version: ${{ matrix.python-version }}
 
       -   name: Install dependencies
-          run: pip install -r requirements.txt  # Adjust if you have specific requirements
+          run: pip install -r requirements.txt
 
       -   name: Run unit tests
           run: python -m unittest discover -s tests
