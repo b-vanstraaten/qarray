@@ -37,12 +37,13 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
     model.ground_state_open,
+    partial(model.ground_state_closed, n_charge=1),
     partial(model.ground_state_closed, n_charge=2),
     partial(model.ground_state_closed, n_charge=3),
-    partial(model.ground_state_closed, n_charge=4),
 ]
 
 # defining the min and max values for the gate voltage sweep
+
 vx_min, vx_max = -5, 10
 vy_min, vy_max = -5, 10
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
@@ -64,8 +65,10 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     z = dot_occupation_changes(n)
     # plotting the result
 
+    # z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
+
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
-    ax.imshow((n * c[np.newaxis, np.newaxis, :]).sum(axis=-1), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
+    ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
               aspect='auto', cmap=cmap,
               interpolation='antialiased')
     ax.set_aspect('equal')

@@ -8,10 +8,11 @@ from itertools import product
 
 import numpy as np
 import osqp
+from loguru import logger
 from pydantic import NonNegativeInt
 from scipy import sparse
 
-from ..charge_configuration_generators import closed_charge_configurations_brute_force
+from src.core_python.charge_configuration_generators import closed_charge_configurations_brute_force
 from ..typing_classes import (CddInv, Cgd, VectorList)
 
 
@@ -40,7 +41,7 @@ def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None
         A = sparse.csc_matrix(np.eye(dim))
 
     prob = osqp.OSQP()
-    prob.setup(P, q, A, l, u, alpha=1., verbose=False, polish=False)
+    prob.setup(P, q, A, l, u, alpha=1., verbose=False, polish=True)
     return prob
 
 
@@ -53,9 +54,17 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
     :return:
     """
 
-    prob.update(q=-cdd_inv @ cgd @ vg)
-    res = prob.solve()
-    n_continuous = np.clip(res.x, 0., None)
+    # computing the analytical minimum charge state, subject to no constraints
+    analytical_result = cgd @ vg
+    if np.all(analytical_result > 0.):  # if all changes in the analytical result are positive we can use it directly
+        logger.trace('using the analytical solution')
+        n_continuous = analytical_result
+    else:  # otherwise we need to use the solver for the constrained problem to get the minimum charge state
+        logger.trace('using the solution from the constrained solver')
+        prob.update(q=-cdd_inv @ cgd @ vg)
+        res = prob.solve()
+        n_continuous = np.clip(res.x, 0., None)
+
     # eliminating the possibly of negative numbers of change carriers
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold)
 

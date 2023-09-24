@@ -58,6 +58,9 @@ class GateVoltageComposer(BaseDataClass):
             case builtins.int:  # parsing int types
                 # checking the gate number is valid
                 self._check_gate(gate)
+                # parsing negative gate values
+                if gate < 0:
+                    gate = self.n_gate + gate
                 return gate
             case builtins.str:  # passing string types
                 # checking the name of the gate is a valid name
@@ -65,6 +68,10 @@ class GateVoltageComposer(BaseDataClass):
                     raise ValueError(f'Gate {gate} not found in dac_names')
                 gate = self.gate_names[gate]
                 self._check_gate(gate)
+
+                if gate < 0:
+                    gate = self.n_gate + gate
+
                 return gate
             case _:
                 raise ValueError(f'Gate not of type int of string {type(gate)}')

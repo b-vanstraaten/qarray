@@ -14,7 +14,7 @@ from src import (CddInv, Cgd, ground_state_open_rust, ground_state_closed_rust, 
                  ground_state_closed_python, Cdd, optimal_Vg, compute_threshold)
 
 N_VOLTAGES = 100
-N_ITERATIONS = 100
+N_ITERATIONS = 1000
 
 
 def double_dot_matrices():
@@ -29,7 +29,7 @@ def double_dot_matrices():
 
 
 class DoubleDotTests(unittest.TestCase):
-    def python_vs_rust_open(self):
+    def test_python_vs_rust_open(self):
         """
         Test that the python and rust open double dot ground state functions return the same result.
 

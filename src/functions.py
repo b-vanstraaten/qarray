@@ -42,8 +42,8 @@ def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMa
     :param cgd_non_maxwell:
     :return:
     """
-    cdd_sum = cdd_non_maxwell.sum(axis=0)
-    cgd_sum = cgd_non_maxwell.sum(axis=0)
+    cdd_sum = cdd_non_maxwell.sum(axis=1)
+    cgd_sum = cgd_non_maxwell.sum(axis=1)
     cdd = Cdd(np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell)
     cdd_inv = CddInv(np.linalg.inv(cdd))
     cgd = Cgd(-cgd_non_maxwell)
