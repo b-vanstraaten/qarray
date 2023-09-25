@@ -12,10 +12,10 @@ from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model
 cdd_non_maxwell = [
-    [0., 0.1, 0.05, 0.01],
-    [0.1, 0., 0.1, 0.05],
-    [0.05, 0.1, 0., 0.1],
-    [0.01, 0.05, 0.1, 0]
+    [0., 0.2, 0.05, 0.01],
+    [0.2, 0., 0.2, 0.05],
+    [0.05, 0.2, 0., 0.2],
+    [0.01, 0.05, 0.2, 0]
 ]
 cgd_non_maxwell = [
     [1., 0.2, 0.05, 0.01],
@@ -47,7 +47,7 @@ ground_state_funcs = [
 vx_min, vx_max = -5, 10
 vy_min, vy_max = -5, 10
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 3, vy_min, vy_max, 100)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

@@ -11,7 +11,7 @@ N = 8
 
 cdd = np.random.uniform(0, 0.1, size=N ** 2).reshape(N, N)
 cdd = (cdd + cdd.T) / 2.
-cgd = np.eye(N) + np.random.uniform(0., 0.1, size=N ** 2).reshape(N, N)
+cgd = np.eye(N) + np.random.uniform(0., 0.5, size=N ** 2).reshape(N, N)
 
 model = DotArray(
     cdd_non_maxwell=cdd,
@@ -28,14 +28,14 @@ ground_state_funcs = [
     model.ground_state_open,
     partial(model.ground_state_closed, n_charge=2),
     partial(model.ground_state_closed, n_charge=4),
-    partial(model.ground_state_closed, n_charge=8),
+    partial(model.ground_state_closed, n_charge=16),
 ]
 
 # defining the min and max values for the gate voltage sweep
 vx_min, vx_max = -5, 5
 vy_min, vy_max = -5, 5
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 400, -1, vy_min, vy_max, 400)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, -1, vy_min, vy_max, 1000)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

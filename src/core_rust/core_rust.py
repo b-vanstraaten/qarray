@@ -7,7 +7,7 @@ from rusty_capacitance_model_core import (ground_state_open, ground_state_closed
                                           closed_charge_configurations_brute_force)
 
 from ..typing_classes import (
-    CddInv, Cgd, VectorList, Vector
+    CddInv, Cgd, VectorList, Vector, Cdd
 )
 
 
@@ -43,7 +43,8 @@ def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold:
     return VectorList(ground_state_open(vg, cgd, cdd_inv, threshold))
 
 
-def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd_inv: CddInv) -> VectorList:
+def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd,
+                             cdd_inv: CddInv) -> VectorList:
     """
     A wrapper for the rust ground state isolated function that takes in numpy arrays and returns numpy arrays.
     :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -57,6 +58,7 @@ def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd,
     # enforcing the correct type of float64 type, so the rust code to come won't panic
     vg = vg.astype(np.float64)
     cgd = cgd.astype(np.float64)
+    cdd = cdd.astype(np.float64)
     cdd_inv = cdd_inv.astype(np.float64)
     n_charge = np.int64(n_charge)
-    return VectorList(ground_state_closed(vg, n_charge, cgd, cdd_inv))
+    return VectorList(ground_state_closed(vg, n_charge, cgd, cdd, cdd_inv))

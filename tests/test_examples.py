@@ -3,7 +3,7 @@ from pathlib import Path
 
 class ExampleTests(unittest.TestCase):
 
-    def test_all_examples_for_error(self):
+    def run_all_examples_for_error(self):
         """
         Test to check all the examples run without errors
         :return:

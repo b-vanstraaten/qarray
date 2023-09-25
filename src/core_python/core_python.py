@@ -13,7 +13,18 @@ from pydantic import NonNegativeInt
 from scipy import sparse
 
 from src.core_python.charge_configuration_generators import closed_charge_configurations_brute_force
-from ..typing_classes import (CddInv, Cgd, VectorList)
+from ..typing_classes import (CddInv, Cgd, VectorList, Cdd)
+
+
+def compute_analytical_solution_open(cgd, vg):
+    return cgd @ vg
+
+
+def compute_analytical_solution_closed(cdd, cgd, n_charge, vg):
+    n_continuous = cgd @ vg
+    # computing the Lagranian multiplier correction due to the array being closed
+    isolation_correction = (n_charge - n_continuous.sum()) * cdd.sum(axis=0) / cdd.sum()
+    return n_continuous + isolation_correction
 
 
 def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None = None) -> osqp.OSQP:
@@ -37,7 +48,7 @@ def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None
     else:
         # if n_charge is None then the array is in the open configuration, which means one fewer constraint
         l = np.zeros(dim)
-        u = np.full(dim, fill_value=1000)
+        u = np.full(dim, fill_value=np.inf)
         A = sparse.csc_matrix(np.eye(dim))
 
     prob = osqp.OSQP()
@@ -53,12 +64,11 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
     :param threshold:
     :return:
     """
-
     # computing the analytical minimum charge state, subject to no constraints
-    analytical_result = cgd @ vg
-    if np.all(analytical_result > 0.):  # if all changes in the analytical result are positive we can use it directly
+    analytical_solution = compute_analytical_solution_open(cgd=cgd, vg=vg)
+    if np.all(analytical_solution > 0.):  # if all changes in the analytical result are positive we can use it directly
         logger.trace('using the analytical solution')
-        n_continuous = analytical_result
+        n_continuous = analytical_solution
     else:  # otherwise we need to use the solver for the constrained problem to get the minimum charge state
         logger.trace('using the solution from the constrained solver')
         prob.update(q=-cdd_inv @ cgd @ vg)
@@ -69,7 +79,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold)
 
 
-def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd_inv: CddInv, prob) -> np.ndarray:
+def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, prob) -> np.ndarray:
     """
     :param vg:
     :param n_charge:
@@ -79,9 +89,17 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd_inv: Cd
     :param threshold:
     :return:
     """
-    prob.update(q=-cdd_inv @ cgd @ vg)
-    res = prob.solve()
-    n_continuous = np.clip(res.x, 0, n_charge)
+
+    analytical_solution = compute_analytical_solution_closed(cdd=cdd, cgd=cgd, n_charge=n_charge, vg=vg)
+    if np.all(np.logical_and(analytical_solution >= 0., analytical_solution <= n_charge)):
+        logger.trace('using the analytical solution')
+        n_continuous = analytical_solution
+    else:  # otherwise we need to use the solver for the constrained problem to get the minimum charge state
+        logger.trace('using the solution from the constrained solver')
+        prob.update(q=-cdd_inv @ cgd @ vg)
+        res = prob.solve()
+        n_continuous = np.clip(res.x, 0, n_charge)
+
     return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, n_charge=n_charge)
 
 
@@ -100,7 +118,8 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
     return VectorList(list(N))
 
 
-def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd_inv: CddInv) -> VectorList:
+def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd,
+                               cdd_inv: CddInv) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -112,7 +131,7 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
      :return: the lowest energy charge configuration for each gate voltage coordinate vector
      """
     prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge)
-    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd_inv=cdd_inv, prob=prob)
+    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, prob=prob)
     N = map(f, vg)
     return VectorList(list(N))
 

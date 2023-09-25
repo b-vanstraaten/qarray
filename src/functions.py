@@ -7,7 +7,6 @@ def lorentzian(x, x0, gamma):
     return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
 
 
-
 def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     """
     This function is used to compute the number of dot occupation changes.

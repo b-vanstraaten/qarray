@@ -69,9 +69,11 @@ class DotArray(BaseDataClass):
             vg = VectorList(vg.reshape(-1, self.n_gate))
         match self.core:
             case 'rust':
-                result = ground_state_closed_rust(vg=vg, n_charge=n_charge, cgd=self.cgd, cdd_inv=self.cdd_inv)
+                result = ground_state_closed_rust(vg=vg, n_charge=n_charge, cgd=self.cgd, cdd=self.cdd,
+                                                  cdd_inv=self.cdd_inv)
             case 'python':
-                result = ground_state_closed_python(vg=vg, n_charge=n_charge, cgd=self.cgd, cdd_inv=self.cdd_inv)
+                result = ground_state_closed_python(vg=vg, n_charge=n_charge, cgd=self.cgd, cdd=self.cdd,
+                                                    cdd_inv=self.cdd_inv)
             case _:
                 raise ValueError(f'Incorrect core {self.core}, it must be either rust or python')
         return result.reshape(nd_shape)

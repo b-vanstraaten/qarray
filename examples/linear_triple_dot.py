@@ -39,8 +39,8 @@ ground_state_funcs = [
     partial(model.ground_state_closed, n_charge=3),
 ]
 
-vx_min, vx_max = -5, 5
-vy_min, vy_max = -5, 5
+vx_min, vx_max = -10, 5
+vy_min, vy_max = -10, 5
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 2, vy_min, vy_max, 400)
 
