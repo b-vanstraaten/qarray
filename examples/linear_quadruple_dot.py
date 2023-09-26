@@ -29,6 +29,7 @@ model = DotArray(
     cgd_non_maxwell=cgd_non_maxwell,
     core='python'
 )
+print(model.threshold)
 
 # creating the gate voltage composer, which helps us to create the gate voltage array
 # for sweeping in 1d and 2d

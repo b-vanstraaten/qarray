@@ -145,9 +145,16 @@ def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, Vg):
 
 
 def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge=None):
+    # threshold = 0.27
+    # n_list = open_charge_configurations(n_continuous, threshold)
+    # n_list = n_list[n_list.sum(axis = -1) == n_charge, :]
+    # v_dash = compute_analytical_solution_closed(cdd=np.linalg.inv(cdd_inv), cgd=cgd, n_charge=n_charge, vg=Vg)
+
     n_list = closed_charge_configurations(n_continuous, n_charge)
+    v_dash = cgd @ Vg
+
     # computing the free energy of the change configurations
-    F = np.einsum('...i, ij, ...j', n_list - cgd @ Vg, cdd_inv, n_list - cgd @ Vg)
+    F = np.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
     # returning the lowest energy change configuration
     return n_list[np.argmin(F), :]
 

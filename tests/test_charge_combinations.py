@@ -3,7 +3,8 @@ from functools import partial
 
 import numpy as np
 
-from src import closed_charge_configurations_brute_force, closed_charge_configurations_rust
+from src import closed_charge_configurations_rust
+from src.core_python.charge_configuration_generators import closed_charge_configurations
 
 
 def to_set(a):
@@ -19,7 +20,7 @@ class ChargeCombinationsTests(unittest.TestCase):
     def loop_over_answer_and_floor_values(self, n_charge, n_dot, floor_value_answer_pairs):
 
         functions = [
-            partial(closed_charge_configurations_brute_force, n_charge, n_dot),
+            partial(closed_charge_configurations, n_charge=n_charge),
             partial(closed_charge_configurations_rust, n_charge, n_dot),
         ]
 
