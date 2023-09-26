@@ -4,7 +4,6 @@ rusty_capacitance_model_core.
 """
 
 from functools import partial
-from itertools import product
 
 import numpy as np
 import osqp
@@ -12,7 +11,7 @@ from loguru import logger
 from pydantic import NonNegativeInt
 from scipy import sparse
 
-from src.core_python.charge_configuration_generators import closed_charge_configurations_brute_force
+from .charge_configuration_generators import (open_charge_configurations, closed_charge_configurations)
 from ..typing_classes import (CddInv, Cgd, VectorList, Cdd)
 
 
@@ -76,7 +75,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
         n_continuous = np.clip(res.x, 0., None)
 
     # eliminating the possibly of negative numbers of change carriers
-    return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold)
+    return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, cgd=cgd, Vg=vg)
 
 
 def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, prob) -> np.ndarray:
@@ -100,13 +99,13 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, c
         res = prob.solve()
         n_continuous = np.clip(res.x, 0, n_charge)
 
-    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, n_charge=n_charge)
+    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, n_charge=n_charge)
 
 
 def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
-        :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at  
+        :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
         :param cgd: the gate to dot capacitance matrix
         :param cdd_inv: the inverse of the dot to dot capacitance matrix
         :param threshold: the threshold to use for the ground state calculation
@@ -136,38 +135,19 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
     return VectorList(list(N))
 
 
-def compute_argmin_open(n_continuous, threshold, cdd_inv):
+def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, Vg):
     # computing the remainder
-    n_remainder = n_continuous - np.floor(n_continuous)
-
-    # computing which dot changes needed to be floor and ceiled, and which can just be rounded
-    args = np.arange(0, n_continuous.size)
-    floor_ceil_args = np.argwhere(np.abs(n_remainder - 0.5) < threshold / 2.)
-    round_args = args[np.logical_not(np.isin(args, floor_ceil_args))]
-
-    # populating a list of all dot occupations which need to be considered
-    n_list = np.zeros(shape=(2 ** floor_ceil_args.size, n_continuous.size)) * np.nan
-    floor_ceil_list = product([np.floor, np.ceil], repeat=floor_ceil_args.size)
-    for i, ops in enumerate(floor_ceil_list):
-        for j, operation in zip(floor_ceil_args, ops):
-            n_list[i, j] = operation(n_continuous[j])
-        for j in round_args:
-            n_list[i, j] = np.rint(n_continuous[j])
-
+    n_list = open_charge_configurations(n_continuous, threshold)
     # computing the free energy of the change configurations
-    F = np.einsum('...i, ij, ...j', n_list - n_continuous, cdd_inv, n_list - n_continuous)
-
+    F = np.einsum('...i, ij, ...j', n_list - cgd @ Vg, cdd_inv, n_list - cgd @ Vg)
     # returning the lowest energy change configuration
     return n_list[np.argmin(F), :]
 
 
-def compute_argmin_closed(n_continuous, cdd_inv, n_charge=None):
-    lower_limits = np.floor(n_continuous).astype(int)
-    n_list = closed_charge_configurations_brute_force(n_charge, cdd_inv.shape[0], lower_limits)
-
+def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge=None):
+    n_list = closed_charge_configurations(n_continuous, n_charge)
     # computing the free energy of the change configurations
-    F = np.einsum('...i, ij, ...j', n_list - n_continuous, cdd_inv, n_list - n_continuous)
-
+    F = np.einsum('...i, ij, ...j', n_list - cgd @ Vg, cdd_inv, n_list - cgd @ Vg)
     # returning the lowest energy change configuration
     return n_list[np.argmin(F), :]
 

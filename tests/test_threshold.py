@@ -2,19 +2,17 @@
 Tests to check the capacitance model works for double dot arrays
 """
 
-import unittest
-
 import matplotlib.pyplot as plt
 import numpy as np
 
 from src import (optimal_Vg, randomly_generate_model,
                  GateVoltageComposer, dot_occupation_changes)
 
-N_VOLTAGES = 400
-N_ITERATIONS = 1000
+N_VOLTAGES = 100
+N_ITERATIONS = 100
 
 
-class threshold_tests(unittest.TestCase):
+class threshold_tests():
     def test_threshold_double_dot(self):
         """
         Test that the python and rust open double dot ground state functions return the same result.

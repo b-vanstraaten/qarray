@@ -3,7 +3,7 @@ from functools import partial
 
 import numpy as np
 
-from src import closed_charge_configurations_brute_force, closed_charge_configurations_brute_force_rust
+from src import closed_charge_configurations_brute_force, closed_charge_configurations_rust
 
 
 def to_set(a):
@@ -20,7 +20,7 @@ class ChargeCombinationsTests(unittest.TestCase):
 
         functions = [
             partial(closed_charge_configurations_brute_force, n_charge, n_dot),
-            partial(closed_charge_configurations_brute_force_rust, n_charge, n_dot),
+            partial(closed_charge_configurations_rust, n_charge, n_dot),
         ]
 
         for floor_values, answers in floor_value_answer_pairs:
@@ -236,7 +236,6 @@ class ChargeCombinationsTests(unittest.TestCase):
         Test the quadruple dot with two charges
         :return:
         """
-
         floor_value_answer_pairs = [
             ([0, 0, 0, 0], [[1, 1, 0, 0], [1, 0, 1, 0], [1, 0, 0, 1], [0, 1, 1, 0], [0, 1, 0, 1], [0, 0, 1, 1]]),
             ([0, 0, 0, 1], [[1, 0, 0, 1], [0, 1, 0, 1], [0, 0, 1, 1], [0, 0, 0, 2]]),

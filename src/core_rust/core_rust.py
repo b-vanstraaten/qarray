@@ -11,8 +11,8 @@ from ..typing_classes import (
 )
 
 
-def closed_charge_configurations_brute_force_rust(n_charge: NonNegativeInt, n_dot: NonNegativeInt,
-                                                  floor_list: Vector) -> VectorList:
+def closed_charge_configurations_rust(n_charge: NonNegativeInt, n_dot: NonNegativeInt,
+                                      floor_list: Vector) -> VectorList:
     """
     A wrapper for the rust closed charge configurations function that takes in numpy arrays and returns numpy arrays.
     :param n_charge: the number of charges in the dot array
