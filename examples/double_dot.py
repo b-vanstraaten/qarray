@@ -20,7 +20,6 @@ model = DotArray(
         [0.2, 1.]
     ], core='rust'
 )
-
 # creating the gate voltage composer, which helps us to create the gate voltage array
 # for sweeping in 1d and 2d
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)

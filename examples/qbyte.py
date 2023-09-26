@@ -7,7 +7,7 @@ import numpy as np
 
 from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
-N = 8
+N = 16
 
 cdd = np.random.uniform(0, 0.1, size=N ** 2).reshape(N, N)
 cdd = (cdd + cdd.T) / 2.
@@ -18,6 +18,7 @@ model = DotArray(
     cgd_non_maxwell=cgd,
     core='rust'
 )
+
 
 # creating the gate voltage composer, which helps us to create the gate voltage array
 # for sweeping in 1d and 2d
@@ -35,7 +36,7 @@ ground_state_funcs = [
 vx_min, vx_max = -5, 5
 vy_min, vy_max = -5, 5
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, -1, vy_min, vy_max, 1000)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 100, -1, vy_min, vy_max, 100)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

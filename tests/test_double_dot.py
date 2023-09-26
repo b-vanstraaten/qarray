@@ -8,8 +8,6 @@ import unittest
 import matplotlib.pyplot as plt
 import numpy as np
 
-np.random.seed(0)
-
 from src import (CddInv, Cgd, ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
                  ground_state_closed_python, Cdd, optimal_Vg, compute_threshold)
 
@@ -45,7 +43,6 @@ class DoubleDotTests(unittest.TestCase):
             if debug:
                 if not np.allclose(n_rust, n_python):
                     print(cdd_inv)
-
                     fig, ax = plt.subplots(1, 3)
                     ax[0].imshow(n_rust, aspect='auto')
                     ax[1].imshow(n_python, aspect='auto')
