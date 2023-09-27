@@ -4,14 +4,25 @@ Type hinted wrappers for the rust core functions.
 import numpy as np
 from pydantic import NonNegativeInt
 from rusty_capacitance_model_core import (ground_state_open, ground_state_closed,
-                                          closed_charge_configurations)
+                                          closed_charge_configurations, open_charge_configurations)
 
 from ..typing_classes import (
     CddInv, Cgd, VectorList, Vector, Cdd
 )
 
 
-def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativeInt) -> VectorList:
+def open_charge_configurations_rust(n_continuous: Vector, threshold: float) -> VectorList:
+    """
+    A wrapper for the rust closed charge configurations function that takes in numpy arrays and returns numpy arrays.
+    :param n_charge: the number of charges in the dot array
+    :param n_dot: the number of dots in the dot array
+    :return: the list of charge configurations
+    """
+    n_continuous = n_continuous.astype(np.float64)
+    return VectorList(open_charge_configurations(n_continuous, threshold))
+
+
+def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativeInt, threshold: float) -> VectorList:
     """
     A wrapper for the rust closed charge configurations function that takes in numpy arrays and returns numpy arrays.
     :param n_charge: the number of charges in the dot array
@@ -20,7 +31,7 @@ def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativ
     """
     n_charge = np.int64(n_charge)
     n_continuous = n_continuous.astype(np.float64)
-    return VectorList(closed_charge_configurations(n_continuous, n_charge)).astype(int)
+    return VectorList(closed_charge_configurations(n_continuous, n_charge, threshold))
 
 
 def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:

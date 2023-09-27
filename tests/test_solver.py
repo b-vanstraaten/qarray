@@ -2,23 +2,14 @@ import unittest
 
 import numpy as np
 
-from src.core_python.core_python import init_osqp_problem
+from src.core_python.core_python import init_osqp_problem, compute_analytical_solution_open, \
+    compute_analytical_solution_closed
 from src.example_models import randomly_generate_model
 
 N_VOLTAGES = 100
 N_ITERATIONS = 100
 ATOL = 1e-3
 
-
-def compute_analytical_solution_open(cgd, vg):
-    return cgd @ vg
-
-
-def compute_analytical_solution_closed(cdd, cgd, n_charge, vg):
-    n_continuous = cgd @ vg
-    # computing the Lagranian multiplier correction due to the array being closed
-    isolation_correction = (n_charge - n_continuous.sum()) * cdd.sum(axis=0) / cdd.sum()
-    return n_continuous + isolation_correction
 
 
 class TestOsqpSolver(unittest.TestCase):

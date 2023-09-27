@@ -148,14 +148,7 @@ def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, Vg):
 
 
 def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge, threshold):
-    n_list = open_charge_configurations(n_continuous, threshold)
-    indexes = n_list.sum(axis=-1) == n_charge
-    if indexes.any():
-        n_list = n_list[indexes, :]
-    else:
-        # failed to find any configurations with the correct number of charges
-        # falling back to computing all configurations
-        n_list = closed_charge_configurations(n_continuous, n_charge)
+    n_list = closed_charge_configurations(n_continuous, n_charge, threshold)
 
     v_dash = cgd @ Vg
     # computing the free energy of the change configurations

@@ -39,7 +39,7 @@ voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate)
 
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
-vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 3, vy_min, vy_max, 1000)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 256, 3, vy_min, vy_max, 256)
 vg += model_threshold_1.optimal_Vg(np.zeros(model_threshold_1.n_dot) + 0.5)
 
 if n_charge is None:

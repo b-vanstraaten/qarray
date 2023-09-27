@@ -3,16 +3,18 @@ from itertools import product
 
 import numpy as np
 
+from src.core_python.charge_configuration_generators.open_dot_configurations import open_charge_configurations
+
 
 def sum_eq(array, sum):
     return np.sum(array) == sum
 
 
-def closed_charge_configurations(n_continuous, n_charge):
+def _closed_charge_configurations(n_continuous, n_charge):
     floor_values = np.floor(n_continuous).astype(int)
     n_dot = n_continuous.size
 
-    if floor_values.sum() > n_charge:
+    if floor_values.sum() > n_charge or (floor_values + 1).sum() < n_charge:
         return np.empty((0, n_dot))
     if (floor_values + 1).sum() < n_charge:
         return np.empty((0, n_dot))
@@ -22,3 +24,17 @@ def closed_charge_configurations(n_continuous, n_charge):
     combinations = filter(f, p)
     return np.stack(list(combinations), axis=0) + floor_values
 
+
+def closed_charge_configurations(n_continuous, n_charge, threshold):
+    n_remainder = n_continuous - np.floor(n_continuous)
+    floor_ceil_args = np.argwhere(np.abs(n_remainder - 0.5) < threshold / 2.)
+    if floor_ceil_args.size == 0 and n_continuous.round().sum().astype(int) != n_charge:
+        return _closed_charge_configurations(n_continuous, n_charge)
+
+    n_list = open_charge_configurations(n_continuous, threshold)
+    indexes = n_list.sum(axis=-1) == n_charge
+    if indexes.any():
+        n_list = n_list[indexes, :]
+    else:
+        n_list = _closed_charge_configurations(n_continuous, n_charge)
+    return n_list

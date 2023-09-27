@@ -3,27 +3,80 @@ from functools import partial
 
 import numpy as np
 
-from src.core_python.charge_configuration_generators import closed_charge_configurations
-from src.core_rust.core_rust import closed_charge_configurations_rust
+from src.core_python.charge_configuration_generators import closed_charge_configurations, open_charge_configurations
+from src.core_rust.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
+from .helper_functions import compare_sets_for_equality, to_set
 
-
-def to_set(a):
-    return set(map(tuple, a.tolist()))
-
-
-def compare_for_equality(a, b):
-    set_a = to_set(a)
-    set_b = to_set(b)
-    return set_a == set_b
-
+N_ITERATIONS = 100
+N_DOT_MAX = 10
+N_CHARGE_MAX = 5
 
 class ChargeCombinationsTests(unittest.TestCase):
+
+    def random_comparison_closed(self, n_continuous, n_charge, threshold):
+
+        functions = [
+            partial(closed_charge_configurations, n_charge=n_charge, threshold=threshold),
+            partial(closed_charge_configurations_rust, n_charge=n_charge, threshold=threshold),
+        ]
+
+        for n in n_continuous:
+            for i in range(1, len(functions)):
+                result_0 = functions[0](n)
+                result_1 = functions[i](n)
+
+                if not compare_sets_for_equality(result_0, result_1):
+                    print(f"n: {n}")
+                    print(f"n_charge, threshold: {n_charge}, {threshold}")
+                    print(f"result_python: {result_0}")
+                    print(f"result_rust: {result_1}")
+                    self.assertTrue(False)
+
+    def random_comparison_open(self, n_continuous, threshold):
+
+        functions = [
+            partial(open_charge_configurations, threshold=threshold),
+            partial(open_charge_configurations_rust, threshold=threshold),
+        ]
+
+        for n in n_continuous:
+            for i in range(1, len(functions)):
+                result_0 = functions[0](n)
+                result_1 = functions[i](n)
+
+                if not compare_sets_for_equality(result_0, result_1):
+                    print(f"n: {n}")
+                    print(f"result_python: {result_0}")
+                    print(f"result_rust: {result_1}")
+                    self.assertTrue(False)
+
+    def test_random_comparison_open(self):
+        """
+        Test the double dot with no charges
+        :return:
+        """
+        for n_dot in range(N_DOT_MAX):
+            n_continuous = np.random.uniform(0, 10, size=(N_ITERATIONS, n_dot))
+            threshold = np.random.uniform(0, 1)
+            self.random_comparison_open(n_continuous, threshold)
+
+    def test_random_comparison_closed(self):
+        """
+        Test the double dot with no charges
+        :return:
+        """
+        for n_dot in range(N_DOT_MAX):
+            for n_charge in range(N_CHARGE_MAX):
+                n_continuous = np.random.uniform(0, 10, size=(N_ITERATIONS, n_dot))
+                threshold = np.random.uniform(0, 1)
+                self.random_comparison_closed(n_continuous, n_charge, threshold)
+
 
     def loop_over_answer_and_floor_values(self, n_charge, floor_value_answer_pairs):
 
         functions = [
-            partial(closed_charge_configurations, n_charge=n_charge),
-            partial(closed_charge_configurations_rust, n_charge=n_charge),
+            partial(closed_charge_configurations, n_charge=n_charge, threshold=1.),
+            partial(closed_charge_configurations_rust, n_charge=n_charge, threshold=1.),
         ]
 
         for floor_values, answers in floor_value_answer_pairs:
@@ -35,7 +88,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             for function in functions:
                 result = function(n_continuous=floor_values)
 
-                if not compare_for_equality(result, answers):
+                if not compare_sets_for_equality(result, answers):
                     print(f"floor values: {floor_values}")
                     print(f"result: {to_set(result)}")
                     print(f"answers: {to_set(answers)}")
