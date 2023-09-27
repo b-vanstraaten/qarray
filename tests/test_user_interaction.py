@@ -1,6 +1,7 @@
 import unittest
 
 from src import (DotArray, GateVoltageComposer)
+from tests.helper_functions import if_errors
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
@@ -14,13 +15,6 @@ model = DotArray(
     ]
 )
 
-
-def if_errors(f, *args, **kwargs):
-    try:
-        f(*args, **kwargs)
-        return False
-    except:
-        return True
 
 
 class MyTestCase(unittest.TestCase):

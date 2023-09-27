@@ -5,7 +5,7 @@ import numpy as np
 
 from src.core_python.charge_configuration_generators import closed_charge_configurations, open_charge_configurations
 from src.core_rust.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
-from .helper_functions import compare_sets_for_equality, to_set
+from tests.helper_functions import compare_sets_for_equality, to_set
 
 N_ITERATIONS = 100
 N_DOT_MAX = 10

@@ -20,13 +20,13 @@ cgd_non_maxwell = [
 ]
 
 core = 'rust'
-n_charge = 4
+n_charge = 1
 
 model_threshold_1 = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core=core,
-    threshold=np.inf,
+    threshold=core,
 )
 
 model_threshold_default = DotArray(
@@ -39,8 +39,8 @@ voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate)
 
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
-vg = voltage_composer.do2d(0, vy_min, vx_max, 256, 3, vy_min, vy_max, 256)
-vg += model_threshold_1.optimal_Vg(np.zeros(model_threshold_1.n_dot) + 0.5)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 512, 3, vy_min, vy_max, 512)
+vg += model_threshold_1.optimal_Vg(np.zeros(model_threshold_1.n_dot))
 
 if n_charge is None:
     t0 = time.time()

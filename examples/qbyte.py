@@ -11,14 +11,14 @@ from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 N = 16
 
-cdd = np.random.uniform(0, 0.1, size=N ** 2).reshape(N, N)
+cdd = np.random.uniform(0, 0.2, size=N ** 2).reshape(N, N)
 cdd = (cdd + cdd.T) / 2.
 cgd = np.eye(N) + np.random.uniform(0., 0.5, size=N ** 2).reshape(N, N)
 
 model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
-    core='rust'
+    core='rust',
 )
 
 
@@ -28,7 +28,7 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
-    model.ground_state_open,
+    partial(model.ground_state_closed, n_charge=1),
     partial(model.ground_state_closed, n_charge=2),
     partial(model.ground_state_closed, n_charge=4),
     partial(model.ground_state_closed, n_charge=16),

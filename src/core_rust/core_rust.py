@@ -11,7 +11,7 @@ from ..typing_classes import (
 )
 
 
-def open_charge_configurations_rust(n_continuous: Vector, threshold: float) -> VectorList:
+def open_charge_configurations_rust(n_continuous: Vector, threshold: float = np.inf) -> VectorList:
     """
     A wrapper for the rust closed charge configurations function that takes in numpy arrays and returns numpy arrays.
     :param n_charge: the number of charges in the dot array
@@ -22,7 +22,8 @@ def open_charge_configurations_rust(n_continuous: Vector, threshold: float) -> V
     return VectorList(open_charge_configurations(n_continuous, threshold))
 
 
-def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativeInt, threshold: float) -> VectorList:
+def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativeInt,
+                                      threshold: float = np.inf) -> VectorList:
     """
     A wrapper for the rust closed charge configurations function that takes in numpy arrays and returns numpy arrays.
     :param n_charge: the number of charges in the dot array
