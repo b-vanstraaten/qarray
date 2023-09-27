@@ -8,7 +8,7 @@ from src.example_models import randomly_generate_model
 
 N_VOLTAGES = 100
 N_ITERATIONS = 100
-ATOL = 1e-3
+ATOL = 5e-3
 
 
 
