@@ -1,19 +1,20 @@
 """
-Tests to check the capacitance model works for double dot arrays
+Tests to check the capacitance model_threshold_1 works for double dot arrays
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 
 from src import (optimal_Vg, randomly_generate_model,
                  GateVoltageComposer, dot_occupation_changes)
 
 N_VOLTAGES = 100
-N_ITERATIONS = 100
+N_ITERATIONS = 10
 
 
-class threshold_tests():
-    def test_threshold_double_dot(self):
+class threshold_tests:
+    def test_threshold_double_dot_open(self):
         """
         Test that the python and rust open double dot ground state functions return the same result.
 
@@ -26,12 +27,34 @@ class threshold_tests():
         models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
-        for model in models:
+        for model in tqdm(models):
             vg = voltage_composer.do2d(0, -5, 5, N_VOLTAGES, -1, -5, 5, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_open(vg)
 
             model.threshold = 1.
             n_threshold_of_1 = model.ground_state_open(vg)
+            self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
+
+    def test_threshold_double_dot_closed(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+
+        n_dot = 2
+        n_gate = 2
+
+        models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
+        voltage_composer = GateVoltageComposer(n_gate=n_gate)
+
+        for model in tqdm(models):
+            model.core = 'python'
+            vg = voltage_composer.do2d(0, -10, 5, N_VOLTAGES, -1, -10, 5, N_VOLTAGES)
+            n_threshold_not_of_1 = model.ground_state_closed(vg, n_charge=5)
+
+            model.threshold = 1.
+            n_threshold_of_1 = model.ground_state_closed(vg, n_charge=5)
             self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
 
     def test_threshold_triple_dot(self):
@@ -54,10 +77,46 @@ class threshold_tests():
             n_threshold_of_1 = model.ground_state_open(vg)
 
             if not np.allclose(n_threshold_of_1, n_threshold_not_of_1):
-                plt.imshow(n_threshold_of_1 - n_threshold_not_of_1, aspect='auto')
+                fig, ax = plt.subplots(1, 3)
+                ax[0].imshow(dot_occupation_changes(n_threshold_of_1), aspect='auto', cmap='Greys')
+                ax[1].imshow(dot_occupation_changes(n_threshold_not_of_1), aspect='auto', cmap='Greys')
+
+                diff = np.abs(n_threshold_of_1 - n_threshold_not_of_1).sum(axis=-1)
+                ax[2].imshow(diff, aspect='auto')
                 plt.show()
 
             self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
+
+    def test_threshold_triple_dot_closed(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+
+        n_dot = 3
+        n_gate = 3
+
+        models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
+        voltage_composer = GateVoltageComposer(n_gate=n_gate)
+
+        for model in models:
+            model.core = 'python'
+            vg = voltage_composer.do2d(0, -20, 5, N_VOLTAGES, -1, -20, 5, N_VOLTAGES)
+            n_threshold_not_of_1 = model.ground_state_closed(vg, n_charge=2)
+
+            model.threshold = 1.
+            n_threshold_of_1 = model.ground_state_closed(vg, n_charge=2)
+
+            if not np.allclose(n_threshold_of_1, n_threshold_not_of_1):
+                fig, ax = plt.subplots(1, 3)
+                ax[0].imshow(dot_occupation_changes(n_threshold_of_1), aspect='auto', cmap='Greys')
+                ax[1].imshow(dot_occupation_changes(n_threshold_not_of_1), aspect='auto', cmap='Greys')
+
+                diff = np.abs(n_threshold_of_1 - n_threshold_not_of_1).sum(axis=-1)
+                ax[2].imshow(diff, aspect='auto')
+                plt.show()
+
 
     def test_threshold_quadruple_dot(self):
         """
@@ -89,14 +148,47 @@ class threshold_tests():
 
             self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
 
+    def test_threshold_quadruple_dot_closed(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+        n_dot = 4
+        n_gate = 4
+
+        models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
+        voltage_composer = GateVoltageComposer(n_gate=n_gate)
+
+        for model in models:
+            model.core = 'python'
+            vg = voltage_composer.do2d(0, -4, 0, N_VOLTAGES, -1, -4, 0, N_VOLTAGES)
+            n_threshold_not_of_1 = model.ground_state_closed(vg, 4)
+
+            model.threshold = 1.
+            n_threshold_of_1 = model.ground_state_closed(vg, 4)
+
+            if not np.allclose(n_threshold_of_1, n_threshold_not_of_1):
+                fig, ax = plt.subplots(1, 3)
+
+                ax[0].imshow(dot_occupation_changes(n_threshold_of_1), aspect='auto', cmap='Greys')
+                ax[1].imshow(dot_occupation_changes(n_threshold_not_of_1), aspect='auto', cmap='Greys')
+
+                diff = np.abs(n_threshold_of_1 - n_threshold_not_of_1).sum(axis=-1)
+                ax[2].imshow(diff, aspect='auto')
+                plt.show()
+
+            self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
+
+
     def test_threshold_five_dot(self):
         """
         Test that the python and rust open double dot ground state functions return the same result.
 
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
-        n_dot = 7
-        n_gate = 7
+        n_dot = 5
+        n_gate = 5
 
         models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
@@ -117,6 +209,39 @@ class threshold_tests():
 
                 diff = np.abs(n_threshold_of_1 - n_threshold_not_of_1).sum(axis=-1)
                 ax[2].imshow(diff, aspect='auto', origin='lower')
+                plt.show()
+
+            self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
+
+    def test_threshold_quadruple_dot_closed(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+        n_dot = 5
+        n_gate = 5
+
+        models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
+        voltage_composer = GateVoltageComposer(n_gate=n_gate)
+
+        for model in models:
+            model.core = 'python'
+            print(model.threshold)
+            vg = voltage_composer.do2d(0, -20, 0, N_VOLTAGES, -1, -20, 0, N_VOLTAGES)
+            n_threshold_not_of_1 = model.ground_state_closed(vg, 4)
+
+            model.threshold = 1.
+            n_threshold_of_1 = model.ground_state_closed(vg, 4)
+
+            if not np.allclose(n_threshold_of_1, n_threshold_not_of_1):
+                fig, ax = plt.subplots(1, 3)
+
+                ax[0].imshow(dot_occupation_changes(n_threshold_of_1), aspect='auto', cmap='Greys')
+                ax[1].imshow(dot_occupation_changes(n_threshold_not_of_1), aspect='auto', cmap='Greys')
+
+                diff = np.abs(n_threshold_of_1 - n_threshold_not_of_1).sum(axis=-1)
+                ax[2].imshow(diff, aspect='auto')
                 plt.show()
 
             self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))

@@ -1,5 +1,5 @@
 """
-Tests to check the capacitance model works for double dot arrays
+Tests to check the capacitance model_threshold_1 works for double dot arrays
 """
 
 
@@ -80,8 +80,8 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = double_dot_matrices()
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_closed_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
-            n_python = ground_state_closed_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
+            n_rust = ground_state_closed_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
+            n_python = ground_state_closed_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             self.assertTrue(np.allclose(n_rust, n_python))
 
     def test_python_vs_rust_two_charge(self):
@@ -94,8 +94,8 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = double_dot_matrices()
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_closed_rust(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
-            n_python = ground_state_closed_python(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
+            n_rust = ground_state_closed_rust(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
+            n_python = ground_state_closed_python(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             self.assertTrue(np.allclose(n_rust, n_python))
 
     def test_python_vs_rust_three_charge(self):
@@ -108,8 +108,8 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = double_dot_matrices()
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_closed_rust(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
-            n_python = ground_state_closed_python(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
+            n_rust = ground_state_closed_rust(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
+            n_python = ground_state_closed_python(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             self.assertTrue(np.allclose(n_rust, n_python))
 
     def test_optimal_vg(self):

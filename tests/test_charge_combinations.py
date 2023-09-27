@@ -3,25 +3,27 @@ from functools import partial
 
 import numpy as np
 
-from src import closed_charge_configurations_rust
 from src.core_python.charge_configuration_generators import closed_charge_configurations
+from src.core_rust.core_rust import closed_charge_configurations_rust
 
 
 def to_set(a):
     return set(map(tuple, a.tolist()))
+
 
 def compare_for_equality(a, b):
     set_a = to_set(a)
     set_b = to_set(b)
     return set_a == set_b
 
+
 class ChargeCombinationsTests(unittest.TestCase):
 
-    def loop_over_answer_and_floor_values(self, n_charge, n_dot, floor_value_answer_pairs):
+    def loop_over_answer_and_floor_values(self, n_charge, floor_value_answer_pairs):
 
         functions = [
             partial(closed_charge_configurations, n_charge=n_charge),
-            partial(closed_charge_configurations_rust, n_charge, n_dot),
+            partial(closed_charge_configurations_rust, n_charge=n_charge),
         ]
 
         for floor_values, answers in floor_value_answer_pairs:
@@ -31,7 +33,7 @@ class ChargeCombinationsTests(unittest.TestCase):
                 floor_values = np.array(floor_values)
 
             for function in functions:
-                result = function(floor_values)
+                result = function(n_continuous=floor_values)
 
                 if not compare_for_equality(result, answers):
                     print(f"floor values: {floor_values}")
@@ -47,7 +49,7 @@ class ChargeCombinationsTests(unittest.TestCase):
         floor_value_answer_pairs = [
             ([0, 0], [[0, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(0, 2, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(0, floor_value_answer_pairs)
 
     def test_double_dot_one_charge(self):
         """
@@ -59,7 +61,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 1], [[0, 1]]),
             ([1, 0], [[1, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(1, 2, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(1, floor_value_answer_pairs)
 
     def test_double_dot_two_charges(self):
         """
@@ -75,7 +77,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([2, 0], [[2, 0]]),
             ([0, 2], [[0, 2]]),
         ]
-        self.loop_over_answer_and_floor_values(2, 2, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(2, floor_value_answer_pairs)
 
     def test_double_dot_three_charges(self):
         """
@@ -93,7 +95,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([3, 0], [[3, 0]]),
             ([0, 3], [[0, 3]]),
         ]
-        self.loop_over_answer_and_floor_values(3, 2, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(3, floor_value_answer_pairs)
 
     def test_double_dot_four_charges(self):
         """
@@ -118,7 +120,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 4], [[0, 4]]),
         ]
 
-        self.loop_over_answer_and_floor_values(4, 2, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(4, floor_value_answer_pairs)
 
     def test_triple_dot_no_charges(self):
         """
@@ -128,7 +130,7 @@ class ChargeCombinationsTests(unittest.TestCase):
         floor_value_answer_pairs = [
             ([0, 0, 0], [[0, 0, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(0, 3, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(0, floor_value_answer_pairs)
 
     def test_triple_dot_one_charge(self):
         """
@@ -141,7 +143,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 1, 0], [[0, 1, 0]]),
             ([1, 0, 0], [[1, 0, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(1, 3, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(1, floor_value_answer_pairs)
 
     def test_triple_dot_two_charges(self):
         """
@@ -161,7 +163,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 0, 2], [[0, 0, 2]]),
         ]
 
-        self.loop_over_answer_and_floor_values(2, 3, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(2, floor_value_answer_pairs)
 
     def test_triple_dot_three_charges(self):
         """
@@ -177,7 +179,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([1, 1, 0], [[1, 1, 1], [1, 2, 0], [2, 1, 0]]),
             ([2, 0, 0], [[3, 0, 0], [2, 1, 0], [2, 0, 1]]),
         ]
-        self.loop_over_answer_and_floor_values(3, 3, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(3, floor_value_answer_pairs)
 
     def test_triple_dot_four_charges(self):
         """
@@ -205,7 +207,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 4, 0], [[0, 4, 0]]),
             ([0, 0, 4], [[0, 0, 4]]),
         ]
-        self.loop_over_answer_and_floor_values(4, 3, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(4, floor_value_answer_pairs)
 
     def test_quadruple_dot_no_charges(self):
         """
@@ -215,7 +217,7 @@ class ChargeCombinationsTests(unittest.TestCase):
         floor_value_answer_pairs = [
             ([0, 0, 0, 0], [[0, 0, 0, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(0, 4, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(0, floor_value_answer_pairs)
 
     def test_quadruple_dot_one_charge(self):
         """
@@ -230,7 +232,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 1, 0, 0], [[0, 1, 0, 0]]),
             ([1, 0, 0, 0], [[1, 0, 0, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(1, 4, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(1, floor_value_answer_pairs)
 
     def test_quadruple_dot_two_charges(self):
         """
@@ -254,7 +256,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 0, 0, 2], [[0, 0, 0, 2]]),
             ([2, 0, 0, 0], [[2, 0, 0, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(2, 4, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(2, floor_value_answer_pairs)
 
     def test_quadruple_dot_three_charges(self):
         """
@@ -293,7 +295,7 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 3, 0, 0], [[0, 3, 0, 0]]),
             ([3, 0, 0, 0], [[3, 0, 0, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(3, 4, floor_value_answer_pairs)
+        self.loop_over_answer_and_floor_values(3, floor_value_answer_pairs)
 
     def test_quadruple_dot_four_charges(self):
         """
@@ -342,5 +344,4 @@ class ChargeCombinationsTests(unittest.TestCase):
             ([0, 4, 0, 0], [[0, 4, 0, 0]]),
             ([4, 0, 0, 0], [[4, 0, 0, 0]]),
         ]
-        self.loop_over_answer_and_floor_values(4, 4, floor_value_answer_pairs)
-
+        self.loop_over_answer_and_floor_values(4, floor_value_answer_pairs)

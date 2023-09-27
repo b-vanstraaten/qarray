@@ -2,7 +2,7 @@ import unittest
 
 from src import (DotArray, GateVoltageComposer)
 
-# setting up the constant capacitance model
+# setting up the constant capacitance model_threshold_1
 model = DotArray(
     cdd_non_maxwell=[
         [0., 0.1],

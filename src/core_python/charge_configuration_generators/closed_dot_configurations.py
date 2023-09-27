@@ -8,9 +8,9 @@ def sum_eq(array, sum):
     return np.sum(array) == sum
 
 
-def closed_charge_configurations(n_continous, n_charge):
-    floor_values = np.floor(n_continous).astype(int)
-    n_dot = n_continous.size
+def closed_charge_configurations(n_continuous, n_charge):
+    floor_values = np.floor(n_continuous).astype(int)
+    n_dot = n_continuous.size
 
     if floor_values.sum() > n_charge:
         return np.empty((0, n_dot))

@@ -5,7 +5,7 @@ from pydantic.dataclasses import dataclass
 from src.core_python import ground_state_open_python, ground_state_closed_python
 from src.core_rust import ground_state_open_rust, ground_state_closed_rust
 from src.data_classes.BaseDataClass import BaseDataClass
-from src.functions import convert_to_maxwell, compute_threshold
+from src.functions import convert_to_maxwell, compute_threshold, optimal_Vg
 from src.typing_classes import (CgdNonMaxwell, CddNonMaxwell, VectorList)
 
 
@@ -34,6 +34,10 @@ class DotArray(BaseDataClass):
         """
         if vg.shape[-1] != self.n_gate:
             raise ValueError(f'The shape of vg is in correct it should be of shape (..., n_gate) = (...,{self.n_gate})')
+
+    def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
+        return optimal_Vg(cdd_inv=self.cdd_inv, cgd=self.cgd, n_charges=n_charges, rcond=rcond)
+
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
         """
@@ -70,10 +74,10 @@ class DotArray(BaseDataClass):
         match self.core:
             case 'rust':
                 result = ground_state_closed_rust(vg=vg, n_charge=n_charge, cgd=self.cgd, cdd=self.cdd,
-                                                  cdd_inv=self.cdd_inv)
+                                                  cdd_inv=self.cdd_inv, threshold=self.threshold)
             case 'python':
                 result = ground_state_closed_python(vg=vg, n_charge=n_charge, cgd=self.cgd, cdd=self.cdd,
-                                                    cdd_inv=self.cdd_inv)
+                                                    cdd_inv=self.cdd_inv, threshold=self.threshold)
             case _:
                 raise ValueError(f'Incorrect core {self.core}, it must be either rust or python')
         return result.reshape(nd_shape)

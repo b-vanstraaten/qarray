@@ -51,4 +51,4 @@ def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMa
 def compute_threshold(cdd: Cdd) -> float:
     cdd_diag = np.diag(cdd)
     c = (cdd - np.diag(cdd_diag)) / cdd_diag[:, np.newaxis]
-    return 2 * np.abs(c).max()
+    return 2 * np.max(np.abs(c))

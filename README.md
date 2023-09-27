@@ -17,5 +17,5 @@
 Install Quantum Dot Constant Capacitance Simulator using pip:
 
 ```bash
-pip install rusty-capacitance-model-core
+pip install rusty-capacitance-model_threshold_1-core
 ```

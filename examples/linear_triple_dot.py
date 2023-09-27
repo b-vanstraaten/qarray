@@ -12,7 +12,7 @@ from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # logger.add(sys.stdout, level="TRACE")
 
-# setting up the constant capacitance model
+# setting up the constant capacitance model_threshold_1
 model = DotArray(
     cdd_non_maxwell=[
         [0., 0.1, 0.05],
@@ -26,6 +26,7 @@ model = DotArray(
     ],
     core='rust',
 )
+print(model.threshold)
 
 
 # creating the gate voltage composer, which helps us to create the gate voltage array
@@ -43,7 +44,7 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 5
 vy_min, vy_max = -10, 5
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 2, vy_min, vy_max, 1000)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 2, vy_min, vy_max, 100)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

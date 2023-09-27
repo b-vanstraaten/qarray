@@ -28,7 +28,7 @@ def compute_analytical_solution_closed(cdd, cgd, n_charge, vg):
 
 def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None = None) -> osqp.OSQP:
     """
-    Initializes the OSQP solver for the closed dot array model
+    Initializes the OSQP solver for the closed dot array model_threshold_1
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :param n_charge: the number of charges in the dot array
     :return: the initialized OSQP solver
@@ -78,7 +78,8 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, cgd=cgd, Vg=vg)
 
 
-def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, prob) -> np.ndarray:
+def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, prob,
+                            threshold) -> np.ndarray:
     """
     :param vg:
     :param n_charge:
@@ -99,7 +100,8 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, c
         res = prob.solve()
         n_continuous = np.clip(res.x, 0, n_charge)
 
-    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, n_charge=n_charge)
+    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, n_charge=n_charge,
+                                 threshold=threshold)
 
 
 def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
@@ -118,7 +120,7 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
 
 
 def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd,
-                               cdd_inv: CddInv) -> VectorList:
+                               cdd_inv: CddInv, threshold: float) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -130,7 +132,8 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
      :return: the lowest energy charge configuration for each gate voltage coordinate vector
      """
     prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge)
-    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, prob=prob)
+    f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, prob=prob,
+                threshold=threshold)
     N = map(f, vg)
     return VectorList(list(N))
 
@@ -144,15 +147,17 @@ def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, Vg):
     return n_list[np.argmin(F), :]
 
 
-def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge=None):
-    # threshold = 0.27
-    # n_list = open_charge_configurations(n_continuous, threshold)
-    # n_list = n_list[n_list.sum(axis = -1) == n_charge, :]
-    # v_dash = compute_analytical_solution_closed(cdd=np.linalg.inv(cdd_inv), cgd=cgd, n_charge=n_charge, vg=Vg)
+def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge, threshold):
+    n_list = open_charge_configurations(n_continuous, threshold)
+    indexes = n_list.sum(axis=-1) == n_charge
+    if indexes.any():
+        n_list = n_list[indexes, :]
+    else:
+        # failed to find any configurations with the correct number of charges
+        # falling back to computing all configurations
+        n_list = closed_charge_configurations(n_continuous, n_charge)
 
-    n_list = closed_charge_configurations(n_continuous, n_charge)
     v_dash = cgd @ Vg
-
     # computing the free energy of the change configurations
     F = np.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
     # returning the lowest energy change configuration
