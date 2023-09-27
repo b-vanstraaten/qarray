@@ -1,5 +1,20 @@
+from pathlib import Path
+
 import numpy as np
 
+
+def run_all_examples_for_error(self):
+    """
+    Test to check all the examples run without errors
+    :return:
+    """
+
+    for python_file in Path(__file__).parent.parent.glob('examples/*.py'):
+        with open(python_file, mode='r+') as f:
+            try:
+                exec(f.read())
+            except Exception as e:
+                raise RuntimeError(f"Error in {python_file.name}") from e
 def to_set(a):
     return set(map(tuple, a.tolist()))
 
