@@ -26,7 +26,8 @@ def compute_analytical_solution_closed(cdd, cgd, n_charge, vg):
     return n_continuous + isolation_correction
 
 
-def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None = None) -> osqp.OSQP:
+def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None = None,
+                      polish: bool = True) -> osqp.OSQP:
     """
     Initializes the OSQP solver for the closed dot array model_threshold_1
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
@@ -51,7 +52,7 @@ def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None
         A = sparse.csc_matrix(np.eye(dim))
 
     prob = osqp.OSQP()
-    prob.setup(P, q, A, l, u, alpha=1., verbose=False, polish=True)
+    prob.setup(P, q, A, l, u, alpha=1., verbose=False, polish=polish)
     return prob
 
 
@@ -104,7 +105,7 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, c
                                  threshold=threshold)
 
 
-def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
+def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float, polish: bool) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
         :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -113,14 +114,14 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
         :param threshold: the threshold to use for the ground state calculation
         :return: the lowest energy charge configuration for each gate voltage coordinate vector
         """
-    prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd)
+    prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, polish=polish)
     f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold, prob=prob)
     N = map(f, vg)
     return VectorList(list(N))
 
 
 def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd,
-                               cdd_inv: CddInv, threshold: float) -> VectorList:
+                               cdd_inv: CddInv, threshold: float, polish: bool) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -131,7 +132,7 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
      :param threshold: the threshold to use for the ground state calculation
      :return: the lowest energy charge configuration for each gate voltage coordinate vector
      """
-    prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge)
+    prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge, polish=polish)
     f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, prob=prob,
                 threshold=threshold)
     N = map(f, vg)

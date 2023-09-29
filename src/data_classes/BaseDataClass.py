@@ -28,10 +28,10 @@ class BaseDataClass:
                             try:
                                 value = type_(value)
                                 break
-                            except ValueError:
+                            except:
                                 pass
                         else:
-                            raise ValueError(f'Could not coerce {value} into any of {parameter_type.__args__}')
+                            raise ValueError(f'Could not coerce \"{value}\" into any of {parameter_type.__args__}')
                     else:
                         value = parameter_type(value)
                 validate_data[name] = value

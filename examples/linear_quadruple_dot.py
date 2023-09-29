@@ -45,8 +45,8 @@ ground_state_funcs = [
 
 # defining the min and max values for the gate voltage sweep
 
-vx_min, vx_max = -3, 7
-vy_min, vy_max = -3, 7
+vx_min, vx_max = -10, 7
+vy_min, vy_max = -10, 7
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 3, vy_min, vy_max, 200)
 
