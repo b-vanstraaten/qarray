@@ -27,9 +27,11 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
         vg = VectorList(vg.reshape(-1, model.n_gate))
     match model.core:
         case 'rust':
-            result = ground_state_open_rust(vg=vg, cgd=model.cgd, cdd_inv=model.cdd_inv, threshold=model.threshold)
+            result = ground_state_open_rust(vg=vg, cgd=model.cgd, cdd_inv=model.cdd_inv, threshold=model.threshold,
+                                            polish=model.polish)
         case 'python':
-            result = ground_state_open_python(vg=vg, cgd=model.cgd, cdd_inv=model.cdd_inv, threshold=model.threshold)
+            result = ground_state_open_python(vg=vg, cgd=model.cgd, cdd_inv=model.cdd_inv, threshold=model.threshold,
+                                              polish=model.polish)
         case _:
             raise ValueError(f'Incorrect core {model.core}, it must be either rust or python')
     return result.reshape(nd_shape)
@@ -50,10 +52,10 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
     match model.core:
         case 'rust':
             result = ground_state_closed_rust(vg=vg, n_charge=n_charge, cgd=model.cgd, cdd=model.cdd,
-                                              cdd_inv=model.cdd_inv, threshold=model.threshold)
+                                              cdd_inv=model.cdd_inv, threshold=model.threshold, polish=model.polish)
         case 'python':
             result = ground_state_closed_python(vg=vg, n_charge=n_charge, cgd=model.cgd, cdd=model.cdd,
-                                                cdd_inv=model.cdd_inv, threshold=model.threshold)
+                                                cdd_inv=model.cdd_inv, threshold=model.threshold, polish=model.polish)
         case _:
             raise ValueError(f'Incorrect core {model.core}, it must be either rust or python')
     return result.reshape(nd_shape)
