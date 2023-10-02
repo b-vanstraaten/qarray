@@ -105,7 +105,8 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, c
                                  threshold=threshold)
 
 
-def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float, polish: bool) -> VectorList:
+def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float,
+                             polish: bool = True) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
         :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -121,7 +122,7 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
 
 
 def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd,
-                               cdd_inv: CddInv, threshold: float, polish: bool) -> VectorList:
+                               cdd_inv: CddInv, threshold: float, polish: bool = True) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at

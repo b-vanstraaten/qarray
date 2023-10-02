@@ -17,7 +17,7 @@ class DotArray(BaseDataClass):
     cdd_non_maxwell: CddNonMaxwell
     cgd_non_maxwell: CgdNonMaxwell
     core: str = 'rust'
-    threshold: float | None = None
+    threshold: float | None = 1.
 
     def __post_init__(self):
         self.n_dot = self.cdd_non_maxwell.shape[0]
