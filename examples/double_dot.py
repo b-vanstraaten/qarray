@@ -18,7 +18,7 @@ model = DotArray(
     cgd_non_maxwell=[
         [1., 0.2],
         [0.2, 1.]
-    ], core='python'
+    ], core='rust'
 )
 print(model.threshold)
 # creating the gate voltage composer, which helps us to create the gate voltage array

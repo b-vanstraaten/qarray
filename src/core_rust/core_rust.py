@@ -35,8 +35,7 @@ def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativ
     return VectorList(closed_charge_configurations(n_continuous, n_charge, threshold))
 
 
-def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float,
-                           polish: bool = True) -> VectorList:
+def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float) -> VectorList:
     """
     A wrapper for the rust ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -51,11 +50,11 @@ def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold:
     cgd = cgd.astype(np.float64)
     cdd_inv = cdd_inv.astype(np.float64)
     threshold = np.float64(threshold)
-    return VectorList(ground_state_open(vg, cgd, cdd_inv, threshold, polish))
+    return VectorList(ground_state_open(vg, cgd, cdd_inv, threshold))
 
 
 def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd,
-                             cdd_inv: CddInv, threshold: float, polish: bool = True) -> VectorList:
+                             cdd_inv: CddInv, threshold: float) -> VectorList:
     """
     A wrapper for the rust ground state isolated function that takes in numpy arrays and returns numpy arrays.
     :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
@@ -73,4 +72,4 @@ def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd,
     cdd_inv = cdd_inv.astype(np.float64)
     n_charge = np.int64(n_charge)
     threshold = np.float64(threshold)
-    return VectorList(ground_state_closed(vg, n_charge, cgd, cdd, cdd_inv, threshold, polish))
+    return VectorList(ground_state_closed(vg, n_charge, cgd, cdd, cdd_inv, threshold))

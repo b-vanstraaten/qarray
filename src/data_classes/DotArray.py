@@ -14,11 +14,10 @@ class DotArray(BaseDataClass):
     """
     This class holds the capacitance matrices for the dot array and provides methods to compute the ground state.
     """
-    cdd_non_maxwell: CddNonMaxwell  # an (n_dot, n_dot) array of the capacitive coupling between dots
-    cgd_non_maxwell: CgdNonMaxwell  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
-    core: str = 'rust'  # a string of either 'python' or 'rust' to specify which backend to use
-    threshold: float = 1.  # a float specifying the threshold for the charge sensing
-    polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
+    cdd_non_maxwell: CddNonMaxwell
+    cgd_non_maxwell: CgdNonMaxwell
+    core: str = 'rust'
+    threshold: float | None = None
 
     def __post_init__(self):
         self.n_dot = self.cdd_non_maxwell.shape[0]
@@ -53,11 +52,9 @@ class DotArray(BaseDataClass):
             vg = VectorList(vg.reshape(-1, self.n_gate))
         match self.core:
             case 'rust':
-                result = ground_state_open_rust(vg=vg, cgd=self.cgd, cdd_inv=self.cdd_inv, threshold=self.threshold,
-                                                polish=self.polish)
+                result = ground_state_open_rust(vg=vg, cgd=self.cgd, cdd_inv=self.cdd_inv, threshold=self.threshold)
             case 'python':
-                result = ground_state_open_python(vg=vg, cgd=self.cgd, cdd_inv=self.cdd_inv, threshold=self.threshold,
-                                                  polish=self.polish)
+                result = ground_state_open_python(vg=vg, cgd=self.cgd, cdd_inv=self.cdd_inv, threshold=self.threshold)
             case _:
                 raise ValueError(f'Incorrect core {self.core}, it must be either rust or python')
         return result.reshape(nd_shape)
