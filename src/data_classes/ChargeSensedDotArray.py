@@ -4,8 +4,8 @@ from pydantic.dataclasses import dataclass
 
 from src.data_classes.BaseDataClass import BaseDataClass
 from src.data_classes.helper_functions import _ground_state_open, _ground_state_closed
-from src.functions import compute_threshold, convert_to_maxwell, optimal_Vg
-from src.typing_classes import CddNonMaxwell, CgdNonMaxwell, VectorList
+from src.functions import compute_threshold, optimal_Vg, convert_to_maxwell_with_sensor, lorentzian
+from src.typing_classes import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell
 
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
@@ -13,8 +13,11 @@ class ChargeSensedDotArray(BaseDataClass):
     cdd_non_maxwell: CddNonMaxwell  # an (n_dot, n_dot) array of the capacitive coupling between dots
     cgd_non_maxwell: CgdNonMaxwell  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
 
-    cds_non_maxwell: CddNonMaxwell  # an (n_dot, n_sensor) array of the capacitive coupling between dots and sensors
-    cgs_non_maxwell: CgdNonMaxwell  # an (n_sensor, n_gate) array of the capacitive coupling between gates and dots
+    cds_non_maxwell: CdsNonMaxwell  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
+    cgs_non_maxwell: CgsNonMaxwell  # an (n_sensor, n_gate) array of the capacitive coupling between gates and dots
+
+    noise: float
+    gamma: float
 
     core: str = 'rust'  # a string of either 'python' or 'rust' to specify which backend to use
     threshold: float = 1.  # a float specifying the threshold for the charge sensing
@@ -23,8 +26,31 @@ class ChargeSensedDotArray(BaseDataClass):
 
     def __post_init__(self):
         self.n_dot = self.cdd_non_maxwell.shape[0]
+        self.n_sensor = self.cds_non_maxwell.shape[0]
         self.n_gate = self.cgd_non_maxwell.shape[1]
-        self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.cdd_non_maxwell, self.cgd_non_maxwell)
+
+        # checking the shape of the cgd matrix
+        assert self.cgd_non_maxwell.shape[0] == self.n_dot, 'Cgd must be of shape (n_dot, n_gate)'
+        assert self.cgd_non_maxwell.shape[1] == self.n_gate, 'Cdd must be of shape (n_dot, n_gate)'
+
+        # checking the shape of the cds matrix
+        assert self.cds_non_maxwell.shape[0] == self.n_sensor, 'Cds must be of shape (n_sensor, n_dot)'
+        assert self.cds_non_maxwell.shape[1] == self.n_dot, 'Cds must be of shape (n_sensor, n_dot)'
+
+        # checking the shape of the cgs matrix
+        assert self.cgs_non_maxwell.shape[0] == self.n_sensor, 'Cgs must be of shape (n_sensor, n_gate)'
+        assert self.cgs_non_maxwell.shape[1] == self.n_gate, 'Cgs must be of shape (n_sensor, n_gate)'
+
+        self.cdd_full, self.cdd_inv_full, self.cgd_full = convert_to_maxwell_with_sensor(self.cdd_non_maxwell,
+                                                                                         self.cgd_non_maxwell,
+                                                                                         self.cds_non_maxwell,
+                                                                                         self.cgs_non_maxwell)
+
+        self.cdd = self.cdd_full[:self.n_dot, :self.n_dot]
+        self.cdd_inv = self.cdd_inv_full[:self.n_dot, :self.n_dot]
+        self.cgd = self.cgd_full[:self.n_dot, :]
+
+
         if self.threshold is None:
             self.threshold = compute_threshold(self.cdd)
 
@@ -45,6 +71,21 @@ class ChargeSensedDotArray(BaseDataClass):
         """
         return _ground_state_open(self, vg)
 
+    def charge_sensor_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
+        n_open = self.ground_state_open(vg)
+
+        V_dot = np.einsum('ij, ...j', self.cgd_full, vg)
+        V_sensor = V_dot[..., self.n_dot:]
+        N_sensor = np.round(V_sensor)
+        signal = np.zeros_like(V_sensor)
+        for n in [-1, 0, 1]:
+            N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
+            V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
+            signal = signal + lorentzian(V_sensor, 0, self.gamma)
+        noise = np.random.normal(0, self.noise, size=signal.shape)
+        return signal + noise
+
+
     def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
         """
         Computes the ground state for a closed dot array.
@@ -53,3 +94,17 @@ class ChargeSensedDotArray(BaseDataClass):
         :return: (..., n_dot) array of the number of charges to compute the ground state for
         """
         return _ground_state_closed(self, vg, n_charge)
+
+    def charge_sensor_closed(self, vg: VectorList | np.ndarray, n_charge) -> np.ndarray:
+        n_open = self.ground_state_closed(vg, n_charge)
+
+        V_dot = np.einsum('ij, ...j', self.cgd_full, vg)
+        V_sensor = V_dot[..., self.n_dot:]
+        N_sensor = np.round(V_sensor)
+        signal = np.zeros_like(V_sensor)
+        for n in [-1, 0, 1]:
+            N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
+            V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
+            signal = signal + lorentzian(V_sensor, 0, self.gamma)
+        noise = np.random.normal(0, self.noise, size=signal.shape)
+        return signal + noise

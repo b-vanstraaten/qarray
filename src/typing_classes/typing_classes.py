@@ -7,7 +7,7 @@ check that the matrices are for example symmetric or positive definite.
 """
 
 import numpy as np
-from pydantic import BaseModel
+
 
 class Vector(np.ndarray):
     """
@@ -118,6 +118,9 @@ class PositiveDefiniteSymmetricMatrix(SymmetricMatrix):
             raise ValueError(f'Matrix is not positive definite symmetric - eigenvals {np.linalg.eigvals(self)} \n\n')
 
 
+class CgsNonMaxwell(PositiveValuedMatrix):
+    pass
+
 class CgdNonMaxwell(PositiveValuedMatrix):
     """
     Class for the gate-dot capacitance matrix, in its non Maxwell form
@@ -127,6 +130,13 @@ class CgdNonMaxwell(PositiveValuedMatrix):
 class CddNonMaxwell(SymmetricMatrix):
     """
     Class for the dot-dot capacitance matrix its non Maxwell form
+    """
+    pass
+
+
+class CdsNonMaxwell(PositiveValuedMatrix):
+    """
+    Class for the dot-sensor capacitance matrix its non Maxwell form
     """
     pass
 

@@ -34,6 +34,28 @@ def optimal_Vg(cdd_inv: CddInv, cgd: Cgd, n_charges: VectorList, rcond: float = 
     M = np.linalg.pinv(cgd.T @ cdd_inv @ cgd, rcond=rcond) @ cgd.T @ cdd_inv
     return np.einsum('ij, ...j', M, n_charges)
 
+
+def convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell,
+                                   cds_non_maxwell: CddNonMaxwell, cgs_non_maxwell: CgdNonMaxwell):
+    n_dot = cdd_non_maxwell.shape[0]
+    n_sensor = cds_non_maxwell.shape[0]
+    n_gate = cgd_non_maxwell.shape[1]
+
+    cdd_non_maxwell_full = np.zeros((n_dot + n_sensor, n_dot + n_sensor))
+    cdd_non_maxwell_full[:n_dot, :n_dot] = cdd_non_maxwell
+    cdd_non_maxwell_full[n_dot:, :n_dot] = cds_non_maxwell
+    cdd_non_maxwell_full[:n_dot, n_dot:] = cds_non_maxwell.T
+    cdd_non_maxwell_full = CddNonMaxwell(cdd_non_maxwell_full)
+
+    cgd_non_maxwell_full = np.zeros((n_dot + n_sensor, n_gate))
+    cgd_non_maxwell_full[:n_dot, :] = cgd_non_maxwell
+    cgd_non_maxwell_full[n_dot:, :] = cgs_non_maxwell
+    cgd_non_maxwell_full = CgdNonMaxwell(cgd_non_maxwell_full)
+
+    return convert_to_maxwell(cdd_non_maxwell_full, cgd_non_maxwell_full)
+
+
+
 def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (Cdd, Cgd):
     """
     Function to convert the non Maxwell capacitance matrices to their maxwell form.
