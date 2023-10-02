@@ -30,8 +30,10 @@ class ChargeSensedDotArray(BaseDataClass):
         self.n_gate = self.cgd_non_maxwell.shape[1]
 
         # checking the shape of the cgd matrix
-        assert self.cgd_non_maxwell.shape[0] == self.n_dot, 'Cgd must be of shape (n_dot, n_gate)'
-        assert self.cgd_non_maxwell.shape[1] == self.n_gate, 'Cdd must be of shape (n_dot, n_gate)'
+        assert self.cgd_non_maxwell.shape[
+                   0] == self.n_dot, f'Cgd must be of shape (n_dot, n_gate) = ({self.n_dot}, {self.n_gate})'
+        assert self.cgd_non_maxwell.shape[
+                   1] == self.n_gate, f'Cdd must be of shape (n_dot, n_gate) = ({self.n_dot}, {self.n_gate})'
 
         # checking the shape of the cds matrix
         assert self.cds_non_maxwell.shape[0] == self.n_sensor, 'Cds must be of shape (n_sensor, n_dot)'
@@ -73,7 +75,6 @@ class ChargeSensedDotArray(BaseDataClass):
 
     def charge_sensor_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
         n_open = self.ground_state_open(vg)
-
         V_dot = np.einsum('ij, ...j', self.cgd_full, vg)
         V_sensor = V_dot[..., self.n_dot:]
         N_sensor = np.round(V_sensor)

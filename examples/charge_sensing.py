@@ -16,11 +16,11 @@ cgd_non_maxwell = [
 ]
 
 cds = [
-    [0.1, 0.05]
+    [0.1, 0.06]
 ]
 
 cgs = [
-    [0.1, 0.1, 1]
+    [0.05, 0.05, 1]
 ]
 
 model = ChargeSensedDotArray(
@@ -29,7 +29,7 @@ model = ChargeSensedDotArray(
     cds_non_maxwell=cds,
     cgs_non_maxwell=cgs,
     gamma=0.1,
-    noise=0.02,
+    noise=0.04,
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
@@ -42,8 +42,8 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the gate voltage sweep
-vx_min, vx_max = -2.5, 2
-vy_min, vy_max = -2.5, 2
+vx_min, vx_max = -3, 2
+vy_min, vy_max = -3, 2
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
 
@@ -58,7 +58,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     print(f'Computing took {t1 - t0: .3f} seconds')
 
     ax.imshow(s[..., 0], extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
-              interpolation='antialiased')
+              interpolation='none')
     ax.set_aspect('equal')
 fig.tight_layout()
 
