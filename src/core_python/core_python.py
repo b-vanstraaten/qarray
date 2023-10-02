@@ -125,6 +125,7 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
                                cdd_inv: CddInv, threshold: float, polish: bool = True) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
+     :param polish:
      :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
      :param n_charge: the number of changes in the array
      :param cgd: the gate to dot capacitance matrix
