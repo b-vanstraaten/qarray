@@ -20,7 +20,7 @@ class ChargeSensedDotArray(BaseDataClass):
     gamma: float
 
     core: str = 'rust'  # a string of either 'python' or 'rust' to specify which backend to use
-    threshold: float = 1.  # a float specifying the threshold for the charge sensing
+    threshold: float | str | None = 1.  # a float specifying the threshold for the charge sensing
 
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 
@@ -52,8 +52,7 @@ class ChargeSensedDotArray(BaseDataClass):
         self.cdd_inv = self.cdd_inv_full[:self.n_dot, :self.n_dot]
         self.cgd = self.cgd_full[:self.n_dot, :]
 
-
-        if self.threshold is None:
+        if self.threshold == 'auto' or self.threshold is None:
             self.threshold = compute_threshold(self.cdd)
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:

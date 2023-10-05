@@ -28,8 +28,9 @@ model = ChargeSensedDotArray(
     cgd_non_maxwell=cgd_non_maxwell,
     cds_non_maxwell=cds,
     cgs_non_maxwell=cgs,
-    gamma=0.1,
-    noise=0.04,
+    gamma=0.05,
+    noise=0.0,
+    threshold='auto',
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)

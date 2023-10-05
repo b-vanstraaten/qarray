@@ -41,8 +41,8 @@ ground_state_funcs = [
     partial(model.ground_state_closed, n_charge=3),
 ]
 
-vx_min, vx_max = -10, 5
-vy_min, vy_max = -10, 5
+vx_min, vx_max = -10, 10
+vy_min, vy_max = -10, 10
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 500, 2, vy_min, vy_max, 500)
 
@@ -56,7 +56,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     t0 = time.time()
     n = func(vg)  # computing the ground state by calling the function
     t1 = time.time()
-    print(f'{t1 - t0} seconds')
+    print(f'{t1 - t0:.3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
     z = dot_occupation_changes(n)

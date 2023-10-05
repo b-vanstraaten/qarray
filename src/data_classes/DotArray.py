@@ -16,14 +16,14 @@ class DotArray(BaseDataClass):
     cdd_non_maxwell: CddNonMaxwell  # an (n_dot, n_dot) array of the capacitive coupling between dots
     cgd_non_maxwell: CgdNonMaxwell  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
     core: str = 'rust'  # a string of either 'python' or 'rust' to specify which backend to use
-    threshold: float | None = 1.  # a float specifying the threshold for the charge sensing
+    threshold: float | str | None = 1.  # a float specifying the threshold for the charge sensing
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 
     def __post_init__(self):
         self.n_dot = self.cdd_non_maxwell.shape[0]
         self.n_gate = self.cgd_non_maxwell.shape[1]
         self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.cdd_non_maxwell, self.cgd_non_maxwell)
-        if self.threshold is None:
+        if self.threshold == 'auto' or self.threshold is None:
             self.threshold = compute_threshold(self.cdd)
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:

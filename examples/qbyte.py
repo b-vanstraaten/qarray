@@ -5,22 +5,22 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-np.random.seed(0)
+np.random.seed(1)
 
 from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
-N = 16
+N = 10
 
 cdd = np.random.uniform(0, 0.2, size=N ** 2).reshape(N, N)
 cdd = (cdd + cdd.T) / 2.
-cgd = np.eye(N) + np.random.uniform(0., 0.5, size=N ** 2).reshape(N, N)
+cgd = np.eye(N) + np.random.uniform(0., 0.2, size=N ** 2).reshape(N, N)
 
 model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
     core='rust',
+    threshold=1.,
 )
-
 
 # creating the gate voltage composer, which helps us to create the gate voltage array
 # for sweeping in 1d and 2d
@@ -28,17 +28,19 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
-    partial(model.ground_state_closed, n_charge=1),
-    partial(model.ground_state_closed, n_charge=2),
-    partial(model.ground_state_closed, n_charge=4),
-    partial(model.ground_state_closed, n_charge=16),
+    partial(model.ground_state_open),
+    partial(model.ground_state_open),
+    partial(model.ground_state_open),
+    partial(model.ground_state_open),
 ]
 
 # defining the min and max values for the gate voltage sweep
-vx_min, vx_max = -10, 1
-vy_min, vy_max = -10, 1
+vx_min, vx_max = -2, 10
+vy_min, vy_max = -2, 10
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 100, -1, vy_min, vy_max, 100)
+vg += model.optimal_Vg(np.ones(model.n_dot))
+
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

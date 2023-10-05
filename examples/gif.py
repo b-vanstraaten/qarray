@@ -19,7 +19,7 @@ cgd_non_maxwell = [
 ]
 
 core = 'rust'
-n_charge = 2
+n_charge = 4
 
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
