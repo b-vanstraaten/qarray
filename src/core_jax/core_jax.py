@@ -41,7 +41,7 @@ def numerical_solver_closed(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt,
     P = cdd_inv
     q = -cdd_inv @ cgd @ vg
 
-    l = np.concatenate(([n_charge], np.zeros(n_dot)))
+    l = np.concatenate([np.array([n_charge]), np.zeros(n_dot)])
     u = np.full(n_dot + 1, n_charge)
     A = np.concatenate((np.ones((1, n_dot)), np.eye(n_dot)), axis=0)
 
@@ -84,7 +84,6 @@ def ground_state_open_jax(vg: VectorList, cgd: Cgd, cdd_inv: CddInv) -> VectorLi
     f = jax.vmap(f)
     return f(vg)
 
-
 @jax.jit
 def ground_state_closed_jax(vg: VectorList, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
                             n_charge: NonNegativeInt) -> VectorList:
@@ -110,7 +109,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray) 
     :param threshold:
     :return:
     """
-    n_continuous = compute_analytical_solution_open(cgd, vg)
+    n_continuous = compute_continuous_solution_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg)
     n_continuous = np.clip(n_continuous, 0, None)
     # eliminating the possibly of negative numbers of change carriers
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg)
@@ -125,7 +124,7 @@ def _ground_state_closed_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray
     :param threshold:
     :return:
     """
-    n_continuous = compute_analytical_solution_closed(cdd=cdd, cgd=cgd, n_charge=n_charge, vg=vg)
+    n_continuous = compute_continuous_solution_closed(cdd=cdd, cgd=cgd, cdd_inv=cdd_inv, n_charge=n_charge, vg=vg)
     n_continuous = np.clip(n_continuous, 0, n_charge)
     # eliminating the possibly of negative numbers of change carriers
     return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, n_charge=n_charge)
@@ -144,7 +143,6 @@ def compute_argmin_open(n_continuous, cdd_inv, cgd, Vg):
 def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge):
     # computing the remainder
     n_list = open_charge_configurations_jax(n_continuous)
-
     mask = (np.sum(n_list, axis=-1) != n_charge) * np.inf
     v_dash = cgd @ Vg
     # computing the free energy of the change configurations
