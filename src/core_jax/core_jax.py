@@ -52,7 +52,7 @@ def numerical_solver_closed(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt,
 def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd, vg):
     analytical_solution = compute_analytical_solution_open(cgd, vg)
     function_list = [
-        partial(numerical_solver_open, cdd_inv=cdd_inv, cgd=cgd, vg=vg),
+        lambda: numerical_solver_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg),
         lambda: analytical_solution,
     ]
     index = np.all(analytical_solution >= 0).astype(int)
@@ -62,10 +62,10 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd, vg):
 def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd, n_charge, vg):
     analytical_solution = compute_analytical_solution_closed(cdd, cgd, n_charge, vg)
     function_list = [
-        partial(numerical_solver_closed, cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge, vg=vg),
+        lambda: numerical_solver_closed(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge, vg=vg),
         lambda: analytical_solution,
     ]
-    index = np.all(analytical_solution >= 0).astype(int)
+    index = np.all(np.logical_and(analytical_solution >= 0, analytical_solution <= n_charge)).astype(int)
     return jax.lax.switch(index, function_list)
 
 
@@ -101,6 +101,7 @@ def ground_state_closed_jax(vg: VectorList, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
     return f(vg)
 
 
+@jax.jit
 def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray) -> np.ndarray:
     """
     :param vg:

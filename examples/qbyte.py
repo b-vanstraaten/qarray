@@ -18,7 +18,7 @@ cgd = np.eye(N) + np.random.uniform(0., 0.2, size=N ** 2).reshape(N, N)
 model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
-    core='rust',
+    core='jax',
     threshold=1.,
 )
 
