@@ -3,7 +3,7 @@ from pydantic import NonNegativeInt
 
 from src import ground_state_open_rust, ground_state_open_python, ground_state_closed_rust, ground_state_closed_python
 from src.typing_classes import VectorList
-from ..core_jax.core_jax import ground_state_open_jax
+from ..core_jax.core_jax import ground_state_open_jax, ground_state_closed_jax
 
 
 def _validate_vg(vg, n_gate):
@@ -75,6 +75,11 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
                 threshold=model.threshold, polish=model.polish
+            )
+        case 'jax':
+            result = ground_state_closed_jax(
+                vg=vg, n_charge=n_charge, cgd=model.cgd,
+                cdd=model.cdd, cdd_inv=model.cdd_inv,
             )
         case _:
             raise ValueError(f'Incorrect core {model.core}, it must be either rust or python')
