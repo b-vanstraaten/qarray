@@ -6,15 +6,16 @@ from functools import partial
 
 import jax
 import jax.numpy as jnp
+import numpy as np
 from jaxopt import BoxOSQP
 
-from src.typing_classes import VectorList, CddInv, Cgd, Vector
 from .charge_configuration_generators import open_charge_configurations_jax
+from ..typing_classes import VectorList, CddInv, Cgd, Vector
 
 qp = BoxOSQP()
 
 
-def compute_analytical_solution_open(cgd: Cgd, vg: Vector) -> Vector:
+def compute_analytical_solution_open(cgd: Cgd, vg: Vector) -> Vector | np.ndarray:
     """
     Computes the analytical solution for the continuous charge distribution for an open array.
     :param cgd: the gate to dot capacitance matrix
@@ -24,7 +25,7 @@ def compute_analytical_solution_open(cgd: Cgd, vg: Vector) -> Vector:
     return cgd @ vg
 
 
-def numerical_solver_open(cdd_inv: CddInv, cgd: Cgd, vg: VectorList) -> VectorList:
+def numerical_solver_open(cdd_inv: CddInv, cgd: Cgd, vg: VectorList) -> VectorList | np.ndarray:
     """
     Solve the quadratic program for the continuous charge distribution for an open array.
     :param cdd_inv: the inverse of the dot to dot capacitance matrix

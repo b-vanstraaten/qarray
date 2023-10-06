@@ -103,4 +103,6 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
             )
         case _:
             raise ValueError(f'Incorrect core {model.core}, it must be either rust or python')
+
+    assert np.all(result.astype(int).sum(axis=-1) == n_charge), 'The number of charges is not correct'
     return result.reshape(nd_shape)

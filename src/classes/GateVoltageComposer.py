@@ -17,6 +17,10 @@ class GateVoltageComposer(BaseDataClass):
     gate_voltages: Vector | None = None  # vector of gate voltages encoding the current DC voltages set to the array
     gate_names: dict[str, int] | None = None  # a dictionary of gate names which can be defined for convenience
 
+    virtual_gate_origin: np.ndarray | None = None  # the origin to consider virtual gates from
+    virtual_gate_matrix: np.ndarray | None = None  # a matrix of virtual gates to be used for the dot array
+    n_gate: int | None
+
     def __post_init__(self):
         """
         post initialise the class. If values are left as none they are set to their mutable default values
@@ -27,6 +31,10 @@ class GateVoltageComposer(BaseDataClass):
 
         if self.gate_names is None:
             self.gate_names = {}
+
+        if self.virtual_gate_origin is not None and self.virtual_gate_origin is not None:
+            self._check_virtual_gate()
+            self.n_dot = self.virtual_gate_matrix.shape[0]
 
     def name_gate(self, name: str | Iterable[str], gate: int | Iterable[int]):
         match (isinstance(name, list | tuple), isinstance(gate, list | tuple)):
@@ -46,6 +54,19 @@ class GateVoltageComposer(BaseDataClass):
     def _check_gate(self, gate: int):
         if (gate <= - self.n_gate or gate > self.n_gate - 1):
             raise ValueError(f'Invalid gate {gate}')
+
+    def _check_virtual_gate(self):
+        # checking the virtual gate parameters are set
+        assert self.virtual_gate_origin is not None, 'virtual_gate_origin must be set'
+        assert self.virtual_gate_matrix is not None, 'virtual_gate_matrix must be set'
+
+        # checking the shapes of the virtual gate matrix
+        assert self.virtual_gate_matrix.shape[0] == self.n_gate
+        assert self.virtual_gate_matrix.shape[1] == self.virtual_gate_origin.shape[0]
+
+        # checking the shape of the virtual gate origin
+        assert self.virtual_gate_origin.shape[0] == self.n_gate
+
 
 
     def _fetch_and_check_gate(self, gate: str | int) -> int:
@@ -91,7 +112,7 @@ class GateVoltageComposer(BaseDataClass):
         vg = np.zeros(shape=(x_resolution, self.n_gate))
         for gate in range(self.n_gate):
             if not gate == x_gate:
-                vg[..., gate] = self.voltages[gate]
+                vg[..., gate] = self.gate_voltages[gate]
             if gate == x_gate:
                 vg[..., gate] = x
         return vg
@@ -126,3 +147,31 @@ class GateVoltageComposer(BaseDataClass):
             if gate == y_gate:
                 vg[..., gate] = Y
         return vg
+
+    def do2d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_resolution: int,
+                     y_dot: str | int, y_min: float, y_max: float, y_resolution: int) -> np.ndarray:
+        """
+        This function is used to compose a 2d gate voltage array.
+        :param x_dot:
+        :param x_min:
+        :param x_max:
+        :param x_resolution:
+        :param y_dot:
+        :param y_min:
+        :param y_max:
+        :param y_resolution:
+        :return:
+        """
+        x = np.linspace(x_min, x_max, x_resolution)
+        y = np.linspace(y_min, y_max, y_resolution)
+        X, Y = np.meshgrid(x, y)
+
+        vd = np.zeros(shape=(x_resolution, y_resolution, self.n_dot))
+        for gate in range(self.n_gate):
+            if not gate == x_dot and not gate == y_dot:
+                vd[..., gate] = self.gate_voltages[gate]
+            if gate == x_dot:
+                vd[..., gate] = X
+            if gate == y_dot:
+                vd[..., gate] = Y
+        return np.einsum('ij,...j->...i', self.virtual_gate_matrix, vd) + self.virtual_gate_origin

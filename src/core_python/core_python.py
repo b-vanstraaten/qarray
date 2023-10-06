@@ -76,7 +76,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
         n_continuous = np.clip(res.x, 0., None)
 
     # eliminating the possibly of negative numbers of change carriers
-    return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, cgd=cgd, Vg=vg)
+    return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, cgd=cgd, vg=vg)
 
 
 def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, prob,
@@ -101,7 +101,7 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, c
         res = prob.solve()
         n_continuous = np.clip(res.x, 0, n_charge)
 
-    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, n_charge=n_charge,
+    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, vg=vg, n_charge=n_charge,
                                  threshold=threshold)
 
 
@@ -141,19 +141,19 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
     return VectorList(list(N))
 
 
-def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, Vg):
+def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, vg):
     # computing the remainder
     n_list = open_charge_configurations(n_continuous, threshold)
     # computing the free energy of the change configurations
-    F = np.einsum('...i, ij, ...j', n_list - cgd @ Vg, cdd_inv, n_list - cgd @ Vg)
+    F = np.einsum('...i, ij, ...j', n_list - cgd @ vg, cdd_inv, n_list - cgd @ vg)
     # returning the lowest energy change configuration
     return n_list[np.argmin(F), :]
 
 
-def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge, threshold):
+def compute_argmin_closed(n_continuous, cdd_inv, cgd, vg, n_charge, threshold):
     n_list = closed_charge_configurations(n_continuous, n_charge, threshold)
 
-    v_dash = cgd @ Vg
+    v_dash = cgd @ vg
     # computing the free energy of the change configurations
     F = np.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
     # returning the lowest energy change configuration
