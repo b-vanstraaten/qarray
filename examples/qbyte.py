@@ -18,7 +18,7 @@ cgd = np.eye(N) + np.random.uniform(0., 0.2, size=N ** 2).reshape(N, N)
 model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
-    core='jax',
+    core='rust',
     threshold=1.,
 )
 
@@ -29,9 +29,9 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
     partial(model.ground_state_open),
-    partial(model.ground_state_open),
-    partial(model.ground_state_open),
-    partial(model.ground_state_open),
+    partial(model.ground_state_closed, n_charge=1),
+    partial(model.ground_state_closed, n_charge=2),
+    partial(model.ground_state_closed, n_charge=3),
 ]
 
 # defining the min and max values for the gate voltage sweep

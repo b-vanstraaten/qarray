@@ -69,7 +69,6 @@ def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd, n_ch
     return jax.lax.switch(index, function_list)
 
 
-@jax.jit
 def ground_state_open_jax(vg: VectorList, cgd: Cgd, cdd_inv: CddInv) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
@@ -81,10 +80,16 @@ def ground_state_open_jax(vg: VectorList, cgd: Cgd, cdd_inv: CddInv) -> VectorLi
         """
 
     f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv)
-    f = jax.vmap(f)
+    match jax.local_device_count():
+        case 0:
+            raise ValueError('Must have at least one device')
+        case 1:
+            f = jax.vmap(f)
+        case _:
+            f = jax.pmap(f)
     return f(vg)
 
-@jax.jit
+
 def ground_state_closed_jax(vg: VectorList, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
                             n_charge: NonNegativeInt) -> VectorList:
     """
@@ -97,7 +102,14 @@ def ground_state_closed_jax(vg: VectorList, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
         """
 
     f = partial(_ground_state_closed_0d, cgd=cgd, cdd_inv=cdd_inv, cdd=cdd, n_charge=n_charge)
-    f = jax.vmap(f)
+
+    match jax.local_device_count():
+        case 0:
+            raise ValueError('Must have at least one device')
+        case 1:
+            f = jax.vmap(f)
+        case _:
+            f = jax.pmap(f)
     return f(vg)
 
 
@@ -116,6 +128,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray) 
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg)
 
 
+@jax.jit
 def _ground_state_closed_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, cdd: np.ndarray,
                             n_charge: NonNegativeInt) -> np.ndarray:
     """
