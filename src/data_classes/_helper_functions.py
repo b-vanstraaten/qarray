@@ -3,16 +3,16 @@ from pydantic import NonNegativeInt
 
 from src import ground_state_open_rust, ground_state_open_python, ground_state_closed_rust, ground_state_closed_python
 from src.typing_classes import VectorList
-from ..core_jax.core_jax import ground_state_open_jax, ground_state_closed_jax
+from ..core_jax import ground_state_open_jax, ground_state_closed_jax
 
 
-def _validate_vg(vg, n_gate):
+def _validate_vg(vg: VectorList, n_gate: NonNegativeInt):
     """
     This function is used to validate the shape of the gate voltage array.
     :param vg: the gate voltage array
     """
     if vg.shape[-1] != n_gate:
-        raise ValueError(f'The shape of vg is in correct it should be of shape (..., n_gate) = (...,{self.n_gate})')
+        raise ValueError(f'The shape of vg is in correct it should be of shape (..., n_gate) = (...,{n_gate})')
 
 
 def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
@@ -21,21 +21,24 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
     :param vg: the gate voltages to compute the ground state at
     :return: the lowest energy charge configuration for each gate voltage coordinate vector
     """
+
+    # validate the shape of the gate voltage array
     _validate_vg(vg, model.n_gate)
+
+    # grabbing the shape of the gate voltage array
     vg_shape = vg.shape
     nd_shape = (*vg_shape[:-1], model.n_dot)
+    # reshaping the gate voltage array to be of shape (n_points, n_gate)
+    vg = vg.reshape(-1, model.n_gate)
+
+    # performing the type conversion if necessary
     if not isinstance(vg, VectorList):
-        vg = VectorList(vg.reshape(-1, model.n_gate))
+        vg = VectorList(vg)
+
+    # calling the appropriate core function to compute the ground state
     match model.core:
         case 'rust':
             result = ground_state_open_rust(
-                vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv,
-                threshold=model.threshold,
-                polish=model.polish
-            )
-        case 'python':
-            result = ground_state_open_python(
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
                 threshold=model.threshold,
@@ -45,6 +48,13 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
             result = ground_state_open_jax(
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
+            )
+        case 'python':
+            result = ground_state_open_python(
+                vg=vg, cgd=model.cgd,
+                cdd_inv=model.cdd_inv,
+                threshold=model.threshold,
+                polish=model.polish
             )
         case _:
             raise ValueError(f'Incorrect core {model.core}, it must be either rust or python')
@@ -58,20 +68,23 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
     :param n_charge: the number of changes in the system
     :return: the lowest energy charge configuration for each gate voltage coordinate vector
     """
+    # validate the shape of the gate voltage array
     _validate_vg(vg, model.n_gate)
+
+    # grabbing the shape of the gate voltage array
     vg_shape = vg.shape
     nd_shape = (*vg_shape[:-1], model.n_dot)
+    # reshaping the gate voltage array to be of shape (n_points, n_gate)
+    vg = vg.reshape(-1, model.n_gate)
+
+    # performing the type conversion if necessary
     if not isinstance(vg, VectorList):
-        vg = VectorList(vg.reshape(-1, model.n_gate))
+        vg = VectorList(vg)
+
+    # calling the appropriate core function to compute the ground state
     match model.core:
         case 'rust':
             result = ground_state_closed_rust(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv,
-                threshold=model.threshold, polish=model.polish
-            )
-        case 'python':
-            result = ground_state_closed_python(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
                 threshold=model.threshold, polish=model.polish
@@ -80,6 +93,12 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
             result = ground_state_closed_jax(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
+            )
+        case 'python':
+            result = ground_state_closed_python(
+                vg=vg, n_charge=n_charge, cgd=model.cgd,
+                cdd=model.cdd, cdd_inv=model.cdd_inv,
+                threshold=model.threshold, polish=model.polish
             )
         case _:
             raise ValueError(f'Incorrect core {model.core}, it must be either rust or python')

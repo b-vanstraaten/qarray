@@ -1,4 +1,4 @@
-rusty_capacitance_model_core==1.4.0
+rusty_capacitance_model_core==1.4.1
 osqp==0.6.3
 
 numpy>=1.26
@@ -6,4 +6,7 @@ pydantic>=2.3
 scipy>=1.11
 matplotlib>=3.8
 loguru>=0.5
+jax>=0.2
+jaxlib>=0.2
+
 

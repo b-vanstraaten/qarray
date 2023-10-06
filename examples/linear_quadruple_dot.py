@@ -65,7 +65,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     z = dot_occupation_changes(n)
     # plotting the result
 
-    # z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
+    # z = (n * jnp.linspace(0.9, 1.1, n.shape[-1])[jnp.newaxis, jnp.newaxis, :]).sum(axis=-1)
 
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',

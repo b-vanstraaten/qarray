@@ -20,7 +20,6 @@ model = DotArray(
         [0.2, 1.]
     ], core='rust'
 )
-print(model.threshold)
 # creating the gate voltage composer, which helps us to create the gate voltage array
 # for sweeping in 1d and 2d
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
@@ -50,7 +49,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     print(f'Computing took {t1 - t0: .3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
-    # z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
+    # z = (n * jnp.linspace(0.9, 1.1, n.shape[-1])[jnp.newaxis, jnp.newaxis, :]).sum(axis=-1)
     z = dot_occupation_changes(n)
     # plotting the result
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])

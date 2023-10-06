@@ -3,8 +3,7 @@ from functools import partial
 
 import numpy as np
 
-from src.core_jax.charge_configuration_generators import open_charge_configurations_jax, \
-    closed_charge_configurations_jax
+from src.core_jax.charge_configuration_generators import open_charge_configurations_jax
 from src.core_python.charge_configuration_generators import closed_charge_configurations, open_charge_configurations
 from src.core_rust.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
 from tests.helper_functions import compare_sets_for_equality, to_set
@@ -79,7 +78,6 @@ class ChargeCombinationsTests(unittest.TestCase):
         functions = [
             partial(closed_charge_configurations, n_charge=n_charge, threshold=1.),
             partial(closed_charge_configurations_rust, n_charge=n_charge, threshold=1.),
-            partial(closed_charge_configurations_jax, n_charge=n_charge)
         ]
 
         for floor_values, answers in floor_value_answer_pairs:

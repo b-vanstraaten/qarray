@@ -31,6 +31,7 @@ model = ChargeSensedDotArray(
     gamma=0.05,
     noise=0.0,
     threshold='auto',
+    core='rust',
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)

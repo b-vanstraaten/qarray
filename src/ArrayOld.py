@@ -1,17 +1,11 @@
 from dataclasses import dataclass
 
-from dataclasses import dataclass
-from pathlib import Path
-
 import numpy as np
-import scipy.linalg
 from tqdm import tqdm
-import os
 
 from functions import (
     lorentzian,
     optimal_Vg,
-    positive_semidefinite,
     convert_to_maxwell_matrix
 )
 
@@ -107,35 +101,35 @@ class CapacitanceModel:
     def _extract_C_dot_to_sens_dot(self):
         """
         Extracts the capacitance matrix between the dots and the sensor dots
-        :return: np.ndarray([...])
+        :return: jnp.ndarray([...])
         """
         return self.C_maxwell[self.n_dot: self.n_dot + self.n_sensor_dot, self.n_dot + self.n_sensor_dot:]
 
     def _extract_C_gate_to_sens_dot(self):
         """
         Extracts the capacitance matrix between the gates and the sensor dots
-        :return: np.ndarray([...])
+        :return: jnp.ndarray([...])
         """
         return self.C_maxwell[self.n_dot: self.n_dot + self.n_sensor_dot, self.n_dot + self.n_sensor_dot:]
 
     def _extract_C_dev_dot_to_dev_dot(self):
         """
         Extracts the capacitance matrix between the dots and the sensor dots
-        :return: np.ndarray([...])
+        :return: jnp.ndarray([...])
         """
         return self.C_maxwell[0:self.n_dot, 0:self.n_dot]
 
     def _extract_C_dot_to_dot(self):
         """
         Extracts the capacitance matrix between all the dots
-        :return: np.ndarray([...])
+        :return: jnp.ndarray([...])
         """
         return self.C_maxwell[0:self.n_dot + self.n_sensor_dot, 0:self.n_dot + self.n_sensor_dot]
 
     def _extract_gate_to_sens_dot(self):
         """
         Extracts the capacitance matrix between the gates and the sensor dots
-        :return: np.ndarray([...])
+        :return: jnp.ndarray([...])
         """
         return self.C_maxwell[0: self.n_dot + self.n_sensor_dot, self.n_dot + self.n_sensor_dot:]
 
@@ -149,7 +143,7 @@ class CapacitanceModel:
     def _validate_Vg(self, Vg):
         """
         Validates the shape of Vg
-        :param Vg: the gate voltages to validate np.ndarray([...])
+        :param Vg: the gate voltages to validate jnp.ndarray([...])
         """
         assert Vg.shape[-1] == self.n_gate + self.n_sensor_gate, f"Vg must be of shape (n_gate,): {Vg.shape}"
 

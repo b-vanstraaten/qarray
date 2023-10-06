@@ -18,7 +18,7 @@ cgd = np.eye(N) + np.random.uniform(0., 0.2, size=N ** 2).reshape(N, N)
 model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
-    core='rust',
+    core='jax',
     threshold=1.,
 )
 
@@ -38,7 +38,7 @@ ground_state_funcs = [
 vx_min, vx_max = -2, 10
 vy_min, vy_max = -2, 10
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, -1, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, -1, vy_min, vy_max, 1000)
 vg += model.optimal_Vg(np.ones(model.n_dot))
 
 
