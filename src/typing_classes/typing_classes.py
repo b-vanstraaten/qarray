@@ -1,5 +1,5 @@
 """
-defining matrix typing_classes to store the capacitance matrices. They inherit
+Defining matrix typing_classes to store the capacitance matrices. They inherit
 from numpy.ndarray so that they can be interacted with identically to numpy arrays.
 
 However, they have a validator method which is called when they are instantiated, this allows us to

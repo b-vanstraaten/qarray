@@ -2,8 +2,8 @@ import numpy as np
 from pydantic import NonNegativeInt
 from pydantic.dataclasses import dataclass
 
-from src.data_classes.BaseDataClass import BaseDataClass
-from src.data_classes._helper_functions import _ground_state_open, _ground_state_closed
+from src.classes.BaseDataClass import BaseDataClass
+from src.classes._helper_functions import _ground_state_open, _ground_state_closed
 from src.functions import compute_threshold, optimal_Vg, convert_to_maxwell_with_sensor, lorentzian
 from src.typing_classes import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell
 

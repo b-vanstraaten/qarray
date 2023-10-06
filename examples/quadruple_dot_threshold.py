@@ -22,6 +22,7 @@ cgd_non_maxwell = [
 core = 'rust'
 n_charge = None
 
+# noinspection PyArgumentList
 model_threshold_1 = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
@@ -29,6 +30,7 @@ model_threshold_1 = DotArray(
     threshold=1.,
 )
 
+# noinspection PyArgumentList
 model_threshold_default = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
@@ -36,6 +38,7 @@ model_threshold_default = DotArray(
     threshold='auto'
 )
 
+# noinspection PyArgumentList
 voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate)
 
 vx_min, vx_max = -10, 5

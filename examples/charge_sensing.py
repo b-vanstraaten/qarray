@@ -30,7 +30,7 @@ model = ChargeSensedDotArray(
     cgs_non_maxwell=cgs,
     gamma=0.05,
     noise=0.0,
-    threshold='auto',
+    threshold=1.,
     core='rust',
 )
 
@@ -75,7 +75,7 @@ axes[0, 1].set_title(r'$n_{charge} = 1$')
 axes[1, 0].set_title(r'$n_{charge} = 2$')
 axes[1, 1].set_title(r'$n_{charge} = 3$')
 
-plt.savefig('double_dot.pdf', bbox_inches='tight')
+# plt.savefig('double_dot.pdf', bbox_inches='tight')
 
 if __name__ == '__main__':
     plt.show()

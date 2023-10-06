@@ -4,7 +4,7 @@ from collections.abc import Iterable
 import numpy as np
 from pydantic.dataclasses import dataclass
 
-from src.data_classes.BaseDataClass import BaseDataClass
+from src.classes.BaseDataClass import BaseDataClass
 from src.typing_classes import Vector
 
 

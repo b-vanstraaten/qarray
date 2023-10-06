@@ -1,3 +1,8 @@
+"""
+This module contains tests for the solver against the analytical solutions. The analytical solutions are only valid
+when all changes are positive.
+"""
+
 import unittest
 
 import numpy as np
