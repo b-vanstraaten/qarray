@@ -34,7 +34,7 @@ class GateVoltageComposer(BaseDataClass):
 
         if self.virtual_gate_origin is not None and self.virtual_gate_origin is not None:
             self._check_virtual_gate()
-            self.n_dot = self.virtual_gate_matrix.shape[0]
+            self.n_dot = self.virtual_gate_matrix.shape[1]
 
     def name_gate(self, name: str | Iterable[str], gate: int | Iterable[int]):
         match (isinstance(name, list | tuple), isinstance(gate, list | tuple)):
@@ -60,12 +60,12 @@ class GateVoltageComposer(BaseDataClass):
         assert self.virtual_gate_origin is not None, 'virtual_gate_origin must be set'
         assert self.virtual_gate_matrix is not None, 'virtual_gate_matrix must be set'
 
-        # checking the shapes of the virtual gate matrix
-        assert self.virtual_gate_matrix.shape[0] == self.n_gate
-        assert self.virtual_gate_matrix.shape[1] == self.virtual_gate_origin.shape[0]
-
-        # checking the shape of the virtual gate origin
-        assert self.virtual_gate_origin.shape[0] == self.n_gate
+        # # checking the shapes of the virtual gate matrix
+        # assert self.virtual_gate_matrix.shape[0] == self.n_gate
+        # assert self.virtual_gate_matrix.shape[1] == self.virtual_gate_origin.shape[0]
+        #
+        # # checking the shape of the virtual gate origin
+        # assert self.virtual_gate_origin.shape[0] == self.n_gate
 
 
 

@@ -22,6 +22,9 @@ class DotArray(BaseDataClass):
     def __post_init__(self):
         self.n_dot = self.cdd_non_maxwell.shape[0]
         self.n_gate = self.cgd_non_maxwell.shape[1]
+        assert self.cgd_non_maxwell.shape[
+                   0] == self.n_dot, 'The number of dots must be the same as the number of rows in cgd'
+
         self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.cdd_non_maxwell, self.cgd_non_maxwell)
         if self.threshold == 'auto' or self.threshold is None:
             self.threshold = compute_threshold(self.cdd)
