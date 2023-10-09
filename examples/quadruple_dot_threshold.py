@@ -20,7 +20,7 @@ cgd_non_maxwell = [
 ]
 
 core = 'rust'
-n_charge = 5
+n_charge = 4
 
 # noinspection PyArgumentList
 model_threshold_1 = DotArray(
@@ -35,15 +35,19 @@ model_threshold_default = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core=core,
-    threshold='auto'
+    threshold='auto',
 )
 
+virtual_gate_origin = np.random.uniform(-10, -1, model_threshold_default.n_gate)
+virtual_gate_matrix = np.linalg.pinv(model_threshold_default.cdd_inv @ model_threshold_1.cgd_non_maxwell)
+
 # noinspection PyArgumentList
-voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate)
+voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate, virtual_gate_origin=virtual_gate_origin,
+                                       virtual_gate_matrix=virtual_gate_matrix)
 
 vx_min, vx_max = -10, 5
 vy_min, vy_max = -10, 5
-vg = voltage_composer.do2d(0, vy_min, vx_max, 512, 3, vy_min, vy_max, 512)
+vg = voltage_composer.do2d_virtual(0, vy_min, vx_max, 512, 3, vy_min, vy_max, 512)
 # vg += model_threshold_1.optimal_Vg(jnp.zeros(model_threshold_1.n_dot) + 0.5)
 vg += np.random.uniform(-0.5, 0.5, size=model_threshold_1.n_gate)
 
