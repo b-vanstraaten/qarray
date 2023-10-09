@@ -1,6 +1,7 @@
 """
 This script recreates figure 3 from the paper https://www.nature.com/articles/s41565-020-00816-w#Sec19
 """
+import time
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -75,14 +76,14 @@ cgd_non_maxwell = np.array([
     [0., 0., cross_talk, 2.3, 0.],
     [0., 0., cross_talk, 0., 1.]
 ]).T
-print(cgd_non_maxwell)
+
 
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='rust'
+    core='rust',
+    threshold=1.,
 )
-print(model.cdd_inv)
 
 # creating the gate voltage composer, which helps us to create the gate voltage array
 # for sweeping in 1d and 2d
@@ -95,7 +96,7 @@ voltage_composer = GateVoltageComposer(
     virtual_gate_origin=virtual_gate_origin
 )
 
-N = 200
+N = 400
 # defining the min and max values for the gate voltage sweep
 vx_min, vx_max = -1.5, 1.5
 vy_min, vy_max = -2.5, 2.5
@@ -110,7 +111,7 @@ vg_rb = voltage_composer.do2d_virtual(3, -vx_min, -vx_max, N, 4, -vy_min, -vy_ma
 
 vg = vg_lt + vg_lb + vg_rt + vg_rb
 scale = 1.
-shift = -0.3
+shift = -0.32
 
 vg = vg + voltage_composer.do1d(2, shift - scale, shift + scale, N)[:, np.newaxis, :]
 
@@ -118,7 +119,11 @@ vg = vg + voltage_composer.do1d(2, shift - scale, shift + scale, N)[:, np.newaxi
 fig, axes = plt.subplots(1, 5, sharex=True, sharey=True)
 fig.set_size_inches(15, 4)
 
+t0 = time.time()
 n = model.ground_state_closed(vg, 5)
+t1 = time.time()
+print(f'Ground state calculation took {t1 - t0:.2f} seconds')
+
 z = dot_occupation_changes(n)
 
 names = ['T', 'L', 'M', 'R', 'B']
@@ -127,4 +132,9 @@ for i in range(5):
     axes[i].set_title(names[i])
     axes[i].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.)
     axes[i].imshow(n[..., i], extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto',
-                   interpolation='None', vmin=0, vmax=5, alpha=0.95, cmap=parula_map)
+                   interpolation='None', vmin=0, vmax=5, alpha=0.9
+                   , cmap=parula_map)
+
+plt.figure()
+plt.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.)
+plt.show()
