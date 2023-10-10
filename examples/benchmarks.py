@@ -8,13 +8,13 @@ np.random.seed(1)
 
 from src import (DotArray)
 
-N_VOLTAGE_POINTS = 100 * 100
+N_VOLTAGE_POINTS = 100 ** 2
 
-cores = ['rust', 'rust', 'rust']
+cores = ['rust', 'jax', 'python']
 
 times = []
 
-dots = range(2, 16)
+dots = range(2, 12)
 
 for N in tqdm(dots):
     cdd = np.random.uniform(0, 0.2, size=N ** 2).reshape(N, N)
@@ -24,10 +24,10 @@ for N in tqdm(dots):
     model = DotArray(
         cdd_non_maxwell=cdd,
         cgd_non_maxwell=cgd,
-        threshold=0.5
+        threshold=1.
     )
 
-    Vg = np.random.uniform(-10, 0, (N_VOLTAGE_POINTS, model.n_gate))
+    Vg = np.random.uniform(-10, 10, (N_VOLTAGE_POINTS, model.n_gate))
 
     ts = []
     for i, core in enumerate(cores):
@@ -44,8 +44,8 @@ for N in tqdm(dots):
 times = np.array(times)
 
 plt.plot(dots, times[:, 0], label='rust')
-plt.plot(dots, times[:, 1], label='python')
-plt.plot(dots, times[:, 2], label='jax')
+plt.plot(dots, times[:, 1], label='jax')
+plt.plot(dots, times[:, 2], label='python')
 plt.legend()
 plt.xlabel('Number of dots')
 plt.ylabel('Time (s)')

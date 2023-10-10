@@ -11,7 +11,7 @@ from pydantic import NonNegativeInt
 from src.typing_classes import VectorList, CddInv, Cgd, Cdd, Vector
 from .charge_configuration_generators import open_charge_configurations_jax
 
-qp = BoxOSQP()
+qp = BoxOSQP(jit=True, check_primal_dual_infeasability=False, verbose=False)
 
 
 def compute_analytical_solution_closed(cdd: Cdd, cgd: Cgd, n_charge: NonNegativeInt, vg: Vector) -> Vector:
@@ -60,14 +60,13 @@ def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd, n_ch
     :param vg: the gate voltage coordinate vector
     :return: the continuous charge distribution
     """
-
     analytical_solution = compute_analytical_solution_closed(cdd, cgd, n_charge, vg)
-    function_list = [
-        lambda: numerical_solver_closed(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge, vg=vg),
+    return jax.lax.cond(
+        jnp.all(jnp.logical_and(analytical_solution >= 0, analytical_solution <= n_charge)),
         lambda: analytical_solution,
-    ]
-    index = jnp.all(jnp.logical_and(analytical_solution >= 0, analytical_solution <= n_charge)).astype(int)
-    return jax.lax.switch(index, function_list)
+        lambda: numerical_solver_closed(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge, vg=vg),
+    )
+
 
 
 def ground_state_closed_jax(vg: VectorList, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,

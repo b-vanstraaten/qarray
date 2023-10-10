@@ -12,7 +12,7 @@ from jaxopt import BoxOSQP
 from .charge_configuration_generators import open_charge_configurations_jax
 from ..typing_classes import VectorList, CddInv, Cgd, Vector
 
-qp = BoxOSQP()
+qp = BoxOSQP(check_primal_dual_infeasability=False, verbose=False)
 
 
 def compute_analytical_solution_open(cgd: Cgd, vg: Vector) -> Vector | np.ndarray:
@@ -53,12 +53,12 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd, vg):
     :return: the continuous charge distribution
     """
     analytical_solution = compute_analytical_solution_open(cgd, vg)
-    function_list = [
-        lambda: numerical_solver_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg),
+    return jax.lax.cond(
+        jnp.all(analytical_solution >= 0),
         lambda: analytical_solution,
-    ]
-    index = jnp.all(analytical_solution >= 0).astype(int)
-    return jax.lax.switch(index, function_list)
+        lambda: numerical_solver_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg),
+    )
+
 
 
 def ground_state_open_jax(vg: VectorList, cgd: Cgd, cdd_inv: CddInv) -> VectorList:

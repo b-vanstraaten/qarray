@@ -24,7 +24,7 @@ model = DotArray(
         [0.2, 1., 0.2],
         [0.05, 0.2, 1]
     ],
-    core='rust',
+    core='jax',
 )
 print(model.threshold)
 
@@ -41,10 +41,10 @@ ground_state_funcs = [
     partial(model.ground_state_closed, n_charge=3),
 ]
 
-vx_min, vx_max = -10, 10
-vy_min, vy_max = -10, 10
+vx_min, vx_max = -2, 0
+vy_min, vy_max = -2, 0
 # using the gate voltage composer to create the gate voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 500, 2, vy_min, vy_max, 500)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 150, 2, vy_min, vy_max, 150)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

@@ -19,7 +19,7 @@ model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
     core='rust',
-    threshold='auto'
+    threshold='auto',
 )
 
 virtual_gate_origin = np.random.uniform(-10, -1, model.n_gate)
