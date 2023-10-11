@@ -9,8 +9,8 @@ from src.typing_classes import VectorList
 
 def _validate_vg(vg: VectorList, n_gate: NonNegativeInt):
     """
-    This function is used to validate the shape of the gate voltage array.
-    :param vg: the gate voltage array
+    This function is used to validate the shape of the dot voltage array.
+    :param vg: the dot voltage array
     """
     if vg.shape[-1] != n_gate:
         raise ValueError(f'The shape of vg is in correct it should be of shape (..., n_gate) = (...,{n_gate})')
@@ -19,17 +19,17 @@ def _validate_vg(vg: VectorList, n_gate: NonNegativeInt):
 def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
     """
     This function is used to compute the ground state for an open system.
-    :param vg: the gate voltages to compute the ground state at
-    :return: the lowest energy charge configuration for each gate voltage coordinate vector
+    :param vg: the dot voltages to compute the ground state at
+    :return: the lowest energy charge configuration for each dot voltage coordinate vector
     """
 
-    # validate the shape of the gate voltage array
+    # validate the shape of the dot voltage array
     _validate_vg(vg, model.n_gate)
 
-    # grabbing the shape of the gate voltage array
+    # grabbing the shape of the dot voltage array
     vg_shape = vg.shape
     nd_shape = (*vg_shape[:-1], model.n_dot)
-    # reshaping the gate voltage array to be of shape (n_points, n_gate)
+    # reshaping the dot voltage array to be of shape (n_points, n_gate)
     vg = vg.reshape(-1, model.n_gate)
 
     # performing the type conversion if necessary
@@ -66,17 +66,17 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
 def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
     """
     This function is used to compute the ground state for a closed system, with a given number of changes.
-    :param vg: the gate voltages to compute the ground state at
+    :param vg: the dot voltages to compute the ground state at
     :param n_charge: the number of changes in the system
-    :return: the lowest energy charge configuration for each gate voltage coordinate vector
+    :return: the lowest energy charge configuration for each dot voltage coordinate vector
     """
-    # validate the shape of the gate voltage array
+    # validate the shape of the dot voltage array
     _validate_vg(vg, model.n_gate)
 
-    # grabbing the shape of the gate voltage array
+    # grabbing the shape of the dot voltage array
     vg_shape = vg.shape
     nd_shape = (*vg_shape[:-1], model.n_dot)
-    # reshaping the gate voltage array to be of shape (n_points, n_gate)
+    # reshaping the dot voltage array to be of shape (n_points, n_gate)
     vg = vg.reshape(-1, model.n_gate)
 
     # performing the type conversion if necessary

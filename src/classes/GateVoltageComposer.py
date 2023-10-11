@@ -11,11 +11,11 @@ from src.typing_classes import Vector
 @dataclass(config=dict(arbitrary_types_allowed=True))
 class GateVoltageComposer(BaseDataClass):
     """
-    This class is used to compose gate voltages for the dot array.
+    This class is used to compose dot voltages for the dot array.
     """
     n_gate: int  # the number of gates
-    gate_voltages: Vector | None = None  # vector of gate voltages encoding the current DC voltages set to the array
-    gate_names: dict[str, int] | None = None  # a dictionary of gate names which can be defined for convenience
+    gate_voltages: Vector | None = None  # vector of dot voltages encoding the current DC voltages set to the array
+    gate_names: dict[str, int] | None = None  # a dictionary of dot names which can be defined for convenience
 
     virtual_gate_origin: np.ndarray | None = None  # the origin to consider virtual gates from
     virtual_gate_matrix: np.ndarray | None = None  # a matrix of virtual gates to be used for the dot array
@@ -42,7 +42,7 @@ class GateVoltageComposer(BaseDataClass):
                 for name, gate in zip(name, gate):
                     assert isinstance(name, str), f'name must be a string, {gate}'
                     self._check_gate(gate)
-                    # now the validation is done setting the name in the gate dict
+                    # now the validation is done setting the name in the dot dict
                     self.gate_names[name] = gate
             case (False, False):  # if neither iterable
                 assert isinstance(name, str), f'name must be a string not {name}'
@@ -53,38 +53,61 @@ class GateVoltageComposer(BaseDataClass):
 
     def _check_gate(self, gate: int):
         if (gate <= - self.n_gate or gate > self.n_gate - 1):
-            raise ValueError(f'Invalid gate {gate}')
+            raise ValueError(f'Invalid dot {gate}')
+
+    def _check_dot(self, dot: int):
+        if (dot <= - self.n_dot or dot > self.n_dot - 1):
+            raise ValueError(f'Invalid dot {dot}')
 
     def _check_virtual_gate(self):
-        # checking the virtual gate parameters are set
+        # checking the virtual dot parameters are set
         assert self.virtual_gate_origin is not None, 'virtual_gate_origin must be set'
         assert self.virtual_gate_matrix is not None, 'virtual_gate_matrix must be set'
 
-        # # checking the shapes of the virtual gate matrix
-        # assert self.virtual_gate_matrix.shape[0] == self.n_gate
-        # assert self.virtual_gate_matrix.shape[1] == self.virtual_gate_origin.shape[0]
-        #
-        # # checking the shape of the virtual gate origin
-        # assert self.virtual_gate_origin.shape[0] == self.n_gate
+    def _fetch_and_check_dot(self, dot: str | int) -> int:
+        """
+        This function is used to fetch the gate index from the gate name.
+        :param dot: the gate voltage to be validated and/or looked up from the name dictionary.
+        :return:
+        """
+        match type(dot):
+            case builtins.int:  # parsing int types
+                # checking the dot number is valid
+                self._check_gate(dot)
+                # parsing negative dot values
+                if dot < 0:
+                    dot = self.n_gate + dot
+                return dot
+            case builtins.str:  # passing string types
+                # checking the name of the dot is a valid name
+                if dot not in self.gate_names.keys():
+                    raise ValueError(f'Gate {dot} not found in dac_names')
+                dot = self.gate_names[dot]
+                self._check_gate(dot)
 
+                if dot < 0:
+                    dot = self.n_gate + dot
 
+                return dot
+            case _:
+                raise ValueError(f'Gate not of type int of string {type(dot)}')
 
     def _fetch_and_check_gate(self, gate: str | int) -> int:
         """
-        This function is used to fetch the gate index from the gate name.
-        :param gate: the gate voltage to be validated and/or looked up from the name dictionary.
+        This function is used to fetch the dot index from the dot name.
+        :param gate: the dot voltage to be validated and/or looked up from the name dictionary.
         :return:
         """
         match type(gate):
             case builtins.int:  # parsing int types
-                # checking the gate number is valid
+                # checking the dot number is valid
                 self._check_gate(gate)
-                # parsing negative gate values
+                # parsing negative dot values
                 if gate < 0:
                     gate = self.n_gate + gate
                 return gate
             case builtins.str:  # passing string types
-                # checking the name of the gate is a valid name
+                # checking the name of the dot is a valid name
                 if gate not in self.gate_names.keys():
                     raise ValueError(f'Gate {gate} not found in dac_names')
                 gate = self.gate_names[gate]
@@ -100,7 +123,7 @@ class GateVoltageComposer(BaseDataClass):
 
     def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int) -> np.ndarray:
         """
-        This function is used to compose a 1d gate voltage array.
+        This function is used to compose a 1d dot voltage array.
         :param x_gate:
         :param x_min:
         :param x_max:
@@ -120,7 +143,7 @@ class GateVoltageComposer(BaseDataClass):
     def do2d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int,
              y_gate: str | int, y_min: float, y_max: float, y_resolution: int) -> np.ndarray:
         """
-        This function is used to compose a 2d gate voltage array.
+        This function is used to compose a 2d dot voltage array.
         :param x_gate:
         :param x_min:
         :param x_max:
@@ -151,7 +174,7 @@ class GateVoltageComposer(BaseDataClass):
     def do2d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_resolution: int,
                      y_dot: str | int, y_min: float, y_max: float, y_resolution: int) -> np.ndarray:
         """
-        This function is used to compose a 2d gate voltage array.
+        This function is used to compose a 2d dot voltage array.
         :param x_dot:
         :param x_min:
         :param x_max:
@@ -162,6 +185,10 @@ class GateVoltageComposer(BaseDataClass):
         :param y_resolution:
         :return:
         """
+
+        x_dot = self._fetch_and_check_dot(x_dot)
+        y_dot = self._fetch_and_check_dot(y_dot)
+
         x = np.linspace(x_min, x_max, x_resolution)
         y = np.linspace(y_min, y_max, y_resolution)
         X, Y = np.meshgrid(x, y)

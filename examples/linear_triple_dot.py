@@ -24,12 +24,11 @@ model = DotArray(
         [0.2, 1., 0.2],
         [0.05, 0.2, 1]
     ],
-    core='jax',
+    core='rust',
 )
 print(model.threshold)
 
-
-# creating the gate voltage composer, which helps us to create the gate voltage array
+# creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
@@ -43,7 +42,7 @@ ground_state_funcs = [
 
 vx_min, vx_max = -2, 0
 vy_min, vy_max = -2, 0
-# using the gate voltage composer to create the gate voltage array for the 2d sweep
+# using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 150, 2, vy_min, vy_max, 150)
 
 # creating the figure and axes

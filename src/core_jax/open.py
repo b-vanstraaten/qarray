@@ -18,8 +18,8 @@ qp = BoxOSQP(check_primal_dual_infeasability=False, verbose=False)
 def compute_analytical_solution_open(cgd: Cgd, vg: Vector) -> Vector | np.ndarray:
     """
     Computes the analytical solution for the continuous charge distribution for an open array.
-    :param cgd: the gate to dot capacitance matrix
-    :param vg: the gate voltage coordinate vector
+    :param cgd: the dot to dot capacitance matrix
+    :param vg: the dot voltage coordinate vector
     :return: the continuous charge distribution
     """
     return cgd @ vg
@@ -29,8 +29,8 @@ def numerical_solver_open(cdd_inv: CddInv, cgd: Cgd, vg: VectorList) -> VectorLi
     """
     Solve the quadratic program for the continuous charge distribution for an open array.
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
-    :param cgd: the gate to dot capacitance matrix
-    :param vg: the gate voltage coordinate vector
+    :param cgd: the dot to dot capacitance matrix
+    :param vg: the dot voltage coordinate vector
     :return: the continuous charge distribution
     """
     n_dot = cdd_inv.shape[0]
@@ -48,8 +48,8 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd, vg):
     Computes the continuous solution for an open array. If the analytical solution is valid, it is returned, otherwise
     the numerical solution is returned.
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
-    :param cgd: the gate to dot capacitance matrix
-    :param vg: the gate voltage coordinate vector
+    :param cgd: the dot to dot capacitance matrix
+    :param vg: the dot voltage coordinate vector
     :return: the continuous charge distribution
     """
     analytical_solution = compute_analytical_solution_open(cgd, vg)
@@ -64,10 +64,10 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd, vg):
 def ground_state_open_jax(vg: VectorList, cgd: Cgd, cdd_inv: CddInv) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
-    :param vg: the gate voltage coordinate vectors to evaluate the ground state at
-    :param cgd: the gate to dot capacitance matrix
+    :param vg: the dot voltage coordinate vectors to evaluate the ground state at
+    :param cgd: the dot to dot capacitance matrix
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
-    :return: the lowest energy charge configuration for each gate voltage coordinate vector
+    :return: the lowest energy charge configuration for each dot voltage coordinate vector
     """
 
     f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv)
@@ -85,8 +85,8 @@ def ground_state_open_jax(vg: VectorList, cgd: Cgd, cdd_inv: CddInv) -> VectorLi
 def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray) -> jnp.ndarray:
     """
     Computes the ground state for an open array.
-    :param vg: the gate voltage coordinate vector
-    :param cgd: the gate to dot capacitance matrix
+    :param vg: the dot voltage coordinate vector
+    :param cgd: the dot to dot capacitance matrix
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :return: the lowest energy charge configuration
     """
@@ -101,8 +101,8 @@ def compute_argmin_open(n_continuous, cdd_inv, cgd, Vg):
     Computes the lowest energy charge configuration for an open array.
     :param n_continuous: the continuous charge distribution
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
-    :param cgd: the gate to dot capacitance matrix
-    :param Vg: the gate voltage coordinate vector
+    :param cgd: the dot to dot capacitance matrix
+    :param Vg: the dot voltage coordinate vector
     :return: the lowest energy charge configuration
     """
 

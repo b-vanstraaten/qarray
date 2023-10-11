@@ -33,7 +33,7 @@ model = DotArray(
 virtual_gate_matrix = np.linalg.pinv(-model.cdd_inv @ model.cgd)
 virtual_gate_origin = np.random.uniform(-0.5, 0.5, size=model.n_gate)
 
-# creating the gate voltage composer, which helps us to create the gate voltage array
+# creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
 voltage_composer = GateVoltageComposer(
     n_gate=model.n_gate,
@@ -49,11 +49,11 @@ ground_state_funcs = [
     partial(model.ground_state_closed, n_charge=3),
 ]
 
-# defining the min and max values for the gate voltage sweep
+# defining the min and max values for the dot voltage sweep
 
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
-# using the gate voltage composer to create the gate voltage array for the 2d sweep
+# using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d_virtual(0, vy_min, vx_max, 400, 1, vy_min, vy_max, 400)
 
 # creating the figure and axes

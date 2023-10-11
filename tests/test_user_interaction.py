@@ -22,10 +22,10 @@ class MyTestCase(unittest.TestCase):
     def test_naming_gates(self):
         gate_voltage_composer = GateVoltageComposer(n_gate=10)
         possibilities = [
-            # (gate_name, gate, should_error)
+            # (gate_name, dot, should_error)
             ('charge_sensor', 9, False),  # this should not error
-            ('charge_sensor', 10, True),  # the should error as the gate value is too large
-            (0, 10, True),  # the should error as the gate value is too large
+            ('charge_sensor', 10, True),  # the should error as the dot value is too large
+            (0, 10, True),  # the should error as the dot value is too large
             ('charge_sensor', -1, False),  # this should not errors as I have accounted for negative indexing
             ('charge_sensor', -11, True),  # this should error as the value is too negative
             (('a', 'b'), (0, 1), False),  # this should not error as I have accounted for iterables

@@ -18,9 +18,9 @@ def compute_analytical_solution_closed(cdd: Cdd, cgd: Cgd, n_charge: NonNegative
     """
     Computes the analytical solution for the continuous charge distribution for a closed array.
     :param cdd: the dot to dot capacitance matrix
-    :param cgd: the gate to dot capacitance matrix
+    :param cgd: the dot to dot capacitance matrix
     :param n_charge: the total number of charge carriers in the array
-    :param vg: the gate voltage coordinate vector
+    :param vg: the dot voltage coordinate vector
     :return: the continuous charge distribution
     """
     n_continuous = jnp.einsum('ij, ...j -> ...i', cgd, vg)
@@ -33,9 +33,9 @@ def numerical_solver_closed(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt,
     """
     Solve the quadratic program for the continuous charge distribution for a closed array.
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
-    :param cgd: the gate to dot capacitance matrix
+    :param cgd: the dot to dot capacitance matrix
     :param n_charge: the total number of charge carriers in the array
-    :param vg: the gate voltage coordinate vector
+    :param vg: the dot voltage coordinate vector
     :return: the continuous charge distribution
     """
     n_dot = cdd_inv.shape[0]
@@ -55,9 +55,9 @@ def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd, n_ch
     Computes the continuous solution for a closed array. If the analytical solution is valid, it is returned, otherwise
     :param cdd: the dot to dot capacitance matrix
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
-    :param cgd: the gate to dot capacitance matrix
+    :param cgd: the dot to dot capacitance matrix
     :param n_charge: the total number of charge carriers in the array
-    :param vg: the gate voltage coordinate vector
+    :param vg: the dot voltage coordinate vector
     :return: the continuous charge distribution
     """
     analytical_solution = compute_analytical_solution_closed(cdd, cgd, n_charge, vg)
@@ -73,12 +73,12 @@ def ground_state_closed_jax(vg: VectorList, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
                             n_charge: NonNegativeInt) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
-    :param vg: the gate voltage coordinate vectors to evaluate the ground state at
-    :param cgd: the gate to dot capacitance matrix
+    :param vg: the dot voltage coordinate vectors to evaluate the ground state at
+    :param cgd: the dot to dot capacitance matrix
     :param cdd: the dot to dot capacitance matrix
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :param n_charge: the total number of charge carriers in the array
-    :return: the lowest energy charge configuration for each gate voltage coordinate vector
+    :return: the lowest energy charge configuration for each dot voltage coordinate vector
    """
 
     f = partial(_ground_state_closed_0d, cgd=cgd, cdd_inv=cdd_inv, cdd=cdd, n_charge=n_charge)
@@ -98,8 +98,8 @@ def _ground_state_closed_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndar
                             n_charge: NonNegativeInt) -> jnp.ndarray:
     """
     Computes the ground state for a closed array.
-    :param vg: the gate voltage coordinate vector
-    :param cgd: the gate to dot capacitance matrix
+    :param vg: the dot voltage coordinate vector
+    :param cgd: the dot to dot capacitance matrix
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :param cdd: the dot to dot capacitance matrix
     :param n_charge: the total number of charge carriers in the array
@@ -116,8 +116,8 @@ def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge):
     Computes the lowest energy charge configuration for a closed array.
     :param n_continuous: the continuous charge distribution
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
-    :param cgd: the gate to dot capacitance matrix
-    :param Vg: the gate voltage coordinate vector
+    :param cgd: the dot to dot capacitance matrix
+    :param Vg: the dot voltage coordinate vector
     :param n_charge: the total number of charge carriers in the array
     :return: the lowest energy charge configuration
     """

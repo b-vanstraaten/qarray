@@ -39,11 +39,11 @@ def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold:
                            polish: bool = True) -> VectorList:
     """
     A wrapper for the rust ground state function that takes in numpy arrays and returns numpy arrays.
-    :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
-    :param cgd: the gate to dot capacitance matrix
+    :param vg: the list of dot voltage coordinate vectors to evaluate the ground state at
+    :param cgd: the dot to dot capacitance matrix
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :param threshold: the threshold to use for the ground state calculation
-    :return: the lowest energy charge configuration for each gate voltage coordinate vector
+    :return: the lowest energy charge configuration for each dot voltage coordinate vector
     """
 
     # enforcing the correct type of float64 type, so the rust code to come won't panic
@@ -58,13 +58,13 @@ def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd,
                              cdd_inv: CddInv, threshold: float, polish: bool = True) -> VectorList:
     """
     A wrapper for the rust ground state isolated function that takes in numpy arrays and returns numpy arrays.
-    :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
+    :param vg: the list of dot voltage coordinate vectors to evaluate the ground state at
     :param n_charge: the number of changes in the array
-    :param cgd: the gate to dot capacitance matrix
+    :param cgd: the dot to dot capacitance matrix
     :param cdd: the dot to dot capacitance matrix
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :param threshold: the threshold to use for the ground state calculation
-    :return: the lowest energy charge configuration for each gate voltage coordinate vector
+    :return: the lowest energy charge configuration for each dot voltage coordinate vector
     """
     # enforcing the correct type of float64 type, so the rust code to come won't panic
     vg = vg.astype(np.float64)

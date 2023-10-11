@@ -35,7 +35,7 @@ model_threshold_default = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core=core,
-    threshold='auto',
+    threshold=0.3,
 )
 
 virtual_gate_origin = np.random.uniform(-10, -1, model_threshold_default.n_gate)

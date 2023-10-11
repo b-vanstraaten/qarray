@@ -126,7 +126,7 @@ class DoubleDotTests(unittest.TestCase):
     def test_optimal_vg(self):
         """
 
-        Test of the optimal gate voltage function which computes the gate voltages which minimise the free energy of a
+        Test of the optimal dot voltage function which computes the dot voltages which minimise the free energy of a
         particular change configuration. For double quantum dots with two gates this means that change state will be the
         ground state.
         """

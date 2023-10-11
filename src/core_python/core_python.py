@@ -109,11 +109,11 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
                              polish: bool = True) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
-        :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
-        :param cgd: the gate to dot capacitance matrix
+        :param vg: the list of dot voltage coordinate vectors to evaluate the ground state at
+        :param cgd: the dot to dot capacitance matrix
         :param cdd_inv: the inverse of the dot to dot capacitance matrix
         :param threshold: the threshold to use for the ground state calculation
-        :return: the lowest energy charge configuration for each gate voltage coordinate vector
+        :return: the lowest energy charge configuration for each dot voltage coordinate vector
         """
     prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, polish=polish)
     f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold, prob=prob)
@@ -126,13 +126,13 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param polish:
-     :param vg: the list of gate voltage coordinate vectors to evaluate the ground state at
+     :param vg: the list of dot voltage coordinate vectors to evaluate the ground state at
      :param n_charge: the number of changes in the array
-     :param cgd: the gate to dot capacitance matrix
+     :param cgd: the dot to dot capacitance matrix
      :param cdd: the dot to dot capacitance matrix
      :param cdd_inv: the inverse of the dot to dot capacitance matrix
      :param threshold: the threshold to use for the ground state calculation
-     :return: the lowest energy charge configuration for each gate voltage coordinate vector
+     :return: the lowest energy charge configuration for each dot voltage coordinate vector
      """
     prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge, polish=polish)
     f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, prob=prob,

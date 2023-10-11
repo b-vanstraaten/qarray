@@ -123,7 +123,7 @@ class CgsNonMaxwell(PositiveValuedMatrix):
 
 class CgdNonMaxwell(PositiveValuedMatrix):
     """
-    Class for the gate-dot capacitance matrix, in its non Maxwell form
+    Class for the dot-dot capacitance matrix, in its non Maxwell form
     """
     pass
 
@@ -142,7 +142,7 @@ class CdsNonMaxwell(PositiveValuedMatrix):
 
 class Cgd(NegativeValuedMatrix):
     """
-    Class for the gate-dot capacitance matrix.
+    Class for the dot-dot capacitance matrix.
     """
     pass
 
