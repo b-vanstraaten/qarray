@@ -1,6 +1,5 @@
 [build-system]
-requires = ["setuptools", "setuptools-scm"]
-build-backend = "setuptools.build_meta"
+requires = ["setuptools ~= 58.0", "cython ~= 0.29.0"]
 
 license = "MIT"
 license-file = "LICENSE.md"
