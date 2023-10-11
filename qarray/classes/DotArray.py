@@ -2,10 +2,10 @@ import numpy as np
 from pydantic import NonNegativeInt
 from pydantic.dataclasses import dataclass
 
-from src.classes.BaseDataClass import BaseDataClass
-from src.functions import convert_to_maxwell, compute_threshold, optimal_Vg
-from src.typing_classes import (CgdNonMaxwell, CddNonMaxwell, VectorList)
+from .BaseDataClass import BaseDataClass
 from ._helper_functions import (_ground_state_open, _ground_state_closed)
+from ..functions import convert_to_maxwell, compute_threshold, optimal_Vg
+from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList
 
 
 @dataclass(config=dict(arbitrary_types_allowed=True))

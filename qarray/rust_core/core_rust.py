@@ -3,10 +3,10 @@ Type hinted wrappers for the rust core functions.
 """
 import numpy as np
 from pydantic import NonNegativeInt
-from rusty_capacitance_model_core import (ground_state_open, ground_state_closed,
-                                          closed_charge_configurations, open_charge_configurations)
+from qarray_rust_core import (ground_state_open, ground_state_closed,
+                              closed_charge_configurations, open_charge_configurations)
 
-from ..typing_classes import (
+from ..qarray_types import (
     CddInv, Cgd, VectorList, Vector, Cdd
 )
 

@@ -7,14 +7,13 @@ import unittest
 
 import numpy as np
 
-from src.core_python.core_python import init_osqp_problem, compute_analytical_solution_open, \
+from qarray.python_core.core_python import init_osqp_problem, compute_analytical_solution_open, \
     compute_analytical_solution_closed
-from src.example_models import randomly_generate_model
+from .helper_functions import randomly_generate_model
 
 N_VOLTAGES = 100
 N_ITERATIONS = 100
 ATOL = 5e-3
-
 
 
 class TestOsqpSolver(unittest.TestCase):

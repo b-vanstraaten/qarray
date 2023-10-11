@@ -1,10 +1,10 @@
 import numpy as np
 from pydantic import NonNegativeInt
 
-from src.core_jax import (ground_state_open_jax, ground_state_closed_jax)
-from src.core_python import (ground_state_open_python, ground_state_closed_python)
-from src.core_rust import (ground_state_open_rust, ground_state_closed_rust)
-from src.typing_classes import VectorList
+from ..jax_core import ground_state_open_jax, ground_state_closed_jax
+from ..python_core import ground_state_open_python, ground_state_closed_python
+from ..qarray_types import VectorList
+from ..rust_core import ground_state_open_rust, ground_state_closed_rust
 
 
 def _validate_vg(vg: VectorList, n_gate: NonNegativeInt):

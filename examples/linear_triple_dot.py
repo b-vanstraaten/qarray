@@ -8,7 +8,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # logger.add(sys.stdout, level="TRACE")
 

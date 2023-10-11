@@ -8,8 +8,8 @@ import jax.numpy as jnp
 from jaxopt import BoxOSQP
 from pydantic import NonNegativeInt
 
-from src.typing_classes import VectorList, CddInv, Cgd, Cdd, Vector
 from .charge_configuration_generators import open_charge_configurations_jax
+from ..qarray_types import VectorList, CddInv, Cgd, Cdd, Vector
 
 qp = BoxOSQP(jit=True, check_primal_dual_infeasability=False, verbose=False)
 

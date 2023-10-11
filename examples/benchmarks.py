@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 np.random.seed(1)
 
-from src import (DotArray)
+from qarray import (DotArray)
 
 N_VOLTAGE_POINTS = 100 ** 2
 

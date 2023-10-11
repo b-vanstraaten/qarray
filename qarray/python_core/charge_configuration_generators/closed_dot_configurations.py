@@ -3,7 +3,7 @@ from itertools import product
 
 import numpy as np
 
-from src.core_python.charge_configuration_generators.open_dot_configurations import open_charge_configurations
+from .open_dot_configurations import open_charge_configurations
 
 
 def sum_eq(array, sum):

@@ -10,7 +10,7 @@ import numpy as np
 from jaxopt import BoxOSQP
 
 from .charge_configuration_generators import open_charge_configurations_jax
-from ..typing_classes import VectorList, CddInv, Cgd, Vector
+from ..qarray_types import VectorList, CddInv, Cgd, Vector
 
 qp = BoxOSQP(check_primal_dual_infeasability=False, verbose=False)
 

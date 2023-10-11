@@ -12,7 +12,7 @@ from pydantic import NonNegativeInt
 from scipy import sparse
 
 from .charge_configuration_generators import (open_charge_configurations, closed_charge_configurations)
-from ..typing_classes import (CddInv, Cgd, VectorList, Cdd)
+from ..qarray_types import CddInv, Cgd, VectorList, Cdd
 
 
 def compute_analytical_solution_open(cgd, vg):

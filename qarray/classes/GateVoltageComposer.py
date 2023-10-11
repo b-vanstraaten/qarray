@@ -4,8 +4,8 @@ from collections.abc import Iterable
 import numpy as np
 from pydantic.dataclasses import dataclass
 
-from src.classes.BaseDataClass import BaseDataClass
-from src.typing_classes import Vector
+from .BaseDataClass import BaseDataClass
+from ..qarray_types import Vector
 
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
@@ -71,14 +71,14 @@ class GateVoltageComposer(BaseDataClass):
         :return:
         """
         match type(dot):
-            case builtins.int:  # parsing int types
+            case builtins.int:  # parsing int qarray_types
                 # checking the dot number is valid
                 self._check_gate(dot)
                 # parsing negative dot values
                 if dot < 0:
                     dot = self.n_gate + dot
                 return dot
-            case builtins.str:  # passing string types
+            case builtins.str:  # passing string qarray_types
                 # checking the name of the dot is a valid name
                 if dot not in self.gate_names.keys():
                     raise ValueError(f'Gate {dot} not found in dac_names')
@@ -99,14 +99,14 @@ class GateVoltageComposer(BaseDataClass):
         :return:
         """
         match type(gate):
-            case builtins.int:  # parsing int types
+            case builtins.int:  # parsing int qarray_types
                 # checking the dot number is valid
                 self._check_gate(gate)
                 # parsing negative dot values
                 if gate < 0:
                     gate = self.n_gate + gate
                 return gate
-            case builtins.str:  # passing string types
+            case builtins.str:  # passing string qarray_types
                 # checking the name of the dot is a valid name
                 if gate not in self.gate_names.keys():
                     raise ValueError(f'Gate {gate} not found in dac_names')

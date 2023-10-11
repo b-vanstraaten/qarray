@@ -4,7 +4,7 @@ from functools import partial
 
 from matplotlib import pyplot as plt
 
-from src import ChargeSensedDotArray, GateVoltageComposer
+from qarray import ChargeSensedDotArray, GateVoltageComposer
 
 cdd_non_maxwell = [
     [0., 0.2],

@@ -7,7 +7,7 @@ import numpy as np
 
 np.random.seed(10)
 
-from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 N = 10
 

@@ -4,7 +4,7 @@ This file contains functions that are used elesewhere in the code.
 
 import numpy as np
 
-from .typing_classes import (CddInv, Cgd, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad)
+from .qarray_types import (CddInv, Cgd, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad)
 
 
 def lorentzian(x, x0, gamma):

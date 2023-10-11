@@ -8,9 +8,10 @@ import unittest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src import (CddInv, Cgd, ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
-                 ground_state_closed_python, Cdd, optimal_Vg, compute_threshold)
-from src.core_jax import ground_state_open_jax, ground_state_closed_jax
+from qarray import (ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
+                    ground_state_closed_python, optimal_Vg, compute_threshold)
+from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
+from qarray.qarray_types import (CddInv, Cgd, Cdd)
 
 N_VOLTAGES = 10
 N_ITERATIONS = 100

@@ -4,7 +4,7 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
-from src import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 cdd_non_maxwell = [
     [0., 0.2, 0.05, 0.01],

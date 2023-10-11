@@ -6,8 +6,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-from src import (optimal_Vg, randomly_generate_model,
-                 GateVoltageComposer, dot_occupation_changes)
+from qarray import (optimal_Vg,
+                    GateVoltageComposer, dot_occupation_changes)
 
 N_VOLTAGES = 100
 N_ITERATIONS = 10

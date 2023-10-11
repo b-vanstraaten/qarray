@@ -3,9 +3,9 @@ from functools import partial
 
 import numpy as np
 
-from src.core_jax.charge_configuration_generators import open_charge_configurations_jax
-from src.core_python.charge_configuration_generators import closed_charge_configurations, open_charge_configurations
-from src.core_rust.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
+from qarray.jax_core.charge_configuration_generators import open_charge_configurations_jax
+from qarray.python_core.charge_configuration_generators import closed_charge_configurations, open_charge_configurations
+from qarray.rust_core.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
 from tests.helper_functions import compare_sets_for_equality, to_set
 
 N_ITERATIONS = 100
