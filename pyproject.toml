@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+license = "MIT"
+license-file = "LICENSE.md"
+
+[project]
+name = "qarray"
+version = "0.0.1"
+requires-python = ">=3.10"
+authors = [
+    { name = 'Barnaby van Straaten', email = 'barnaby.vanstraaten@kellogg.ox.ac.uk' }
+]
+
+
+classifiers = [
+    "Topic :: Scientific/Engineering :: Physics",
+    "Operating System :: OS Independent",
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+
+[project.urls]
+Homepage = 'https://github.com/b-vanstraaten/qarray'

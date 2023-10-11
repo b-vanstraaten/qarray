@@ -1,1 +1,0 @@
-from .closed_dot_configurations import closed_charge_configurations_brute_force
