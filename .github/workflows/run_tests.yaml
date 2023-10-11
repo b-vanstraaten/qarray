@@ -4,12 +4,8 @@ on:
     push:
         branches:
             - main  # Change this to your main branch name if different
-    pull_request:
-        branches:
-            - main  # Change this to your main branch name if different
 
 jobs:
-
     linux:
         runs-on: ubuntu-latest
         strategy:
