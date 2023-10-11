@@ -2,7 +2,6 @@
 requires = ["setuptools ~= 58.0", "cython ~= 0.29.0"]
 
 license = "MIT"
-license-file = "LICENSE.md"
 
 [project]
 name = "qarray"
