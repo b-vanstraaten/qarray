@@ -19,8 +19,8 @@ dependencies = [
     'matplotlib>=3.8',
     'loguru>=0.5',
     'jax>=0.2',
-    'jaxlib>=0.2',
-    'jaxopt>=0.8',
+    'jaxlib>=0.4',
+    'jaxopt>=0.4',
     'tqdm>=4.62',
 ]
 
