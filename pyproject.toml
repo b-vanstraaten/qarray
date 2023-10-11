@@ -1,23 +1,22 @@
+# Poetry pyproject.toml: https://python-poetry.org/docs/pyproject/
 [build-system]
-requires = ["setuptools ~= 58.0", "cython ~= 0.29.0"]
+requires = ["poetry_core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
-license = "MIT"
-
-[project]
+[tool.poetry]
 name = "qarray"
-version = "0.0.1"
-requires-python = ">=3.10"
+version = "0.0.01"
+description = ""
+readme = "README.md"
 authors = [
     { name = 'Barnaby van Straaten', email = 'barnaby.vanstraaten@kellogg.ox.ac.uk' }
 ]
-
-
-classifiers = [
-    "Topic :: Scientific/Engineering :: Physics",
-    "Operating System :: OS Independent",
-    "Programming Language :: Rust",
-    "Programming Language :: Python :: Implementation :: CPython",
+license = "MIT"
+repository = "https://github.com/b-vanstraaten/qarray"
+homepage = "https://github.com/b-vanstraaten/qarray"
+keywords = [
 ]
 
-[project.urls]
-Homepage = 'https://github.com/b-vanstraaten/qarray'
+# Pypi classifiers: https://pypi.org/classifiers/
+classifiers = [
+]
