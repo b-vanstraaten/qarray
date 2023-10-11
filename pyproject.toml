@@ -9,7 +9,7 @@ version = "0.0.01"
 description = ""
 readme = "README.md"
 authors = [
-    { name = 'Barnaby van Straaten', email = 'barnaby.vanstraaten@kellogg.ox.ac.uk' }
+    'Barnaby van Straaten'
 ]
 license = "MIT"
 repository = "https://github.com/b-vanstraaten/qarray"
