@@ -166,9 +166,9 @@ class GateVoltageComposer(BaseDataClass):
             if not gate == x_gate and not gate == y_gate:
                 vg[..., gate] = self.gate_voltages[gate]
             if gate == x_gate:
-                vg[..., gate] = X
+                vg[..., gate] = X.T
             if gate == y_gate:
-                vg[..., gate] = Y
+                vg[..., gate] = Y.T
         return vg
 
     def do2d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_resolution: int,
