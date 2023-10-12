@@ -27,7 +27,7 @@ cgd_non_maxwell = [
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='rust'
+    core='jax'
 )
 
 virtual_gate_matrix = np.linalg.pinv(-model.cdd_inv @ model.cgd)

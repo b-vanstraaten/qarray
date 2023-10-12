@@ -27,7 +27,7 @@ cgd_non_maxwell = [
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='rust'
+    core='jax'
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
@@ -36,7 +36,7 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
-    model.ground_state_open,
+    partial(model.ground_state_closed, n_charge=1),
     partial(model.ground_state_closed, n_charge=1),
     partial(model.ground_state_closed, n_charge=2),
     partial(model.ground_state_closed, n_charge=3),
@@ -47,7 +47,7 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 0
 vy_min, vy_max = -10, 0
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 61, 3, vy_min, vy_max, 61)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 3, vy_min, vy_max, 1000)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

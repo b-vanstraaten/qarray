@@ -86,10 +86,8 @@ def ground_state_closed_jax(vg: VectorList, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
     match jax.local_device_count():
         case 0:
             raise ValueError('Must have at least one device')
-        case 1:
-            f = jax.vmap(f)
         case _:
-            f = jax.pmap(f)
+            f = jax.vmap(f)
     return f(vg)
 
 

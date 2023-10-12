@@ -56,7 +56,8 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd, vg):
     return jax.lax.cond(
         jnp.all(analytical_solution >= 0),
         lambda: analytical_solution,
-        lambda: numerical_solver_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg),
+        lambda: analytical_solution
+        # lambda: numerical_solver_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg),
     )
 
 
@@ -74,10 +75,8 @@ def ground_state_open_jax(vg: VectorList, cgd: Cgd, cdd_inv: CddInv) -> VectorLi
     match jax.local_device_count():
         case 0:
             raise ValueError('Must have at least one device')
-        case 1:
-            f = jax.vmap(f)
         case _:
-            f = jax.pmap(f)
+            f = jax.vmap(f)
     return f(vg)
 
 

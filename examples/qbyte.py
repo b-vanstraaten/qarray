@@ -18,8 +18,7 @@ cgd = np.eye(N) + np.random.uniform(0., 0.2, size=N ** 2).reshape(N, N)
 model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
-    core='rust',
-    threshold=0.25,
+    core='jax',
 )
 
 virtual_gate_origin = np.random.uniform(-10, -1, model.n_gate)
@@ -42,7 +41,7 @@ ground_state_funcs = [
 vx_min, vx_max = -5, 5
 vy_min, vy_max = -5, 5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d_virtual(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg = voltage_composer.do2d_virtual(0, vy_min, vx_max, 100, 3, vy_min, vy_max, 100)
 vg += model.optimal_Vg(np.ones(model.n_dot))
 
 
