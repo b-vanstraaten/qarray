@@ -33,12 +33,12 @@ class DotArray(BaseDataClass):
                 if np.all(self.cgd > 0):
                     self.cgd = Cgd_electrons(self.cgd)
                 else:
-                    raise ValueError('The capacitance matrix cgd must be positive')
+                    self.cgd = Cgd_electrons(-self.cgd)
             case 'hole':
                 if np.all(self.cgd > 0):
                     self.cgd = Cgd_holes(-self.cgd)
                 else:
-                    raise ValueError('The capacitance matrix cgd must be positive')
+                    self.cgd = Cgd_holes(self.cgd)
             case _:
                 raise ValueError(f'charge_carrier must be either "electron" or "hole {self.charge_carrier}"')
 

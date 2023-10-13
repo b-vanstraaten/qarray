@@ -18,7 +18,7 @@ N = 3
 # for sweeping in 1d and 2d
 
 for i in range(10000):
-    cdd = np.random.uniform(0, 0.2, size=N ** 2).reshape(N, N)
+    cdd = np.random.uniform(0.0, 0.2, size=N ** 2).reshape(N, N)
     cdd = (cdd + cdd.T) / 2.
     cgd = np.eye(N) + np.random.uniform(0., 0.2, size=N ** 2).reshape(N, N)
 

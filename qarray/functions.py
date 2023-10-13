@@ -4,7 +4,8 @@ This file contains functions that are used elesewhere in the code.
 
 import numpy as np
 
-from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad)
+from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad,
+                           NegativeValuedMatrix)
 
 
 def lorentzian(x, x0, gamma):
@@ -82,7 +83,7 @@ def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMa
     cgd_sum = cgd_non_maxwell.sum(axis=1)
     cdd = Cdd(np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell)
     cdd_inv = CddInv(np.linalg.inv(cdd))
-    cgd = Cgd_holes(cgd_non_maxwell)
+    cgd = NegativeValuedMatrix(-cgd_non_maxwell)
     return cdd, cdd_inv, cgd
 
 def compute_threshold(cdd: Cdd) -> float:
