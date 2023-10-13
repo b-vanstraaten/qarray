@@ -12,7 +12,7 @@ from pydantic import NonNegativeInt
 from scipy import sparse
 
 from .charge_configuration_generators import (open_charge_configurations, closed_charge_configurations)
-from ..qarray_types import CddInv, Cgd, VectorList, Cdd
+from ..qarray_types import CddInv, Cgd_holes, VectorList, Cdd
 
 
 def compute_analytical_solution_open(cgd, vg):
@@ -26,7 +26,7 @@ def compute_analytical_solution_closed(cdd, cgd, n_charge, vg):
     return n_continuous + isolation_correction
 
 
-def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt | None = None,
+def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd_holes, n_charge: NonNegativeInt | None = None,
                       polish: bool = True) -> osqp.OSQP:
     """
     Initializes the OSQP solver for the closed dot array model_threshold_1
@@ -79,7 +79,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, cgd=cgd, vg=vg)
 
 
-def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv, prob,
+def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv, prob,
                             threshold) -> np.ndarray:
     """
     :param vg:
@@ -105,7 +105,7 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd, cdd: Cdd, c
                                  threshold=threshold)
 
 
-def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float,
+def ground_state_open_python(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, threshold: float,
                              polish: bool = True) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
@@ -121,7 +121,7 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshol
     return VectorList(list(N))
 
 
-def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd,
+def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes, cdd: Cdd,
                                cdd_inv: CddInv, threshold: float, polish: bool = True) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.

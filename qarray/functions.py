@@ -4,7 +4,7 @@ This file contains functions that are used elesewhere in the code.
 
 import numpy as np
 
-from .qarray_types import (CddInv, Cgd, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad)
+from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad)
 
 
 def lorentzian(x, x0, gamma):
@@ -25,7 +25,8 @@ def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     change_in_y = np.logical_not(np.isclose(n[:-1, 1:, :], n[:-1, :-1, :], atol=1e-3)).any(axis=(-1))
     return np.logical_or(change_in_x, change_in_y)
 
-def optimal_Vg(cdd_inv: CddInv, cgd: Cgd, n_charges: VectorList, rcond: float = 1e-3):
+
+def optimal_Vg(cdd_inv: CddInv, cgd: Cgd_holes, n_charges: VectorList, rcond: float = 1e-3):
     '''
     calculate voltage that mminimises charge state energy
 
@@ -70,8 +71,7 @@ def convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwe
     return convert_to_maxwell(cdd_non_maxwell_full, cgd_non_maxwell_full)
 
 
-
-def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (Cdd, Cgd):
+def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (Cdd, Cgd_holes):
     """
     Function to convert the non Maxwell capacitance matrices to their maxwell form.
     :param cdd_non_maxwell:
@@ -82,7 +82,7 @@ def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMa
     cgd_sum = cgd_non_maxwell.sum(axis=1)
     cdd = Cdd(np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell)
     cdd_inv = CddInv(np.linalg.inv(cdd))
-    cgd = Cgd(-cgd_non_maxwell)
+    cgd = Cgd_holes(cgd_non_maxwell)
     return cdd, cdd_inv, cgd
 
 def compute_threshold(cdd: Cdd) -> float:

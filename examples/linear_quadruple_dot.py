@@ -12,10 +12,10 @@ from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model_threshold_1
 cdd_non_maxwell = [
-    [0., 0.2, 0.05, 0.01],
-    [0.2, 0., 0.2, 0.05],
-    [0.05, 0.2, 0., 0.2],
-    [0.01, 0.05, 0.2, 0]
+    [0., 0.1, 0.05, 0.01],
+    [0.1, 0., 0.1, 0.05],
+    [0.05, 0.1, 0., 0.1],
+    [0.01, 0.05, 0.1, 0]
 ]
 cgd_non_maxwell = [
     [1., 0.2, 0.05, 0.01],
@@ -27,7 +27,7 @@ cgd_non_maxwell = [
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='jax'
+    core='rust'
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
@@ -36,7 +36,7 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
-    partial(model.ground_state_closed, n_charge=1),
+    model.ground_state_open,
     partial(model.ground_state_closed, n_charge=1),
     partial(model.ground_state_closed, n_charge=2),
     partial(model.ground_state_closed, n_charge=3),
@@ -47,7 +47,9 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 0
 vy_min, vy_max = -10, 0
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 3, vy_min, vy_max, 1000)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg += model.optimal_Vg(np.zeros(model.n_dot) + 0.5)
+
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

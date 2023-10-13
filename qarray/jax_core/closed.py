@@ -9,12 +9,12 @@ from jaxopt import BoxOSQP
 from pydantic import NonNegativeInt
 
 from .charge_configuration_generators import open_charge_configurations_jax
-from ..qarray_types import VectorList, CddInv, Cgd, Cdd, Vector
+from ..qarray_types import VectorList, CddInv, Cgd_holes, Cdd, Vector
 
 qp = BoxOSQP(jit=True, check_primal_dual_infeasability=False, verbose=False)
 
 
-def compute_analytical_solution_closed(cdd: Cdd, cgd: Cgd, n_charge: NonNegativeInt, vg: Vector) -> Vector:
+def compute_analytical_solution_closed(cdd: Cdd, cgd: Cgd_holes, n_charge: NonNegativeInt, vg: Vector) -> Vector:
     """
     Computes the analytical solution for the continuous charge distribution for a closed array.
     :param cdd: the dot to dot capacitance matrix
@@ -29,7 +29,7 @@ def compute_analytical_solution_closed(cdd: Cdd, cgd: Cgd, n_charge: NonNegative
     return n_continuous + isolation_correction
 
 
-def numerical_solver_closed(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt, vg: VectorList) -> VectorList:
+def numerical_solver_closed(cdd_inv: CddInv, cgd: Cgd_holes, n_charge: NonNegativeInt, vg: VectorList) -> VectorList:
     """
     Solve the quadratic program for the continuous charge distribution for a closed array.
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
@@ -50,7 +50,7 @@ def numerical_solver_closed(cdd_inv: CddInv, cgd: Cgd, n_charge: NonNegativeInt,
     return params.primal[0]
 
 
-def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd, n_charge, vg):
+def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd_holes, n_charge, vg):
     """
     Computes the continuous solution for a closed array. If the analytical solution is valid, it is returned, otherwise
     :param cdd: the dot to dot capacitance matrix
@@ -68,8 +68,7 @@ def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd, n_ch
     )
 
 
-
-def ground_state_closed_jax(vg: VectorList, cgd: Cgd, cdd: Cdd, cdd_inv: CddInv,
+def ground_state_closed_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
                             n_charge: NonNegativeInt) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.

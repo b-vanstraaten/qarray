@@ -7,7 +7,7 @@ from qarray_rust_core import (ground_state_open, ground_state_closed,
                               closed_charge_configurations, open_charge_configurations)
 
 from ..qarray_types import (
-    CddInv, Cgd, VectorList, Vector, Cdd
+    CddInv, Cgd_holes, VectorList, Vector, Cdd
 )
 
 
@@ -35,7 +35,7 @@ def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativ
     return VectorList(closed_charge_configurations(n_continuous, n_charge, threshold))
 
 
-def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold: float,
+def ground_state_open_rust(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, threshold: float,
                            polish: bool = True) -> VectorList:
     """
     A wrapper for the rust ground state function that takes in numpy arrays and returns numpy arrays.
@@ -54,7 +54,7 @@ def ground_state_open_rust(vg: VectorList, cgd: Cgd, cdd_inv: CddInv, threshold:
     return VectorList(ground_state_open(vg, cgd, cdd_inv, threshold, polish))
 
 
-def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd, cdd: Cdd,
+def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes, cdd: Cdd,
                              cdd_inv: CddInv, threshold: float, polish: bool = True) -> VectorList:
     """
     A wrapper for the rust ground state isolated function that takes in numpy arrays and returns numpy arrays.

@@ -10,12 +10,12 @@ import numpy as np
 from jaxopt import BoxOSQP
 
 from .charge_configuration_generators import open_charge_configurations_jax
-from ..qarray_types import VectorList, CddInv, Cgd, Vector
+from ..qarray_types import VectorList, CddInv, Cgd_holes, Vector
 
 qp = BoxOSQP(check_primal_dual_infeasability=False, verbose=False)
 
 
-def compute_analytical_solution_open(cgd: Cgd, vg: Vector) -> Vector | np.ndarray:
+def compute_analytical_solution_open(cgd: Cgd_holes, vg: Vector) -> Vector | np.ndarray:
     """
     Computes the analytical solution for the continuous charge distribution for an open array.
     :param cgd: the dot to dot capacitance matrix
@@ -25,7 +25,7 @@ def compute_analytical_solution_open(cgd: Cgd, vg: Vector) -> Vector | np.ndarra
     return cgd @ vg
 
 
-def numerical_solver_open(cdd_inv: CddInv, cgd: Cgd, vg: VectorList) -> VectorList | np.ndarray:
+def numerical_solver_open(cdd_inv: CddInv, cgd: Cgd_holes, vg: VectorList) -> VectorList | np.ndarray:
     """
     Solve the quadratic program for the continuous charge distribution for an open array.
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
@@ -43,7 +43,7 @@ def numerical_solver_open(cdd_inv: CddInv, cgd: Cgd, vg: VectorList) -> VectorLi
     return params.primal[0]
 
 
-def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd, vg):
+def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd_holes, vg):
     """
     Computes the continuous solution for an open array. If the analytical solution is valid, it is returned, otherwise
     the numerical solution is returned.
@@ -56,13 +56,11 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd, vg):
     return jax.lax.cond(
         jnp.all(analytical_solution >= 0),
         lambda: analytical_solution,
-        lambda: analytical_solution
-        # lambda: numerical_solver_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg),
+        lambda: numerical_solver_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg),
     )
 
 
-
-def ground_state_open_jax(vg: VectorList, cgd: Cgd, cdd_inv: CddInv) -> VectorList:
+def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at

@@ -11,7 +11,7 @@ import numpy as np
 from qarray import (ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
                     ground_state_closed_python, optimal_Vg, compute_threshold)
 from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
-from qarray.qarray_types import (CddInv, Cgd, Cdd)
+from qarray.qarray_types import (CddInv, Cgd_holes, Cdd)
 
 N_VOLTAGES = 10
 N_ITERATIONS = 100
@@ -24,7 +24,7 @@ def double_dot_matrices():
     cdd = Cdd(np.linalg.inv(cdd_inv))
     cgd = np.eye(2) + np.random.uniform(-0.5, 0.5, size=(2, 2))
     cgd = np.clip(cgd, 0, None)
-    return Cdd(cdd), CddInv(cdd_inv), Cgd(-cgd)
+    return Cdd(cdd), CddInv(cdd_inv), Cgd_holes(-cgd)
 
 
 class DoubleDotTests(unittest.TestCase):
