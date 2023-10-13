@@ -9,7 +9,7 @@ np.random.seed(10)
 
 from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
-N = 10
+N = 16
 
 cdd = np.random.uniform(0, 0.2, size=N ** 2).reshape(N, N)
 cdd = (cdd + cdd.T) / 2.
@@ -18,7 +18,7 @@ cgd = np.eye(N) + np.random.uniform(0., 0.2, size=N ** 2).reshape(N, N)
 model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
-    core='jax',
+    core='rust',
 )
 
 virtual_gate_origin = np.random.uniform(-10, -1, model.n_gate)
