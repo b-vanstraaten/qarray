@@ -18,7 +18,7 @@ model = DotArray(
     cgd_non_maxwell=[
         [1., 0.2],
         [0.2, 1.]
-    ], core='rust'
+    ], core='jax_brute_force'
 )
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
@@ -26,7 +26,7 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
-    partial(model.ground_state_closed, n_charge=0),
+    model.ground_state_open,
     partial(model.ground_state_closed, n_charge=1),
     partial(model.ground_state_closed, n_charge=2),
     partial(model.ground_state_closed, n_charge=3),

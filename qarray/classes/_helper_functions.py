@@ -1,6 +1,7 @@
 import numpy as np
 from pydantic import NonNegativeInt
 
+from ..jax_brute_force_core import ground_state_open_jax_brute_force, ground_state_closed_jax_brute_force
 from ..jax_core import ground_state_open_jax, ground_state_closed_jax
 from ..python_core import ground_state_open_python, ground_state_closed_python
 from ..qarray_types import VectorList
@@ -53,6 +54,14 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
             )
+
+        case 'jax_brute_force':
+            if model.threshold < 1.:
+                print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
+            result = ground_state_open_jax_brute_force(
+                vg=vg, cgd=model.cgd,
+                cdd_inv=model.cdd_inv,
+            )
         case 'python':
             result = ground_state_open_python(
                 vg=vg, cgd=model.cgd,
@@ -102,6 +111,15 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
             )
+
+        case 'jax_brute_force':
+            if model.threshold < 1.:
+                print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
+            result = ground_state_closed_jax_brute_force(
+                vg=vg, n_charge=n_charge, cgd=model.cgd,
+                cdd=model.cdd, cdd_inv=model.cdd_inv,
+            )
+
         case 'python':
             result = ground_state_closed_python(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,

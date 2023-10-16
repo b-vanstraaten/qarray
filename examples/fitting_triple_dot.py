@@ -33,7 +33,7 @@ cgd = np.array([
 model = DotArray(
     cdd=cdd,
     cgd=cgd,
-    core='rust',
+    core='jax_brute_force',
     charge_carrier='electron',
 )
 
@@ -48,7 +48,6 @@ vy_min, vy_max = -2, 4
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, res, 2, vy_min, vy_max, res)
 vg += np.array([0., -0.5, 0.])
-
 
 fig, ax = plt.subplots()
 t0 = time.time()
