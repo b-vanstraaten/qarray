@@ -56,11 +56,17 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
             )
 
         case 'jax_brute_force':
+
+            if model.max_charge_carriers is None:
+                message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
+                           '\nmodel.max_charge_carriers = #')
+                raise ValueError(message)
+
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
             result = ground_state_open_jax_brute_force(
                 vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv,
+                cdd_inv=model.cdd_inv, max_number_of_charge_carriers=model.max_charge_carriers
             )
         case 'python':
             result = ground_state_open_python(
@@ -117,7 +123,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
             result = ground_state_closed_jax_brute_force(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv,
+                cdd=model.cdd, cdd_inv=model.cdd_inv
             )
 
         case 'python':

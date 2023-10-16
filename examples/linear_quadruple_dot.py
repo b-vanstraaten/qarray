@@ -27,8 +27,9 @@ cgd_non_maxwell = [
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='rust'
+    core='rust',
 )
+model.max_charge_carriers = 10
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d

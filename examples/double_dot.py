@@ -18,8 +18,10 @@ model = DotArray(
     cgd_non_maxwell=[
         [1., 0.2],
         [0.2, 1.]
-    ], core='jax_brute_force'
+    ], core='jax'
 )
+model.max_charge_carriers = 3
+
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)

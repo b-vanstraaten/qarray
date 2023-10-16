@@ -22,6 +22,7 @@ class DotArray(BaseDataClass):
     threshold: float | str | None = 1.  # a float specifying the threshold for the charge sensing
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 
+    max_charge_carriers: int | None = None  # the maximum number of change carriers, only used for jax_brute_force
     def __post_init__(self):
 
         if self.cdd_non_maxwell is not None and self.cgd_non_maxwell is not None:
