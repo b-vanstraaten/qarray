@@ -1,15 +1,20 @@
+import os
 import time
 
+import jax
 import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
+
+os.environ['CUDA_VISIBLE_DEVICES'] = '5'
+devices = jax.local_devices()
 
 np.random.seed(1)
 
 from qarray import (DotArray)
 
 N_VOLTAGE_POINTS = 10000
-N_MODEL_MAX = 1000
+N_MODEL_MAX = 10000
 T_MAX = 10
 
 
@@ -34,8 +39,9 @@ def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=Tr
                 threshold=1.,
                 core=core
             )
+            model.max_charge_carriers = N
 
-            if core == 'jax':
+            if core in ['jax', 'jax_brute_force']:
                 Vg = np.random.uniform(-10, 0, (n_voltage_points, model.n_gate))
 
                 if state == 'open':
@@ -53,7 +59,6 @@ def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=Tr
 
             t1 = time.time()
             times[i, n] = t1 - t0
-
             n += 1
 
     if plot:
@@ -68,18 +73,19 @@ def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=Tr
         plt.show()
 
     if save:
-        np.savez(f'./benchmark_data/{core}_{state}_benchmark.npz', n_dots=n_dots, times=times)
-
+        np.savez(f'./benchmark_data/{core}_{state}_benchmark_GPU.npz', n_dots=n_dots, times=times)
     return times
 
 
 benchmark_combinations = [
-    ('rust', 'open', np.arange(16, 1, -1)),
-    ('rust', 'closed', np.arange(16, 1, -1)),
-    ('jax', 'open', np.arange(12, 1, -1)),
-    ('jax', 'closed', np.arange(12, 1, -1)),
-    ('python', 'open', np.arange(8, 1, -1)),
-    ('python', 'closed', np.arange(8, 1, -1)),
+    # ('rust', 'open', np.arange(16, 1, -1)),
+    # ('rust', 'closed', np.arange(16, 1, -1)),
+    # ('jax', 'open', np.arange(8, 1, -1)),
+    # ('jax', 'closed', np.arange(8, 1, -1)),
+    # ('python', 'open', np.arange(8, 1, -1)),
+    # ('python', 'closed', np.arange(8, 1, -1)),
+    ('jax_brute_force', 'open', np.arange(5, 1, -1)),
+    ('jax_brute_force', 'closed', np.arange(5, 1, -1)),
 ]
 
 for core, state, n_dots in benchmark_combinations:

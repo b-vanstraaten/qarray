@@ -86,7 +86,6 @@ class DoubleDotTests(unittest.TestCase):
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
             n_rust = ground_state_closed_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             n_python = ground_state_closed_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
-
             n_jax = ground_state_closed_jax(vg, n_charge=1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
             self.assertTrue(np.allclose(n_rust, n_python))
             self.assertTrue(np.allclose(n_rust, n_jax))

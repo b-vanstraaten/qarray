@@ -18,7 +18,7 @@ cgd_non_maxwell = [
 ]
 
 core = 'rust'
-n_charge = None
+n_charge = 2
 
 # noinspection PyArgumentList
 model_threshold_1 = DotArray(

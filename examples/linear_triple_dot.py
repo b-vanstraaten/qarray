@@ -27,6 +27,7 @@ model = DotArray(
     core='rust',
 )
 print(model.threshold)
+model.max_charge_carriers = 3
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d

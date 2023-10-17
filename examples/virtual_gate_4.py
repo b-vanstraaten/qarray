@@ -27,7 +27,7 @@ cgd_non_maxwell = [
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='jax'
+    core='rust'
 )
 
 virtual_gate_matrix = np.linalg.pinv(-model.cdd_inv @ model.cgd)
@@ -54,7 +54,7 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d_virtual(0, vy_min, vx_max, 400, 1, vy_min, vy_max, 400)
+vg = voltage_composer.do2d_virtual(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

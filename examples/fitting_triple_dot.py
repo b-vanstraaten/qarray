@@ -33,9 +33,10 @@ cgd = np.array([
 model = DotArray(
     cdd=cdd,
     cgd=cgd,
-    core='jax_brute_force',
+    core='rust',
     charge_carrier='electron',
 )
+model.max_charge_carriers = 4
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
@@ -56,5 +57,6 @@ t1 = time.time()
 z = dot_occupation_changes(n)
 print(f'Computing took {t1 - t0: .3f} seconds')
 
-ax.imshow(z, cmap='Greys', extent=[vx_min, vx_max, vy_min, vy_max], origin='lower')
+ax.imshow(z, cmap='Greys', extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', interpolation='antialiased')
+plt.savefig('triple_dot.pdf', bbox_inches='tight')
 plt.show()

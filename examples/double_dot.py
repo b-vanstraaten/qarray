@@ -18,7 +18,8 @@ model = DotArray(
     cgd_non_maxwell=[
         [1., 0.2],
         [0.2, 1.]
-    ], core='jax'
+    ], core='jax',
+    charge_carrier='hole'
 )
 model.max_charge_carriers = 3
 
@@ -35,10 +36,10 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -2, 2
-vy_min, vy_max = -2, 2
+vx_min, vx_max = -10, 10
+vy_min, vy_max = -10, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 1, vy_min, vy_max, 1000)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
