@@ -6,16 +6,12 @@ from tqdm import tqdm
 
 from qarray import (ground_state_open_rust, ground_state_closed_rust, dot_occupation_changes)
 from qarray.jax_brute_force_core import ground_state_open_jax_brute_force, ground_state_closed_jax_brute_force
-from tests.helper_functions import randomly_generate_matrices
+from tests.helper_functions import randomly_generate_matrices, too_different
 
 N_VOLTAGES = 100
 N_ITERATIONS = 10
 
 
-def too_different(n1, n2):
-    different = np.any(np.logical_not(np.isclose(n1, n2)), axis=-1)
-    number_of_different = different.sum()
-    return number_of_different > 0.001 * different.size
 
 
 class BruteForceTests(unittest.TestCase):

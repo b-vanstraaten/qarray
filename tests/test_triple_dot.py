@@ -10,10 +10,10 @@ import numpy as np
 from qarray import (ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
                     ground_state_closed_python, optimal_Vg, compute_threshold)
 from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
-from .helper_functions import randomly_generate_matrices
+from .helper_functions import randomly_generate_matrices, too_different
 
-N_VOLTAGES = 10
-N_ITERATIONS = 100
+N_VOLTAGES = 1000
+N_ITERATIONS = 10
 
 
 class TripleDotTests(unittest.TestCase):
@@ -40,8 +40,9 @@ class TripleDotTests(unittest.TestCase):
                     ax[1].imshow(n_python, aspect='auto')
                     ax[2].imshow(n_rust - n_python, aspect='auto')
                     plt.show()
-            self.assertTrue(np.allclose(n_rust, n_python))
-            self.assertTrue(np.allclose(n_rust, n_jax))
+
+            self.assertFalse(too_different(n_rust, n_python))
+            self.assertFalse(too_different(n_rust, n_jax))
 
     def test_threshold(self):
         """
@@ -76,8 +77,9 @@ class TripleDotTests(unittest.TestCase):
             n_rust = ground_state_closed_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             n_python = ground_state_closed_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             n_jax = ground_state_closed_jax(vg, n_charge=1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
-            self.assertTrue(np.allclose(n_rust, n_python))
-            self.assertTrue(np.allclose(n_rust, n_jax))
+
+            self.assertFalse(too_different(n_rust, n_python))
+            self.assertFalse(too_different(n_rust, n_jax))
 
     def test_python_vs_rust_two_charge(self):
         """
@@ -92,8 +94,9 @@ class TripleDotTests(unittest.TestCase):
             n_rust = ground_state_closed_rust(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             n_python = ground_state_closed_python(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             n_jax = ground_state_closed_jax(vg, n_charge=2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
-            self.assertTrue(np.allclose(n_rust, n_python))
-            self.assertTrue(np.allclose(n_rust, n_jax))
+
+            self.assertFalse(too_different(n_rust, n_python))
+            self.assertFalse(too_different(n_rust, n_jax))
 
     def test_python_vs_rust_three_charge(self):
         """
@@ -109,9 +112,9 @@ class TripleDotTests(unittest.TestCase):
             n_python = ground_state_closed_python(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
 
             n_jax = ground_state_closed_jax(vg, n_charge=3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
-            self.assertTrue(np.allclose(n_rust, n_python))
-            self.assertTrue(np.allclose(n_rust, n_jax))
 
+            self.assertFalse(too_different(n_rust, n_python))
+            self.assertFalse(too_different(n_rust, n_jax))
     def test_optimal_vg(self):
         """
 

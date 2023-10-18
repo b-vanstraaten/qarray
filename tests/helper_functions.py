@@ -7,11 +7,21 @@ from qarray import DotArray, convert_to_maxwell
 from qarray.qarray_types import CddInv, Cgd_holes, Cdd
 
 
-def randomly_generate_matrices(n_dot):
+def too_different(n1, n2):
+    different = np.any(np.logical_not(np.isclose(n1, n2)), axis=-1)
+    number_of_different = different.sum()
+    return number_of_different > 0.001 * different.size
+
+
+def randomly_generate_matrices(n_dot, n_gates=None):
+    if n_gates is None:
+        n_gates = n_dot
+
     cdd_non_maxwell = np.random.uniform(0, 1., size=(n_dot, n_dot))
+    np.fill_diagonal(cdd_non_maxwell, 0)
     cdd_non_maxwell = (cdd_non_maxwell + cdd_non_maxwell.T) / 2.
 
-    cgd_non_maxwell = np.eye(n_dot) + np.random.uniform(-0.5, 0.5, size=(n_dot, n_dot))
+    cgd_non_maxwell = np.eye(n_dot) + np.random.uniform(-0.5, 0.5, size=(n_dot, n_gates))
     cgd_non_maxwell = np.clip(cgd_non_maxwell, 0, None)
 
     cdd, cdd_inv, cgd_non_maxwell = convert_to_maxwell(cdd_non_maxwell, cgd_non_maxwell)
@@ -40,15 +50,13 @@ def randomly_generate_model(n_dots: int, n_gates: int, n_models: int = 1) -> Dot
     """
     match n_models:
         case 1:
-            cdd = generate_random_cdd(n_dots)
-            cgd = generate_random_cgd(n_dots, n_gates)
-            return DotArray(cdd_non_maxwell=cdd, cgd_non_maxwell=cgd)
+            cdd, _, cgd = randomly_generate_matrices(n_dots, n_gates)
+            return DotArray(cdd=cdd, cgd=-cgd)
         case _:
             models = []
             for i in range(n_models):
-                cdd = generate_random_cdd(n_dots)
-                cgd = generate_random_cgd(n_dots, n_gates)
-                model = DotArray(cdd_non_maxwell=cdd, cgd_non_maxwell=cgd)
+                cdd, _, cgd = randomly_generate_matrices(n_dots, n_gates)
+                model = DotArray(cdd=cdd, cgd=-cgd)
                 models.append(model)
             return models
 

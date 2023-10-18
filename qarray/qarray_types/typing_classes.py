@@ -67,7 +67,7 @@ class SquareMatrix(Matrix):
     def validate(self):
         super().validate()
         if self.shape[0] != self.shape[1]:
-            raise ValueError(f'Matrix not square - {self.shape}')
+            raise ValueError(f'Matrix not square - \n{self}')
 
 
 class SymmetricMatrix(SquareMatrix):
@@ -78,7 +78,8 @@ class SymmetricMatrix(SquareMatrix):
     def validate(self):
         super().validate()
         if not np.allclose(self, self.T):
-            raise ValueError(f'Matrix not symmetric -\n{self}')
+            message = f'Matrix not symmetric -\n{self}'
+            raise ValueError(message)
 
 
 class PositiveValuedMatrix(Matrix):
