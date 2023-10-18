@@ -52,7 +52,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
 
             result = ground_state_open_jax(
                 vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv,
+                cdd_inv=model.cdd_inv, T=model.T
             )
 
         case 'jax_brute_force':
@@ -109,13 +109,14 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
                 threshold=model.threshold, polish=model.polish
             )
+
         case 'jax':
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using of 1.0')
 
             result = ground_state_closed_jax(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv,
+                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T
             )
 
         case 'jax_brute_force':
@@ -132,8 +133,11 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
                 threshold=model.threshold, polish=model.polish
             )
+
         case _:
             raise ValueError(f'Incorrect core {model.core}, it must be either rust, jax or python')
+
     assert np.all(
-        result.astype(int).sum(axis=-1) == n_charge), 'The number of charges is not correct something went wrong'
+        np.isclose(result.sum(axis=-1), n_charge)), 'The number of charges is not correct something went wrong'
+
     return result.reshape(nd_shape)

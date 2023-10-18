@@ -36,7 +36,7 @@ def ground_state_closed_jax_brute_force(vg: VectorList, cgd: Cgd_holes, cdd: Cdd
 
 @jax.jit
 def _ground_state_closed_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray,
-                            n_charge: NonNegativeInt, n_list) -> jnp.ndarray:
+                            n_charge: NonNegativeInt, n_list, T=0.0) -> jnp.ndarray:
     """
     Computes the ground state for a closed array.
     :param vg: the dot voltage coordinate vector
@@ -52,5 +52,12 @@ def _ground_state_closed_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndar
     # computing the free energy of the change configurations
     F = jnp.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
     F = F + mask
-    # returning the lowest energy change configuration
-    return n_list[jnp.argmin(F), :]
+
+    def softargmin():
+        weights = jax.nn.softmax(-F / T, axis=0)
+        return (n_list * weights[:, None]).sum(axis=0)
+
+    def hardargmin():
+        return n_list[jnp.argmin(F)]
+
+    return jax.lax.cond(T > 0., softargmin, hardargmin)

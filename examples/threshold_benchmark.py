@@ -10,7 +10,7 @@ from qarray import (DotArray)
 
 N_VOLTAGE_POINTS = 10000
 N_MODEL_MAX = 10000
-T_MAX = 0.1
+T_MAX = 1
 
 
 def benchmark(state, threshold, n_dots, n_voltage_points, n_model_max, t_max, plot=True, save=True):
@@ -60,17 +60,17 @@ def benchmark(state, threshold, n_dots, n_voltage_points, n_model_max, t_max, pl
         plt.show()
 
     if save:
-        np.savez(f'./benchmark_data/{threshold:3f}_{state}_benchmark_GPU.npz', n_dots=n_dots, times=times)
+        np.savez(f'./benchmark_data/{threshold:3f}_{state}_benchmark.npz', n_dots=n_dots, times=times)
     return times
 
 
 n_max = 16
 benchmark_combinations = [
-    ('open', 1., np.arange(n_max, 1, -1)),
-    ('open', 0.75, np.arange(n_max, 1, -1)),
-    ('open', 0.5, np.arange(n_max, 1, -1)),
-    ('open', 0.25, np.arange(n_max, 1, -1)),
-    ('open', 0.0, np.arange(n_max, 1, -1)),
+    ('closed', 1., np.arange(n_max, 1, -1)),
+    ('closed', 0.75, np.arange(n_max, 1, -1)),
+    ('closed', 0.5, np.arange(n_max, 1, -1)),
+    ('closed', 0.25, np.arange(n_max, 1, -1)),
+    ('closed', 0.0, np.arange(n_max, 1, -1)),
 ]
 
 for state, threshold, n_dots in benchmark_combinations:

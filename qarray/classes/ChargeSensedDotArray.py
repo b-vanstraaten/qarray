@@ -21,6 +21,7 @@ class ChargeSensedDotArray(BaseDataClass):
 
     core: str = 'rust'  # a string of either 'python' or 'rust' to specify which backend to use
     threshold: float | str | None = 1.  # a float specifying the threshold for the charge sensing
+    T: float = 0.  # the temperature of the system
 
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 

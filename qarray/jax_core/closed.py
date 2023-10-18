@@ -7,8 +7,10 @@ import jax
 import jax.numpy as jnp
 from jaxopt import BoxOSQP
 from pydantic import NonNegativeInt
+from pydantic import PositiveFloat
 
 from .charge_configuration_generators import open_charge_configurations_jax
+from .helper_functions import softargmin, hardargmin
 from ..qarray_types import VectorList, CddInv, Cgd_holes, Cdd, Vector
 
 qp = BoxOSQP(jit=True, check_primal_dual_infeasability=False, verbose=False)
@@ -69,7 +71,7 @@ def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd_holes
 
 
 def ground_state_closed_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
-                            n_charge: NonNegativeInt) -> VectorList:
+                            n_charge: NonNegativeInt, T: PositiveFloat = 0.) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at
@@ -80,7 +82,7 @@ def ground_state_closed_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: C
     :return: the lowest energy charge configuration for each dot voltage coordinate vector
    """
 
-    f = partial(_ground_state_closed_0d, cgd=cgd, cdd_inv=cdd_inv, cdd=cdd, n_charge=n_charge)
+    f = partial(_ground_state_closed_0d, cgd=cgd, cdd_inv=cdd_inv, cdd=cdd, n_charge=n_charge, T=T)
 
     match jax.local_device_count():
         case 0:
@@ -92,7 +94,7 @@ def ground_state_closed_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: C
 
 @jax.jit
 def _ground_state_closed_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray, cdd: jnp.ndarray,
-                            n_charge: NonNegativeInt) -> jnp.ndarray:
+                            n_charge: NonNegativeInt, T: PositiveFloat) -> jnp.ndarray:
     """
     Computes the ground state for a closed array.
     :param vg: the dot voltage coordinate vector
@@ -105,10 +107,10 @@ def _ground_state_closed_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndar
     n_continuous = compute_continuous_solution_closed(cdd=cdd, cgd=cgd, cdd_inv=cdd_inv, n_charge=n_charge, vg=vg)
     n_continuous = jnp.clip(n_continuous, 0, n_charge)
     # eliminating the possibly of negative numbers of change carriers
-    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, n_charge=n_charge)
+    return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, n_charge=n_charge, T=T)
 
 
-def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge):
+def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge, T: PositiveFloat):
     """
     Computes the lowest energy charge configuration for a closed array.
     :param n_continuous: the continuous charge distribution
@@ -125,5 +127,6 @@ def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge):
     # computing the free energy of the change configurations
     F = jnp.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
     F = F + mask
-    # returning the lowest energy change configuration
-    return n_list[jnp.argmin(F), :]
+    return jax.lax.cond(T > 0.,
+                        lambda: softargmin(F, n_list, T),
+                        lambda: hardargmin(F, n_list))

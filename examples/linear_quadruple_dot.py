@@ -8,7 +8,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from qarray import (DotArray, GateVoltageComposer)
 
 # setting up the constant capacitance model_threshold_1
 cdd_non_maxwell = [
@@ -27,7 +27,8 @@ cgd_non_maxwell = [
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='jax'
+    core='jax',
+    charge_carrier='hole'
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
@@ -39,13 +40,13 @@ ground_state_funcs = [
     model.ground_state_open,
     partial(model.ground_state_closed, n_charge=1),
     partial(model.ground_state_closed, n_charge=2),
-    partial(model.ground_state_closed, n_charge=3),
+    partial(model.ground_state_closed, n_charge=4),
 ]
 
 # defining the min and max values for the dot voltage sweep
 
-vx_min, vx_max = -10, 5
-vy_min, vy_max = -10, 5
+vx_min, vx_max = -10, 10
+vy_min, vy_max = -10, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
 
@@ -63,10 +64,10 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     print(f'{t1 - t0:.3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
-    z = dot_occupation_changes(n)
+    # z = dot_occupation_changes(n)
     # plotting the result
 
-    # z = (n * jnp.linspace(0.9, 1.1, n.shape[-1])[jnp.newaxis, jnp.newaxis, :]).sum(axis=-1)
+    z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
 
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
@@ -85,6 +86,8 @@ axes[0, 0].set_title(r'Open')
 axes[0, 1].set_title(r'$n_{charge} = 1$')
 axes[1, 0].set_title(r'$n_{charge} = 2$')
 axes[1, 1].set_title(r'$n_{charge} = 3$')
+
+plt.savefig('quadruple_dot.pdf', bbox_inches='tight')
 
 if __name__ == '__main__':
     plt.show()

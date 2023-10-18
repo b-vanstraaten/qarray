@@ -7,26 +7,29 @@ import numpy as np
 from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 cdd_non_maxwell = [
-    [0., 0.2],
-    [0.2, 0.],
-
+    [0., 0.1, 0.05, 0.01],
+    [0.1, 0., 0.1, 0.05],
+    [0.05, 0.1, 0., 0.1],
+    [0.01, 0.05, 0.1, 0]
 ]
 cgd_non_maxwell = [
-    [1., 0.2],
-    [0.2, 1.],
-
+    [1., 0.2, 0.05, 0.01],
+    [0.2, 1., 0.2, 0.05],
+    [0.05, 0.2, 1., 0.2],
+    [0.01, 0.05, 0.2, 1]
 ]
 
 core = 'rust'
-n_charge = 2
+n_charge = None
 
 # noinspection PyArgumentList
 model_threshold_1 = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core=core,
+    core='jax',
     threshold=1.,
 )
+model_threshold_1.max_charge_carriers = 4
 
 # noinspection PyArgumentList
 model_threshold_default = DotArray(
@@ -36,18 +39,13 @@ model_threshold_default = DotArray(
     threshold='auto'
 )
 
-virtual_gate_origin = np.random.uniform(-10, -1, model_threshold_default.n_gate)
-virtual_gate_matrix = np.linalg.pinv(model_threshold_default.cdd_inv @ model_threshold_1.cgd_non_maxwell)
+voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate)
 
-# noinspection PyArgumentList
-voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate, virtual_gate_origin=virtual_gate_origin,
-                                       virtual_gate_matrix=virtual_gate_matrix)
-
-vx_min, vx_max = -10, 5
-vy_min, vy_max = -10, 5
-vg = voltage_composer.do2d(0, vy_min, vx_max, 512, 1, vy_min, vy_max, 512)
-# vg += model_threshold_1.optimal_Vg(jnp.zeros(model_threshold_1.n_dot) + 0.5)
-vg += np.random.uniform(-0.5, 0.5, size=model_threshold_1.n_gate)
+vx_min, vx_max = -10, 10
+vy_min, vy_max = -10, 10
+# using the dot voltage composer to create the dot voltage array for the 2d sweep
+vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+# vg += model_threshold_default.optimal_Vg(np.zeros(model_threshold_default.n_dot) + 0.5)
 
 if n_charge is None:
     t0 = time.time()
@@ -66,11 +64,11 @@ else:
 
 fig, ax = plt.subplots(1, 3, sharex=True, sharey=True)
 
-ax[0].imshow(dot_occupation_changes(n), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto',
+ax[0].imshow(dot_occupation_changes(n).T, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto',
              cmap='Greys')
-ax[1].imshow(dot_occupation_changes(n_threshold_1), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
+ax[1].imshow(dot_occupation_changes(n_threshold_1).T, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
              aspect='auto', cmap='Greys')
-ax[2].imshow(np.abs(n - n_threshold_1).sum(axis=-1) > 0., extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
+ax[2].imshow(np.abs(n - n_threshold_1).sum(axis=-1).T > 0., extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
              aspect='auto', cmap='Greys')
 
 ax[0].set_title(f'threshold = {model_threshold_default.threshold:.3f}')

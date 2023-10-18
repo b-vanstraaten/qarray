@@ -8,8 +8,10 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from jaxopt import BoxOSQP
+from pydantic.types import PositiveFloat
 
 from .charge_configuration_generators import open_charge_configurations_jax
+from .helper_functions import softargmin, hardargmin
 from ..qarray_types import VectorList, CddInv, Cgd_holes, Vector
 
 qp = BoxOSQP(check_primal_dual_infeasability=False, verbose=False)
@@ -60,7 +62,7 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd_holes, vg):
     )
 
 
-def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv) -> VectorList:
+def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, T: PositiveFloat = 0.) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at
@@ -69,7 +71,7 @@ def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv) -> Ve
     :return: the lowest energy charge configuration for each dot voltage coordinate vector
     """
 
-    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv)
+    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, T=T)
     match jax.local_device_count():
         case 0:
             raise ValueError('Must have at least one device')
@@ -79,7 +81,7 @@ def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv) -> Ve
 
 
 @jax.jit
-def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray) -> jnp.ndarray:
+def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray, T: PositiveFloat) -> jnp.ndarray:
     """
     Computes the ground state for an open array.
     :param vg: the dot voltage coordinate vector
@@ -90,10 +92,10 @@ def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarra
     n_continuous = compute_continuous_solution_open(cdd_inv=cdd_inv, cgd=cgd, vg=vg)
     n_continuous = jnp.clip(n_continuous, 0, None)
     # eliminating the possibly of negative numbers of change carriers
-    return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg)
+    return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, T=T)
 
 
-def compute_argmin_open(n_continuous, cdd_inv, cgd, Vg):
+def compute_argmin_open(n_continuous, cdd_inv, cgd, Vg, T: PositiveFloat = 0.0):
     """
     Computes the lowest energy charge configuration for an open array.
     :param n_continuous: the continuous charge distribution
@@ -108,5 +110,7 @@ def compute_argmin_open(n_continuous, cdd_inv, cgd, Vg):
     v_dash = cgd @ Vg
     # computing the free energy of the change configurations
     F = jnp.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
-    # returning the lowest energy change configuration
-    return n_list[jnp.argmin(F), :]
+
+    return jax.lax.cond(T > 0.,
+                        lambda: softargmin(F, n_list, T),
+                        lambda: hardargmin(F, n_list))
