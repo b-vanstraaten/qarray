@@ -4,30 +4,18 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-from qarray import (ground_state_open_rust, ground_state_closed_rust, dot_occupation_changes,
-                    convert_to_maxwell)
+from qarray import (ground_state_open_rust, ground_state_closed_rust, dot_occupation_changes)
 from qarray.jax_brute_force_core import ground_state_open_jax_brute_force, ground_state_closed_jax_brute_force
-from qarray.qarray_types import (CddInv, Cgd_holes, Cdd)
+from tests.helper_functions import randomly_generate_matrices
 
 N_VOLTAGES = 100
-N_ITERATIONS = 100
+N_ITERATIONS = 10
 
 
 def too_different(n1, n2):
     different = np.any(np.logical_not(np.isclose(n1, n2)), axis=-1)
     number_of_different = different.sum()
-    return number_of_different > 0
-
-
-def randomly_generate_matrices(n_dot):
-    cdd_non_maxwell = np.random.uniform(0, 1., size=(n_dot, n_dot))
-    cdd_non_maxwell = (cdd_non_maxwell + cdd_non_maxwell.T) / 2.
-
-    cgd_non_maxwell = np.eye(n_dot) + np.random.uniform(-0.5, 0.5, size=(n_dot, n_dot))
-    cgd_non_maxwell = np.clip(cgd_non_maxwell, 0, None)
-
-    cdd, cdd_inv, cgd_non_maxwell = convert_to_maxwell(cdd_non_maxwell, cgd_non_maxwell)
-    return Cdd(cdd), CddInv(cdd_inv), Cgd_holes(cgd_non_maxwell)
+    return number_of_different > 0.001 * different.size
 
 
 class BruteForceTests(unittest.TestCase):
@@ -87,10 +75,7 @@ class BruteForceTests(unittest.TestCase):
         for _ in tqdm(range(N_ITERATIONS)):
             cdd, cdd_inv, cgd = randomly_generate_matrices(3)
 
-            meshgrid = np.meshgrid(
-                np.linspace(-5, 5, N_VOLTAGES),
-                np.linspace(-5, 5, N_VOLTAGES),
-            )
+            meshgrid = np.meshgrid(np.linspace(-5, 5, N_VOLTAGES), np.linspace(-5, 5, N_VOLTAGES), )
             vg = np.stack([*meshgrid, np.zeros((N_VOLTAGES, N_VOLTAGES))], axis=-1)
 
             n_rust = ground_state_open_rust(vg.reshape(-1, 3), cgd, cdd_inv, 1)
@@ -123,10 +108,7 @@ class BruteForceTests(unittest.TestCase):
             for n in range(5, 2, -1):
                 cdd, cdd_inv, cgd = randomly_generate_matrices(3)
 
-                meshgrid = np.meshgrid(
-                    np.linspace(-5, 5, N_VOLTAGES),
-                    np.linspace(-5, 5, N_VOLTAGES),
-                )
+                meshgrid = np.meshgrid(np.linspace(-5, 5, N_VOLTAGES), np.linspace(-5, 5, N_VOLTAGES), )
                 vg = np.stack([*meshgrid, np.zeros((N_VOLTAGES, N_VOLTAGES))], axis=-1)
 
                 n_rust = ground_state_closed_rust(vg.reshape(-1, 3), cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1,

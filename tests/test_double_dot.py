@@ -13,8 +13,8 @@ from qarray import (ground_state_open_rust, ground_state_closed_rust, ground_sta
 from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
 from tests.helper_functions import randomly_generate_matrices
 
-N_VOLTAGES = 10
-N_ITERATIONS = 100
+N_VOLTAGES = 100
+N_ITERATIONS = 10
 
 
 class DoubleDotTests(unittest.TestCase):
