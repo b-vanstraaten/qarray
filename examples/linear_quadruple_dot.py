@@ -8,7 +8,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (DotArray, GateVoltageComposer)
+from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model_threshold_1
 cdd_non_maxwell = [
@@ -27,9 +27,10 @@ cgd_non_maxwell = [
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='jax',
+    core='jax_brute_force',
     charge_carrier='hole'
 )
+model.max_charge_carriers = 4
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
@@ -64,10 +65,10 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     print(f'{t1 - t0:.3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
-    # z = dot_occupation_changes(n)
+    z = dot_occupation_changes(n)
     # plotting the result
 
-    z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
+    # z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
 
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',

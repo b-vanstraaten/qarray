@@ -10,24 +10,13 @@ import numpy as np
 from qarray import (ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
                     ground_state_closed_python, optimal_Vg, compute_threshold)
 from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
-from qarray.qarray_types import (CddInv, Cgd_holes, Cdd)
+from .helper_functions import randomly_generate_matrices
 
 N_VOLTAGES = 10
 N_ITERATIONS = 100
 
 
-def triple_dot_matrices():
-    cdd_inv = np.eye(3) + np.random.uniform(-0.5, 0.5, size=(3, 3))
-    cdd_inv = (cdd_inv + cdd_inv.T) / 2.
-    cdd_inv = np.clip(cdd_inv, 0, None)
-
-    cdd = Cdd(np.linalg.inv(cdd_inv))
-    cgd = np.eye(3) + np.random.uniform(-0.5, 0.5, size=(3, 3))
-    cgd = np.clip(cgd, 0, None)
-    return Cdd(cdd), CddInv(cdd_inv), Cgd_holes(-cgd)
-
-
-class DoubleDotTests(unittest.TestCase):
+class TripleDotTests(unittest.TestCase):
     def test_python_vs_rust_open(self):
         """
         Test that the python and rust open double dot ground state functions return the same result.
@@ -36,7 +25,7 @@ class DoubleDotTests(unittest.TestCase):
         """
 
         for _ in range(N_ITERATIONS):
-            cdd, cdd_inv, cgd = triple_dot_matrices()
+            cdd, cdd_inv, cgd = randomly_generate_matrices(3)
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 3))
             n_rust = ground_state_open_rust(vg, cgd, cdd_inv, 1)
             n_python = ground_state_open_python(vg, cgd, cdd_inv, 1)
@@ -62,7 +51,7 @@ class DoubleDotTests(unittest.TestCase):
         """
 
         for _ in range(N_ITERATIONS):
-            cdd, cdd_inv, cgd = triple_dot_matrices()
+            cdd, cdd_inv, cgd = randomly_generate_matrices(3)
             vg = np.random.uniform(-10, 5, size=(N_VOLTAGES, 3))
             n_threshold_of_1 = ground_state_open_rust(vg, cgd, cdd_inv, 1.)
 
@@ -82,7 +71,7 @@ class DoubleDotTests(unittest.TestCase):
         """
 
         for _ in range(N_ITERATIONS):
-            cdd, cdd_inv, cgd = triple_dot_matrices()
+            cdd, cdd_inv, cgd = randomly_generate_matrices(3)
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 3))
             n_rust = ground_state_closed_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             n_python = ground_state_closed_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
@@ -98,7 +87,7 @@ class DoubleDotTests(unittest.TestCase):
         """
 
         for _ in range(N_ITERATIONS):
-            cdd, cdd_inv, cgd = triple_dot_matrices()
+            cdd, cdd_inv, cgd = randomly_generate_matrices(3)
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 3))
             n_rust = ground_state_closed_rust(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             n_python = ground_state_closed_python(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
@@ -114,7 +103,7 @@ class DoubleDotTests(unittest.TestCase):
         """
 
         for _ in range(N_ITERATIONS):
-            cdd, cdd_inv, cgd = triple_dot_matrices()
+            cdd, cdd_inv, cgd = randomly_generate_matrices(3)
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 3))
             n_rust = ground_state_closed_rust(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
             n_python = ground_state_closed_python(vg, 3, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
@@ -132,7 +121,7 @@ class DoubleDotTests(unittest.TestCase):
         """
 
         for _ in range(N_ITERATIONS):
-            cdd, cdd_inv, cgd = triple_dot_matrices()
+            cdd, cdd_inv, cgd = randomly_generate_matrices(3)
             n_charges = np.random.choice(np.arange(0, 10), size=(N_VOLTAGES, 3)).astype(int)
             vg = optimal_Vg(cdd_inv=cdd_inv, cgd=cgd, n_charges=n_charges)
             n_rust = ground_state_open_rust(vg, cgd, cdd_inv, 1).astype(int)

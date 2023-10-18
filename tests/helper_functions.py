@@ -3,8 +3,19 @@ from typing import List
 
 import numpy as np
 
-from qarray import DotArray
+from qarray import DotArray, convert_to_maxwell
+from qarray.qarray_types import CddInv, Cgd_holes, Cdd
 
+
+def randomly_generate_matrices(n_dot):
+    cdd_non_maxwell = np.random.uniform(0, 1., size=(n_dot, n_dot))
+    cdd_non_maxwell = (cdd_non_maxwell + cdd_non_maxwell.T) / 2.
+
+    cgd_non_maxwell = np.eye(n_dot) + np.random.uniform(-0.5, 0.5, size=(n_dot, n_dot))
+    cgd_non_maxwell = np.clip(cgd_non_maxwell, 0, None)
+
+    cdd, cdd_inv, cgd_non_maxwell = convert_to_maxwell(cdd_non_maxwell, cgd_non_maxwell)
+    return Cdd(cdd), CddInv(cdd_inv), Cgd_holes(cgd_non_maxwell)
 
 def generate_random_cdd(n_dots):
     """
