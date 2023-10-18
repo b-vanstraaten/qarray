@@ -48,6 +48,13 @@ class BaseDataClass:
                 if isinstance(value, parameter_type):
                     validate_data[name] = value
 
+                # now that we know the value is not the correct type, we try to coerce it to the correct type.
+                # if it is an instance of np.ndarray or any of the qarray types which are subclasses of np.ndarray,
+                # we convert it to a numpy array, so we don't have to deal with the qarray types in the rest of the code.
+                if isinstance(value, np.ndarray):
+                    value = np.array(value)
+
+
                 # types to iterate over
                 if isinstance(parameter_type, UnionType):
                     types = parameter_type.__args__
