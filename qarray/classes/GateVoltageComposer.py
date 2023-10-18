@@ -1,12 +1,16 @@
 import builtins
 from collections.abc import Iterable
+from typing import TYPE_CHECKING
 
 import numpy as np
-from pydantic.dataclasses import dataclass
 
 from .BaseDataClass import BaseDataClass
 from ..qarray_types import Vector
 
+if TYPE_CHECKING:
+    from dataclasses import dataclass
+else:
+    from pydantic.dataclasses import dataclass
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
 class GateVoltageComposer(BaseDataClass):
@@ -16,10 +20,8 @@ class GateVoltageComposer(BaseDataClass):
     n_gate: int  # the number of gates
     gate_voltages: Vector | None = None  # vector of dot voltages encoding the current DC voltages set to the array
     gate_names: dict[str, int] | None = None  # a dictionary of dot names which can be defined for convenience
-
     virtual_gate_origin: np.ndarray | None = None  # the origin to consider virtual gates from
     virtual_gate_matrix: np.ndarray | None = None  # a matrix of virtual gates to be used for the dot array
-    n_gate: int | None
 
     def __post_init__(self):
         """
