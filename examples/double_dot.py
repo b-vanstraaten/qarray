@@ -12,15 +12,14 @@ from qarray import (DotArray, GateVoltageComposer)
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
-    cdd_non_maxwell=[
+    cdd_non_maxwell=np.array(
         [0., 0.1],
-        [0.1, 0.]
-    ],
+    ),
     cgd_non_maxwell=[
         [1., 0.2],
         [0.2, 1.]
     ],
-    core='jax', charge_carrier='hole', polish=True, threshold=1.
+    core='jax', charge_carrier=1, polish=True
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
