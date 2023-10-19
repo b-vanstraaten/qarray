@@ -34,9 +34,8 @@ model = DotArray(
     cdd=cdd,
     cgd=cgd,
     core='rust',
-    charge_carrier='electron',
+    charge_carrier='hole',
 )
-model.max_charge_carriers = 4
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d

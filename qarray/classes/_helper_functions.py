@@ -39,14 +39,14 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
 
     # calling the appropriate core function to compute the ground state
     match model.core:
-        case 'rust':
+        case 'rust' | 'Rust' | 'RUST' | 'r':
             result = ground_state_open_rust(
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
                 threshold=model.threshold,
                 polish=model.polish
             )
-        case 'jax':
+        case 'jax' | 'Jax' | 'JAX' | 'j':
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
 
@@ -55,7 +55,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 cdd_inv=model.cdd_inv, T=model.T
             )
 
-        case 'jax_brute_force':
+        case 'brute_force' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
 
             if model.max_charge_carriers is None:
                 message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
@@ -68,7 +68,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv, max_number_of_charge_carriers=model.max_charge_carriers
             )
-        case 'python':
+        case 'python' | 'Python' | 'PYTHON' | 'p':
             result = ground_state_open_python(
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
@@ -103,37 +103,36 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
 
     # calling the appropriate core function to compute the ground state
     match model.core:
-        case 'rust':
+        case 'rust' | 'Rust' | 'RUST' | 'r':
             result = ground_state_closed_rust(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
                 threshold=model.threshold, polish=model.polish
             )
 
-        case 'jax':
+        case 'jax' | 'Jax' | 'JAX' | 'j':
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using of 1.0')
-
             result = ground_state_closed_jax(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T
             )
 
-        case 'jax_brute_force':
+        case 'brute_force' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
+
             result = ground_state_closed_jax_brute_force(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv
             )
 
-        case 'python':
+        case 'python' | 'Python' | 'PYTHON' | 'p':
             result = ground_state_closed_python(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
                 threshold=model.threshold, polish=model.polish
             )
-
         case _:
             raise ValueError(f'Incorrect core {model.core}, it must be either rust, jax or python')
 

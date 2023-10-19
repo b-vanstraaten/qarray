@@ -26,6 +26,9 @@ def _closed_charge_configurations(n_continuous, n_charge):
 
 
 def closed_charge_configurations(n_continuous, n_charge, threshold):
+    if threshold >= 1:
+        return _closed_charge_configurations(n_continuous, n_charge)
+
     n_remainder = n_continuous - np.floor(n_continuous)
     floor_ceil_args = np.argwhere(np.abs(n_remainder - 0.5) < threshold / 2.)
     if floor_ceil_args.size == 0 and n_continuous.round().sum().astype(int) != n_charge:
@@ -36,5 +39,5 @@ def closed_charge_configurations(n_continuous, n_charge, threshold):
     if indexes.any():
         n_list = n_list[indexes, :]
     else:
-        n_list = _closed_charge_configurations(n_continuous, n_charge)
+        n_list = closed_charge_configurations(n_continuous, n_charge, threshold * 2)
     return n_list

@@ -6,9 +6,9 @@ import numpy as np
 from qarray.jax_core.charge_configuration_generators import open_charge_configurations_jax
 from qarray.python_core.charge_configuration_generators import closed_charge_configurations, open_charge_configurations
 from qarray.rust_core.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
-from tests.helper_functions import compare_sets_for_equality, to_set
+from .helper_functions import compare_sets_for_equality, to_set
 
-N_ITERATIONS = 100
+N_ITERATIONS = 1000
 N_DOT_MAX = 10
 N_CHARGE_MAX = 5
 

@@ -22,8 +22,9 @@ model = DotArray(
         [0.2, 1., 0.2],
         [0.2, 0.2, 1]
     ],
-    core='rust',
+    core='b',
 )
+model.max_charge_carriers = 5
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d

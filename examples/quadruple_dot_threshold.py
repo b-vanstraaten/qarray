@@ -20,31 +20,33 @@ cgd_non_maxwell = [
 ]
 
 core = 'rust'
-n_charge = None
+n_charge = 4
 
 # noinspection PyArgumentList
 model_threshold_1 = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='jax',
-    threshold=1.,
+    core='b',
+    threshold='auto',
 )
-model_threshold_1.max_charge_carriers = 4
+model_threshold_1.max_charge_carriers = 1
 
 # noinspection PyArgumentList
 model_threshold_default = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core=core,
-    threshold='auto'
+    core='j',
+    threshold=1.,
+    polish=True,
+    charge_carrier='hole'
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate)
 
-vx_min, vx_max = -10, 10
-vy_min, vy_max = -10, 10
+vx_min, vx_max = -20, 20
+vy_min, vy_max = -20, 20
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 3, vy_min, vy_max, 200)
 # vg += model_threshold_default.optimal_Vg(np.zeros(model_threshold_default.n_dot) + 0.5)
 
 if n_charge is None:
@@ -68,7 +70,7 @@ ax[0].imshow(dot_occupation_changes(n).T, extent=[vx_min, vx_max, vy_min, vy_max
              cmap='Greys')
 ax[1].imshow(dot_occupation_changes(n_threshold_1).T, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
              aspect='auto', cmap='Greys')
-ax[2].imshow(np.abs(n - n_threshold_1).sum(axis=-1).T > 0., extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
+ax[2].imshow(np.abs(n - n_threshold_1).sum(axis=-1).T, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
              aspect='auto', cmap='Greys')
 
 ax[0].set_title(f'threshold = {model_threshold_default.threshold:.3f}')

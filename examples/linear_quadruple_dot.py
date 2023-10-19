@@ -27,7 +27,7 @@ cgd_non_maxwell = [
 model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
-    core='jax_brute_force',
+    core='rust',
     charge_carrier='hole'
 )
 model.max_charge_carriers = 4

@@ -15,7 +15,7 @@ from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
 from tests.helper_functions import randomly_generate_matrices, too_different
 
 N_VOLTAGES = 1000
-N_ITERATIONS = 10
+N_ITERATIONS = 100
 
 
 class DoubleDotTests(unittest.TestCase):

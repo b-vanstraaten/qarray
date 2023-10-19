@@ -128,7 +128,8 @@ class CgdNonMaxwell(PositiveValuedMatrix):
     """
     pass
 
-class CddNonMaxwell(SymmetricMatrix):
+
+class CddNonMaxwell(PositiveValuedSquareMatrix):
     """
     Class for the dot-dot capacitance matrix its non Maxwell form
     """

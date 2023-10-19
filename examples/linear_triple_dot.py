@@ -24,7 +24,7 @@ model = DotArray(
         [0.2, 1., 0.2],
         [0.05, 0.2, 1]
     ],
-    core='rust',
+    core='b',
 )
 print(model.threshold)
 model.max_charge_carriers = 3
