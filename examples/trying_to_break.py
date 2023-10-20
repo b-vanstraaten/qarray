@@ -10,9 +10,9 @@ model = DotArray(
     ]),
     cgd_non_maxwell=[
         [1., 0.],
-        [0., 10.]
+        [0., 1.]
     ],
-    core='jax', charge_carrier='h', polish=True
+    core='jax', charge_carrier='h', polish=True, threshold='auto'
 )
 print(np.linalg.eigvals(model.cdd_inv))
 print(np.linalg.eig(model.cdd_inv))
@@ -20,8 +20,8 @@ print(np.linalg.eig(model.cdd_inv))
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -10, 10
-vy_min, vy_max = -10, 10
+vx_min, vx_max = -2, 1
+vy_min, vy_max = -2, 1
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
 

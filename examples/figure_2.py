@@ -20,7 +20,7 @@ cdd_non_maxwell = [
     [far_coupling, diagonal_coupling, nearest_coupling, diagonal_coupling, 0.]
 ]
 
-cross_talk = 0.1
+cross_talk = 0.10
 cgd_non_maxwell = np.array([
     [1., 0, cross_talk, 0., 0.],
     [0, 2.3, cross_talk, 0., 0.],
@@ -50,8 +50,8 @@ voltage_composer = GateVoltageComposer(
 
 N = 300
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -1.7, 1.7
-vy_min, vy_max = -2.7, 2.7
+vx_min, vx_max = -1.9, 1.9
+vy_min, vy_max = -2.3, 2.8
 
 vg = voltage_composer.do2d_virtual(1, vy_min, vx_max, N, 3, vy_min, vy_max, N)
 
@@ -63,7 +63,7 @@ vg_rb = voltage_composer.do2d_virtual(3, -vx_min, -vx_max, N, 4, -vy_min, -vy_ma
 
 vg = vg_lt + vg_lb + vg_rt + vg_rb
 scale = 1.
-shift = -0.3
+shift = -0.2
 
 vg = vg + voltage_composer.do1d(2, shift - scale, shift + scale, N)[:, np.newaxis, :]
 
@@ -92,10 +92,10 @@ names = ['T', 'L', 'M', 'R', 'B']
 fig, ax = plt.subplots(1, 2)
 fig.set_size_inches(8, 4)
 
-my_data = np.genfromtxt('./closed_array.csv', delimiter=',')
+# my_data = np.genfromtxt('./closed_array.csv', delimiter=',')
 
-ax[0].imshow(my_data, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
-             interpolation='spline16')
+# ax[0].imshow(my_data, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
+#              interpolation='spline16')
 ax[1].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
              interpolation='spline16')
 plt.savefig('5_dots.pdf', bbox_inches='tight')
