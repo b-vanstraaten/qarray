@@ -91,7 +91,7 @@ class DotArray(BaseDataClass):
                 self.threshold = compute_threshold(self.cdd)
             case _:
                 assert isinstance(self.threshold, float), 'The threshold must be a float or "auto"'
-                assert self.threshold > 0, 'The threshold must be positive'
+                assert self.threshold >= 0, 'The threshold must be positive'
                 assert self.threshold <= 1, 'The threshold must be smaller than or equal to 1'
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:

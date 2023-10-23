@@ -32,7 +32,7 @@ model = ChargeSensedDotArray(
     noise=0.0,
     threshold=1.,
     core='jax',
-    T=0.05
+    T=0.00
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)

@@ -35,6 +35,7 @@ model = DotArray(
     cgd=cgd,
     core='rust',
     charge_carrier='hole',
+    threshold=0.1
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array

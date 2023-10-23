@@ -94,4 +94,4 @@ def compute_threshold(cdd: Cdd) -> float:
     """
     cdd_diag = np.diag(cdd)
     c = (cdd - np.diag(cdd_diag)) / cdd_diag[:, np.newaxis]
-    return 2 * np.max(np.abs(c))
+    return 2 * np.max(np.sum(np.abs(c), axis=1))

@@ -188,6 +188,9 @@ class GateVoltageComposer(BaseDataClass):
         :return:
         """
 
+        assert self.virtual_gate_origin is not None, 'virtual_gate_origin must be set with model.virtual_gate_origin = ... or in the init'
+        assert self.virtual_gate_matrix is not None, 'virtual_gate_matrix must be set with model.virtual_gate_matrix = ... or in the init'
+
         x_dot = self._fetch_and_check_dot(x_dot)
         y_dot = self._fetch_and_check_dot(y_dot)
 

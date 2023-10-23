@@ -5,8 +5,8 @@ from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 model = DotArray(
     cdd_non_maxwell=np.array([
-        [0., 0.1],
-        [0.1, 0.]
+        [0., 10.],
+        [10, 0.]
     ]),
     cgd_non_maxwell=[
         [1., 0.],

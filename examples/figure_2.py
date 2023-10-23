@@ -34,7 +34,7 @@ model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core='rust',
-    threshold=1.,
+    threshold=0.,
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
