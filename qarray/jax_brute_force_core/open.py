@@ -9,11 +9,12 @@ import jax.numpy as jnp
 from pydantic.types import PositiveInt
 
 from .charge_configuration_generators import open_change_configurations_brute_force_jax
+from ..jax_core.helper_functions import softargmin, hardargmin
 from ..qarray_types import VectorList, CddInv, Cgd_holes
 
 
 def ground_state_open_jax_brute_force(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv,
-                                      max_number_of_charge_carriers: PositiveInt) -> VectorList:
+                                      max_number_of_charge_carriers: PositiveInt, T: float) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at
@@ -25,7 +26,7 @@ def ground_state_open_jax_brute_force(vg: VectorList, cgd: Cgd_holes, cdd_inv: C
     n_dot = cdd_inv.shape[0]
     n_list = open_change_configurations_brute_force_jax(n_dot=n_dot, n_max=max_number_of_charge_carriers)
 
-    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, n_list=n_list)
+    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, n_list=n_list, T=T)
     match jax.local_device_count():
         case 0:
             raise ValueError('Must have at least one device')
@@ -36,7 +37,7 @@ def ground_state_open_jax_brute_force(vg: VectorList, cgd: Cgd_holes, cdd_inv: C
 
 @jax.jit
 def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray, n_list: VectorList,
-                          T=0.0) -> jnp.ndarray:
+                          T: float) -> jnp.ndarray:
     """
     Computes the ground state for an open array.
     :param vg: the dot voltage coordinate vector
@@ -48,12 +49,6 @@ def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarra
     # computing the free energy of the change configurations
     F = jnp.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
     # returning the lowest energy change configuration
-
-    def softargmin():
-        weights = jax.nn.softmax(-F / T, axis=0)
-        return (n_list * weights[:, None]).sum(axis=0)
-
-    def hardargmin():
-        return n_list[jnp.argmin(F)]
-
-    return jax.lax.cond(T > 0., softargmin, hardargmin)
+    return jax.lax.cond(T > 0.,
+                        lambda: softargmin(F, n_list, T),
+                        lambda: hardargmin(F, n_list))

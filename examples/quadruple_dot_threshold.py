@@ -7,10 +7,10 @@ import numpy as np
 from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 cdd_non_maxwell = [
-    [0., 0.1, 0.05, 0.01],
-    [0.1, 0., 0.1, 0.05],
-    [0.05, 0.1, 0., 0.1],
-    [0.01, 0.05, 0.1, 0]
+    [0., 0.5, 0.05, 0.01],
+    [0.5, 0., 0.5, 0.05],
+    [0.05, 0.5, 0., 0.5],
+    [0.01, 0.05, 0.5, 0]
 ]
 cgd_non_maxwell = [
     [1., 0.1, 0.05, 0.01],
@@ -18,6 +18,8 @@ cgd_non_maxwell = [
     [0.05, 0.1, 1., 0.1],
     [0.01, 0.05, 0.1, 1]
 ]
+
+print(np.linalg.cond(np.linalg.inv(cdd_non_maxwell)))
 
 core = 'rust'
 n_charge = None
@@ -27,9 +29,8 @@ model_threshold_1 = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core='b',
-    polish=True,
 )
-model_threshold_1.max_charge_carriers = 3
+model_threshold_1.max_charge_carriers = 6
 
 
 # noinspection PyArgumentList
@@ -37,16 +38,16 @@ model_rust = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core='r',
-    threshold='auto',
-    charge_carrier='hole'
+    charge_carrier='hole',
 )
+
 
 voltage_composer = GateVoltageComposer(n_gate=model_threshold_1.n_gate)
 
-vx_min, vx_max = -10, 10
-vy_min, vy_max = -10, 10
+vx_min, vx_max = -10, 5
+vy_min, vy_max = -10, 5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d_virtual(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
 vg += model_rust.optimal_Vg(np.zeros(model_rust.n_dot))
 
 if n_charge is None:

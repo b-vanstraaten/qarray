@@ -19,8 +19,10 @@ model = DotArray(
     cdd_non_maxwell=cdd,
     cgd_non_maxwell=cgd,
     core='rust',
-    threshold=0.5
+    threshold='auto',
+    T=0.01
 )
+print(model.threshold)
 
 virtual_gate_origin = np.random.uniform(-10, -1, model.n_gate)
 virtual_gate_matrix = np.linalg.pinv(model.cdd_inv @ model.cgd_non_maxwell)

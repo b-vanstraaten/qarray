@@ -12,10 +12,10 @@ from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model_threshold_1
 cdd_non_maxwell = [
-    [0., 0.1, 0.05, 0.01],
-    [0.1, 0., 0.1, 0.05],
-    [0.05, 0.1, 0., 0.1],
-    [0.01, 0.05, 0.1, 0]
+    [0., 0.3, 0.05, 0.01],
+    [0.3, 0., 0.3, 0.05],
+    [0.05, 0.3, 0., 0.3],
+    [0.01, 0.05, 0.3, 0]
 ]
 cgd_non_maxwell = [
     [1., 0.2, 0.05, 0.01],
@@ -28,9 +28,13 @@ model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core='rust',
-    charge_carrier='hole'
+    charge_carrier='hole',
+    threshold='auto',
+    T=0.001,
 )
 model.max_charge_carriers = 4
+
+print(np.linalg.cond(model.cdd_inv))
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
@@ -68,7 +72,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     z = dot_occupation_changes(n)
     # plotting the result
 
-    # z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
+    z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
 
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',

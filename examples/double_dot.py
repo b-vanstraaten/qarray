@@ -8,7 +8,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (DotArray, GateVoltageComposer)
+from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
@@ -20,7 +20,7 @@ model = DotArray(
         [1., 0.],
         [0., 1]
     ],
-    core='j', charge_carrier='h', polish=True, T=0.01
+    core='r', charge_carrier='h', polish=True, T=0.0
 )
 print(np.linalg.eigvals(model.cdd_inv))
 print(np.linalg.eig(model.cdd_inv))
@@ -38,10 +38,10 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -1, 0
-vy_min, vy_max = -1, 0
+vx_min, vx_max = -3, 0
+vy_min, vy_max = -3, 0
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 1, vy_min, vy_max, 1000)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
@@ -54,8 +54,8 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     print(f'Computing took {t1 - t0: .3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
-    z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
-    # z = dot_occupation_changes(n)
+    # z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
+    z = dot_occupation_changes(n)
     # plotting the result
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,

@@ -2,16 +2,17 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-from qarray import (DotArray)
+from qarray import (DotArray, compute_threshold)
 
 n_max = 8
 
 
 f = []
+thresh = []
 
 for N in tqdm(range(2, n_max)):
     fractions = []
-    thresholds = np.linspace(0.0, 1., 50)
+    thresholds = np.linspace(0.0, 0.3, 50)
 
     cdd = np.random.uniform(0, 0.2, size=N ** 2).reshape(N, N)
     cdd = (cdd + cdd.T) / 2.
@@ -31,13 +32,16 @@ for N in tqdm(range(2, n_max)):
         threshold=1.
     )
 
-    vg = np.random.uniform(-10, 10, (10000, model.n_gate))
+    vg = np.random.uniform(-10, 10, (1000, model.n_gate))
+
+    thresh.append(compute_threshold(model.cdd))
 
     for threshold in thresholds:
         model.threshold = threshold
 
         n_reference = reference_model.ground_state_open(vg)
         n = model.ground_state_open(vg)
+
 
         # n_reference = reference_model.ground_state_closed(vg, N)
         # n = model.ground_state_closed(vg, N)
@@ -58,4 +62,5 @@ z = f
 plt.figure()
 f = np.array(f)
 plt.imshow(z, extent=[thresholds.min(), thresholds.max(), 2, n_max], aspect='auto', origin='lower', cmap='hot')
+plt.plot(thresh, np.arange(2, n_max), 'k--')
 plt.colorbar()
