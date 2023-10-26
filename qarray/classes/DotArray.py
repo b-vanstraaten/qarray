@@ -78,7 +78,7 @@ class DotArray(BaseDataClass):
             case _:
                 raise ValueError(f'charge_carrier must be either "electrons" or "holes {self.charge_carrier}"')
 
-        # by now in the code, the cdd and cgd matrices have been initialized as as their specified types. These
+        # by now in the code, the cdd and cgd matrices have been initialized as their specified types. These
         # types enforce most of the constraints on the matrices like positive-definitness for cdd for example,
         # but not all. The following asserts check the remainder.
         self.n_dot = self.cdd.shape[0]
