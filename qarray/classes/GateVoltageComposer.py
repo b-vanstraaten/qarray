@@ -195,61 +195,60 @@ class GateVoltageComposer(BaseDataClass):
 
         return np.einsum('ij,...j->...i', self.virtual_gate_matrix, Vd) + self.virtual_gate_origin
 
-
-    def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int) -> np.ndarray:
+    def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_res: int) -> np.ndarray:
         """
         This function is used to compose a 1d dot voltage array.
         :param x_gate:
         :param x_min:
         :param x_max:
-        :param x_resolution:
+        :param x_res:
         :return:
         """
         return self.meshgrid(
             [x_gate],
-            [np.linspace(x_min, x_max, x_resolution)]
+            [np.linspace(x_min, x_max, x_res)]
         )
 
-    def do2d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int,
-             y_gate: str | int, y_min: float, y_max: float, y_resolution: int) -> np.ndarray:
+    def do2d(self, x_gate: str | int, x_min: float, x_max: float, x_res: int,
+             y_gate: str | int, y_min: float, y_max: float, y_res: int) -> np.ndarray:
         """
         This function is used to compose a 2d dot voltage array.
         :param x_gate:
         :param x_min:
         :param x_max:
-        :param x_resolution:
+        :param x_res:
         :param y_gate:
         :param y_min:
         :param y_max:
-        :param y_resolution:
+        :param y_res:
         :return:
         """
         return self.meshgrid(
             [x_gate, y_gate],
-            [np.linspace(x_min, x_max, x_resolution), np.linspace(y_min, y_max, y_resolution)]
+            [np.linspace(x_min, x_max, x_res), np.linspace(y_min, y_max, y_res)]
         )
 
-    def do1d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_resolution: int) -> np.ndarray:
+    def do1d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_res: int) -> np.ndarray:
         return self.meshgrid_virtual(
             [x_dot],
-            [np.linspace(x_min, x_max, x_resolution)]
+            [np.linspace(x_min, x_max, x_res)]
         )
 
-    def do2d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_resolution: int,
-                     y_dot: str | int, y_min: float, y_max: float, y_resolution: int) -> np.ndarray:
+    def do2d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_res: int,
+                     y_dot: str | int, y_min: float, y_max: float, y_res: int) -> np.ndarray:
         """
         This function is used to compose a 2d dot voltage array.
         :param x_dot:
         :param x_min:
         :param x_max:
-        :param x_resolution:
+        :param x_res:
         :param y_dot:
         :param y_min:
         :param y_max:
-        :param y_resolution:
+        :param y_res:
         :return:
         """
         return self.meshgrid_virtual(
             [x_dot, y_dot],
-            [np.linspace(x_min, x_max, x_resolution), np.linspace(y_min, y_max, y_resolution)]
+            [np.linspace(x_min, x_max, x_res), np.linspace(y_min, y_max, y_res)]
         )
