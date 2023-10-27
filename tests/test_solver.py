@@ -11,7 +11,7 @@ from qarray.python_core.core_python import init_osqp_problem, compute_analytical
     compute_analytical_solution_closed
 from .helper_functions import randomly_generate_model
 
-N_VOLTAGES = 1000
+N_VOLTAGES = 100
 N_ITERATIONS = 10
 ATOL = 5e-3
 

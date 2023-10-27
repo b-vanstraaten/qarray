@@ -12,8 +12,6 @@ N_VOLTAGES = 100
 N_ITERATIONS = 10
 
 
-
-
 class BruteForceTests(unittest.TestCase):
     def test_double_dot_open(self):
         """
