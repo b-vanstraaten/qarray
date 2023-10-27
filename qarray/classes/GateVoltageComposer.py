@@ -1,6 +1,6 @@
 import builtins
 from collections.abc import Iterable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, List
 
 import numpy as np
 
@@ -122,7 +122,7 @@ class GateVoltageComposer(BaseDataClass):
             case _:
                 raise ValueError(f'Gate not of type int of string {type(gate)}')
 
-    def meshgrid(self, gates, arrays):
+    def meshgrid(self, gates: List[int | str], arrays: List[np.ndarray]) -> np.ndarray:
         """
         This function is used to compose a dot voltage array, given a list of gates and a list of arrays it will
         compose a dot voltage array, based on the meshgrid of the arrays.
@@ -157,6 +157,45 @@ class GateVoltageComposer(BaseDataClass):
                 Vg[..., gate] = V[i]
         return Vg
 
+    def meshgrid_virtual(self, dots: List[int | str], arrays: List[np.ndarray]) -> np.ndarray:
+        """
+        This function is used to compose a virtual gate voltage array, given a list of gates and a list of arrays it will
+        compose a dot voltage array, based on the meshgrid of the arrays.
+
+        :param dots: a list of dots to be varied
+        :param arrays: a list of arrays to be meshgridded
+        :return: a dot voltage array
+        """
+
+        assert self.virtual_gate_origin is not None, 'virtual_gate_origin must be set in the init or with model.virtual_gate_origin = ...'
+        assert self.virtual_gate_matrix is not None, 'virtual_gate_matrix must be set in the init or with model.virtual_gate_matrix = ...'
+        assert self.n_dot is not None, 'n_gate must be set in the init or with model.n_gate = ...'
+        assert all([array.ndim == 1 for array in arrays]), 'arrays must be 1d'
+        assert len(dots) == len(arrays), 'gates and arrays must be the same length'
+
+        dots = list(map(self._fetch_and_check_dot, dots))
+        sizes = [array.size for array in arrays]
+
+        # initialising the voltage array
+        Vd = np.zeros(shape=sizes + [self.n_dot])
+
+        # creating the meshgrid
+        V = np.meshgrid(*arrays)
+
+        # setting the voltages
+        for dot in range(self.n_gate):
+            # if the gate is not in the gates list then set it to the current voltage
+            if dot not in dots:
+                Vd[..., dot] = self.gate_voltages[dot]
+
+            # if the gate is in the gates list then set it to the voltage array from the meshgrid
+            if dot in dots:
+                i = dots.index(dot)
+                Vd[..., dot] = V[i]
+
+        return np.einsum('ij,...j->...i', self.virtual_gate_matrix, Vd) + self.virtual_gate_origin
+
+
     def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int) -> np.ndarray:
         """
         This function is used to compose a 1d dot voltage array.
@@ -166,15 +205,10 @@ class GateVoltageComposer(BaseDataClass):
         :param x_resolution:
         :return:
         """
-        x_gate = self._fetch_and_check_gate(x_gate)
-        x = np.linspace(x_min, x_max, x_resolution)
-        vg = np.zeros(shape=(x_resolution, self.n_gate))
-        for gate in range(self.n_gate):
-            if not gate == x_gate:
-                vg[..., gate] = self.gate_voltages[gate]
-            if gate == x_gate:
-                vg[..., gate] = x
-        return vg
+        return self.meshgrid(
+            [x_gate],
+            [np.linspace(x_min, x_max, x_resolution)]
+        )
 
     def do2d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int,
              y_gate: str | int, y_min: float, y_max: float, y_resolution: int) -> np.ndarray:
@@ -190,22 +224,16 @@ class GateVoltageComposer(BaseDataClass):
         :param y_resolution:
         :return:
         """
-        x_gate = self._fetch_and_check_gate(x_gate)
-        y_gate = self._fetch_and_check_gate(y_gate)
+        return self.meshgrid(
+            [x_gate, y_gate],
+            [np.linspace(x_min, x_max, x_resolution), np.linspace(y_min, y_max, y_resolution)]
+        )
 
-        x = np.linspace(x_min, x_max, x_resolution)
-        y = np.linspace(y_min, y_max, y_resolution)
-        X, Y = np.meshgrid(x, y)
-
-        vg = np.zeros(shape=(x_resolution, y_resolution, self.n_gate))
-        for gate in range(self.n_gate):
-            if not gate == x_gate and not gate == y_gate:
-                vg[..., gate] = self.gate_voltages[gate]
-            if gate == x_gate:
-                vg[..., gate] = X.T
-            if gate == y_gate:
-                vg[..., gate] = Y.T
-        return vg
+    def do1d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_resolution: int) -> np.ndarray:
+        return self.meshgrid_virtual(
+            [x_dot],
+            [np.linspace(x_min, x_max, x_resolution)]
+        )
 
     def do2d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_resolution: int,
                      y_dot: str | int, y_min: float, y_max: float, y_resolution: int) -> np.ndarray:
@@ -221,23 +249,7 @@ class GateVoltageComposer(BaseDataClass):
         :param y_resolution:
         :return:
         """
-
-        assert self.virtual_gate_origin is not None, 'virtual_gate_origin must be set with model.virtual_gate_origin = ... or in the init'
-        assert self.virtual_gate_matrix is not None, 'virtual_gate_matrix must be set with model.virtual_gate_matrix = ... or in the init'
-
-        x_dot = self._fetch_and_check_dot(x_dot)
-        y_dot = self._fetch_and_check_dot(y_dot)
-
-        x = np.linspace(x_min, x_max, x_resolution)
-        y = np.linspace(y_min, y_max, y_resolution)
-        X, Y = np.meshgrid(x, y)
-
-        vd = np.zeros(shape=(x_resolution, y_resolution, self.n_dot))
-        for gate in range(self.n_gate):
-            if not gate == x_dot and not gate == y_dot:
-                vd[..., gate] = self.gate_voltages[gate]
-            if gate == x_dot:
-                vd[..., gate] = X
-            if gate == y_dot:
-                vd[..., gate] = Y
-        return np.einsum('ij,...j->...i', self.virtual_gate_matrix, vd) + self.virtual_gate_origin
+        return self.meshgrid_virtual(
+            [x_dot, y_dot],
+            [np.linspace(x_min, x_max, x_resolution), np.linspace(y_min, y_max, y_resolution)]
+        )
