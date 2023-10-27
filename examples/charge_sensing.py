@@ -2,6 +2,7 @@
 import time
 from functools import partial
 
+import numpy as np
 from matplotlib import pyplot as plt
 
 from qarray import ChargeSensedDotArray, GateVoltageComposer
@@ -29,10 +30,10 @@ model = ChargeSensedDotArray(
     cds_non_maxwell=cds,
     cgs_non_maxwell=cgs,
     gamma=0.05,
-    noise=0.0,
+    noise=0.001,
     threshold=1.,
     core='r',
-    T=0.05
+    T=0.01
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
@@ -45,10 +46,11 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -5, 5
-vy_min, vy_max = -5, 5
+vx_min, vx_max = -0.3, 0.3
+vy_min, vy_max = -0.3, 0.3
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 1, vy_min, vy_max, 200)
+vg += model.optimal_Vg(np.zeros(model.n_dot) + 0.5)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
@@ -62,7 +64,10 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
 
     # s = np.sqrt(np.gradient(s, axis=1, edge_order=2)**2 + np.gradient(s, axis=0, edge_order=2)**2)
 
-    ax.imshow(s[..., 0], extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
+    z = s[..., 0]
+    z = np.sqrt(np.gradient(z, axis=1, edge_order=2) ** 2 + np.gradient(z, axis=0, edge_order=2) ** 2)
+
+    ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
               interpolation='none')
     ax.set_aspect('equal')
 fig.tight_layout()

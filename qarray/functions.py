@@ -27,6 +27,14 @@ def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     return np.logical_or(change_in_x, change_in_y)
 
 
+def dot_gradient(n: Tetrad | np.ndarray) -> VectorList:
+    if not isinstance(n, Tetrad):
+        n = Tetrad(n)
+
+    grad_x = np.abs(n[1:, :-1, ] - n[:-1, :-1, :])
+    grad_y = np.abs(n[:-1, 1:, :] - n[:-1, :-1, :])
+    return (grad_x + grad_y).max(axis=(-1))
+
 def optimal_Vg(cdd_inv: CddInv, cgd: Cgd_holes, n_charges: VectorList, rcond: float = 1e-3):
     '''
     calculate voltage that mminimises charge state energy

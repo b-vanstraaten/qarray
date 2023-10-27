@@ -122,6 +122,40 @@ class GateVoltageComposer(BaseDataClass):
             case _:
                 raise ValueError(f'Gate not of type int of string {type(gate)}')
 
+    def meshgrid(self, gates, arrays):
+        """
+        This function is used to compose a dot voltage array, given a list of gates and a list of arrays it will
+        compose a dot voltage array, based on the meshgrid of the arrays.
+        :param gates: a list of gates to be varied
+        :param arrays: a list of arrays to be meshgridded
+        :return: a dot voltage array
+        """
+
+        # checking the gates and arrays are the same length and are 1d
+        assert all([array.ndim == 1 for array in arrays]), 'arrays must be 1d'
+        assert len(gates) == len(arrays), 'gates and arrays must be the same length'
+        gates = list(map(self._fetch_and_check_gate, gates))
+
+        # getting the sizes of the arrays
+        sizes = [array.size for array in arrays]
+
+        # initialising the voltage array
+        Vg = np.zeros(shape=sizes + [self.n_gate])
+
+        # creating the meshgrid
+        V = np.meshgrid(*arrays)
+
+        # setting the voltages
+        for gate in range(self.n_gate):
+            # if the gate is not in the gates list then set it to the current voltage
+            if gate not in gates:
+                Vg[..., gate] = self.gate_voltages[gate]
+
+            # if the gate is in the gates list then set it to the voltage array from the meshgrid
+            if gate in gates:
+                i = gates.index(gate)
+                Vg[..., gate] = V[i]
+        return Vg
 
     def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_resolution: int) -> np.ndarray:
         """

@@ -1,7 +1,7 @@
 import numpy as np
 from pydantic import NonNegativeInt
 
-from ..jax_brute_force_core import ground_state_open_jax_brute_force, ground_state_closed_jax_brute_force
+from ..brute_force import ground_state_open_brute_force, ground_state_closed_brute_force
 from ..jax_core import ground_state_open_jax, ground_state_closed_jax
 from ..python_core import ground_state_open_python, ground_state_closed_python
 from ..qarray_types import VectorList
@@ -64,7 +64,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
 
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
-            result = ground_state_open_jax_brute_force(
+            result = ground_state_open_brute_force(
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv, max_number_of_charge_carriers=model.max_charge_carriers, T=model.T
             )
@@ -122,7 +122,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
 
-            result = ground_state_closed_jax_brute_force(
+            result = ground_state_closed_brute_force(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T
             )
