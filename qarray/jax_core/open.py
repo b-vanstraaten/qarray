@@ -12,6 +12,7 @@ from pydantic.types import PositiveFloat
 
 from .charge_configuration_generators import open_charge_configurations_jax
 from .helper_functions import softargmin, hardargmin
+from ..functions import batched_vmap
 from ..qarray_types import VectorList, CddInv, Cgd_holes, Vector
 
 qp = BoxOSQP(check_primal_dual_infeasability=False, verbose=False)
@@ -62,7 +63,8 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd_holes, vg):
     )
 
 
-def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, T: PositiveFloat = 0.) -> VectorList:
+def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, T: PositiveFloat = 0.,
+                          batch_size: int = 10000) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at
@@ -70,14 +72,16 @@ def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, T: Po
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :return: the lowest energy charge configuration for each dot voltage coordinate vector
     """
-
     f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, T=T)
     match jax.local_device_count():
         case 0:
             raise ValueError('Must have at least one device')
         case _:
             f = jax.vmap(f)
-    return f(vg)
+
+    n_dot = cdd_inv.shape[0]
+    return batched_vmap(f=f, Vg=vg, n_dot=n_dot, batch_size=batch_size)
+
 
 
 @jax.jit

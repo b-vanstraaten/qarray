@@ -52,7 +52,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
 
             result = ground_state_open_jax(
                 vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv, T=model.T
+                cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
 
         case 'brute_force' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
@@ -66,7 +66,10 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
             result = ground_state_open_brute_force(
                 vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv, max_number_of_charge_carriers=model.max_charge_carriers, T=model.T
+                cdd_inv=model.cdd_inv,
+                max_number_of_charge_carriers=model.max_charge_carriers,
+                T=model.T,
+                batch_size=model.batch_size
             )
         case 'python' | 'Python' | 'PYTHON' | 'p':
             result = ground_state_open_python(
@@ -115,7 +118,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 print('Warning: JAX core does not support threshold < 1.0, using of 1.0')
             result = ground_state_closed_jax(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T
+                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
 
         case 'brute_force' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
@@ -124,7 +127,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
 
             result = ground_state_closed_brute_force(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T
+                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
 
         case 'python' | 'Python' | 'PYTHON' | 'p':

@@ -9,12 +9,14 @@ import jax.numpy as jnp
 from pydantic.types import PositiveInt
 
 from .charge_configuration_generators import open_change_configurations_brute_force_jax
+from ..functions import batched_vmap
 from ..jax_core.helper_functions import softargmin, hardargmin
 from ..qarray_types import VectorList, CddInv, Cgd_holes
 
 
 def ground_state_open_brute_force(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv,
-                                  max_number_of_charge_carriers: PositiveInt, T: float = 0) -> VectorList:
+                                  max_number_of_charge_carriers: PositiveInt, T: float = 0,
+                                  batch_size: int = 10000) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at
@@ -32,7 +34,9 @@ def ground_state_open_brute_force(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddIn
             raise ValueError('Must have at least one device')
         case _:
             f = jax.vmap(f)
-    return f(vg)
+
+    n_dot = cdd_inv.shape[0]
+    return batched_vmap(f=f, Vg=vg, n_dot=n_dot, batch_size=batch_size)
 
 
 @jax.jit

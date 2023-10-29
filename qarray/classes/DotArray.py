@@ -45,6 +45,7 @@ class DotArray(BaseDataClass):
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
     T: float = 0.  # the temperature of the system, only used for jax and jax_brute_force cores
     max_charge_carriers: int | None = None  # the maximum number of change carriers, only used for jax_brute_force
+    batch_size: int = 10000
 
     def __post_init__(self):
 

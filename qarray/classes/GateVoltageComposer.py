@@ -137,7 +137,7 @@ class GateVoltageComposer(BaseDataClass):
         gates = list(map(self._fetch_and_check_gate, gates))
 
         # getting the sizes of the arrays
-        sizes = [array.size for array in arrays]
+        sizes = [array.size for array in reversed(arrays)]
 
         # initialising the voltage array
         Vg = np.zeros(shape=sizes + [self.n_gate])
