@@ -2,7 +2,8 @@
 This script recreates figure 3 from the paper https://www.nature.com/articles/s41565-020-00816-w#Sec19
 """
 import time
-
+import matplotlib
+matplotlib.use('TkAgg')
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -34,7 +35,7 @@ model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core='rust',
-    threshold=0.,
+    T=0.01
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
@@ -48,7 +49,7 @@ voltage_composer = GateVoltageComposer(
     virtual_gate_origin=virtual_gate_origin
 )
 
-N = 300
+N = 1000
 # defining the min and max values for the dot voltage sweep
 vx_min, vx_max = -1.9, 1.9
 vy_min, vy_max = -2.3, 2.8
@@ -96,7 +97,7 @@ fig.set_size_inches(8, 4)
 
 # ax[0].imshow(my_data, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
 #              interpolation='spline16')
-ax[1].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
-             interpolation='spline16')
+ax[1].imshow(np.sum(np.gradient(z, axis=(0, 1)), axis=0), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
+             interpolation='none')
 plt.savefig('5_dots.pdf', bbox_inches='tight')
 plt.show()

@@ -61,6 +61,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,
                  interpolation='antialiased')
     ax.set_aspect('equal')
+
 fig.tight_layout()
 
 # setting the labels and titles
