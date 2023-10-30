@@ -17,10 +17,10 @@ model = DotArray(
         [0.1, 0.]
     ]),
     cgd_non_maxwell=[
-        [1., 0.],
-        [0., 1]
+        [1., 0.2],
+        [0.2, 1]
     ],
-    core='r', charge_carrier='h', polish=True, T=0.0
+    core='j', charge_carrier='h', polish=True, T=0.0, batch_size=int(1.1e3)
 )
 print(np.linalg.eigvals(model.cdd_inv))
 print(np.linalg.eig(model.cdd_inv))
@@ -41,7 +41,7 @@ ground_state_funcs = [
 vx_min, vx_max = -3, 0
 vy_min, vy_max = -3, 0
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 1, vy_min, vy_max, 1000)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

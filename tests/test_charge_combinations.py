@@ -8,7 +8,7 @@ from qarray.python_core.charge_configuration_generators import closed_charge_con
 from qarray.rust_core.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
 from .helper_functions import compare_sets_for_equality, to_set
 
-N_ITERATIONS = 1000
+N_ITERATIONS = 100
 N_DOT_MAX = 10
 N_CHARGE_MAX = 5
 

@@ -57,6 +57,7 @@ def benchmark(state, threshold, n_dots, n_voltage_points, n_model_max, t_max, pl
         plt.xlabel('Number of dots')
         plt.ylabel('Time (s)')
         plt.yscale('log')
+        plt.legend()
         plt.show()
 
     if save:

@@ -11,6 +11,7 @@ from pydantic import PositiveFloat
 
 from .charge_configuration_generators import open_charge_configurations_jax
 from .helper_functions import softargmin, hardargmin
+from ..functions import batched_vmap
 from ..qarray_types import VectorList, CddInv, Cgd_holes, Cdd, Vector
 
 qp = BoxOSQP(jit=True, check_primal_dual_infeasability=False, verbose=False)
@@ -71,7 +72,7 @@ def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd_holes
 
 
 def ground_state_closed_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
-                            n_charge: NonNegativeInt, T: PositiveFloat = 0.) -> VectorList:
+                            n_charge: NonNegativeInt, T: PositiveFloat = 0., batch_size: int = 10000) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at
@@ -89,7 +90,10 @@ def ground_state_closed_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: C
             raise ValueError('Must have at least one device')
         case _:
             f = jax.vmap(f)
-    return f(vg)
+
+    n_dot = cdd_inv.shape[0]
+    return batched_vmap(f=f, Vg=vg, n_dot=n_dot, batch_size=batch_size)
+
 
 
 @jax.jit
