@@ -112,11 +112,11 @@ class DotArray(BaseDataClass):
         """
         return _ground_state_open(self, vg)
 
-    def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
+    def ground_state_closed(self, vg: VectorList | np.ndarray, n_charges: NonNegativeInt) -> np.ndarray:
         """
         Computes the ground state for a closed dot array.
         :param vg: (..., n_gate) array of dot voltages to compute the ground state for
-        :param n_charge: the number of charges to be confined in the dot array
+        :param n_charges: the number of charges to be confined in the dot array
         :return: (..., n_dot) array of the number of charges to compute the ground state for
         """
-        return _ground_state_closed(self, vg, n_charge)
+        return _ground_state_closed(self, vg, n_charges)
