@@ -16,7 +16,7 @@ from qarray import (DotArray)
 
 N_VOLTAGE_POINTS = 10000
 N_MODEL_MAX = 10000
-T_MAX = 60
+T_MAX = 10
 
 
 def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=True, save=True):
@@ -39,7 +39,7 @@ def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=Tr
                 cgd_non_maxwell=cgd,
                 threshold=1.,
                 core=core,
-                batch_size=int(min((2 ** 25) / (2 ** N), N_VOLTAGE_POINTS))
+                batch_size=int(min((2 ** 25) / (N ** N), N_VOLTAGE_POINTS))
             )
             model.max_charge_carriers = N
 
@@ -82,12 +82,12 @@ def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=Tr
 benchmark_combinations = [
     # ('rust', 'open', np.arange(16, 1, -1)),
     # ('rust', 'closed', np.arange(16, 1, -1)),
-    ('jax', 'open', np.arange(16, 1, -1)),
-    ('jax', 'closed', np.arange(16, 1, -1)),
+    # ('jax', 'open', np.arange(16, 1, -1)),
+    # ('jax', 'closed', np.arange(16, 1, -1)),
     # ('python', 'open', np.arange(8, 1, -1)),
     # ('python', 'closed', np.arange(8, 1, -1)),
-    # ('jax_brute_force', 'open', np.arange(6, 1, -1)),
-    # ('jax_brute_force', 'closed', np.arange(6, 1, -1)),
+    ('jax_brute_force', 'open', np.arange(6, 1, -1)),
+    ('jax_brute_force', 'closed', np.arange(6, 1, -1)),
 ]
 
 for core, state, n_dots in benchmark_combinations:
