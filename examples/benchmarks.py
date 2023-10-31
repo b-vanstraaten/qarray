@@ -9,7 +9,7 @@ from tqdm import tqdm
 os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 
 os.environ["XLA_PYTHON_CLIENT_PREALLOCATE"] = "false"
-os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = ".XX"
+os.environ["XLA_PYTHON_CLIENT_MEM_FRACTION"] = "1.0"
 os.environ["XLA_PYTHON_CLIENT_ALLOCATOR"] = "platform"
 
 devices = jax.local_devices()
