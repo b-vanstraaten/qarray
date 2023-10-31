@@ -16,7 +16,7 @@ from qarray import (DotArray)
 
 N_VOLTAGE_POINTS = 10000
 N_MODEL_MAX = 10000
-T_MAX = 1
+T_MAX = 60
 
 
 def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=True, save=True):
