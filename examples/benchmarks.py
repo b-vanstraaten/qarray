@@ -43,7 +43,7 @@ def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=Tr
                 cgd_non_maxwell=cgd,
                 threshold=1.,
                 core=core,
-                batch_size=1000
+                batch_size=500
             )
             model.max_charge_carriers = N
 
