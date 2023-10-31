@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '5'
+os.environ['CUDA_VISIBLE_DEVICES'] = '7'
 devices = jax.local_devices()
 
 np.random.seed(1)
@@ -15,7 +15,7 @@ from qarray import (DotArray)
 
 N_VOLTAGE_POINTS = 10000
 N_MODEL_MAX = 10000
-T_MAX = 10
+T_MAX = 1
 
 
 def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=True, save=True):
@@ -37,7 +37,8 @@ def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=Tr
                 cdd_non_maxwell=cdd,
                 cgd_non_maxwell=cgd,
                 threshold=1.,
-                core=core
+                core=core,
+                batch_size=100000
             )
             model.max_charge_carriers = N
 
@@ -73,19 +74,19 @@ def benchmark(core, state, n_dots, n_voltage_points, n_model_max, t_max, plot=Tr
         plt.show()
 
     if save:
-        np.savez(f'./benchmark_data/{core}_{state}_benchmark_GPU.npz', n_dots=n_dots, times=times)
+        np.savez(f'./benchmark_data/{core}_{state}_benchmark_GPU_batched.npz', n_dots=n_dots, times=times)
     return times
 
 
 benchmark_combinations = [
     # ('rust', 'open', np.arange(16, 1, -1)),
     # ('rust', 'closed', np.arange(16, 1, -1)),
-    # ('jax', 'open', np.arange(8, 1, -1)),
-    # ('jax', 'closed', np.arange(8, 1, -1)),
+    ('jax', 'open', np.arange(16, 1, -1)),
+    ('jax', 'closed', np.arange(16, 1, -1)),
     # ('python', 'open', np.arange(8, 1, -1)),
     # ('python', 'closed', np.arange(8, 1, -1)),
-    ('jax_brute_force', 'open', np.arange(5, 1, -1)),
-    ('jax_brute_force', 'closed', np.arange(5, 1, -1)),
+    # ('jax_brute_force', 'open', np.arange(6, 1, -1)),
+    # ('jax_brute_force', 'closed', np.arange(6, 1, -1)),
 ]
 
 for core, state, n_dots in benchmark_combinations:
