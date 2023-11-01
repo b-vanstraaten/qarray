@@ -65,15 +65,15 @@ def dot_gradient(n: Tetrad | np.ndarray) -> VectorList:
 
 def optimal_Vg(cdd_inv: CddInv, cgd: Cgd_holes, n_charges: VectorList, rcond: float = 1e-3):
     '''
-    calculate voltage that mminimises charge state energy
-
+    calculate voltage that minimises charge state energy
     check influence of rcond!
     :param cdd_inv:
     :param cgd:
     :param n_charges:
     :return:
     '''
-    M = np.linalg.pinv(cgd.T @ cdd_inv @ cgd, rcond=rcond) @ cgd.T @ cdd_inv
+    R = np.linalg.cholesky(cdd_inv).T
+    M = np.linalg.pinv(R @ cgd, rcond=rcond) @ R
     return np.einsum('ij, ...j', M, n_charges)
 
 
