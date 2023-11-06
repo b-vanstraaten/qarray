@@ -9,8 +9,8 @@ np.random.seed(1)
 from qarray import (DotArray)
 
 N_VOLTAGE_POINTS = 10000
-N_MODEL_MAX = 10000
-T_MAX = 1
+N_MODEL_MAX = 1000000
+T_MAX = 10
 
 
 def benchmark(state, threshold, n_dots, n_voltage_points, n_model_max, t_max, plot=True, save=True):
@@ -67,11 +67,14 @@ def benchmark(state, threshold, n_dots, n_voltage_points, n_model_max, t_max, pl
 
 n_max = 16
 benchmark_combinations = [
+    ('open', 1., np.arange(n_max, 1, -1)),
+    ('open', 2 / 3, np.arange(n_max, 1, -1)),
+    ('open', 1 / 3, np.arange(n_max, 1, -1)),
+    ('open', 0 / 3, np.arange(n_max, 1, -1)),
     ('closed', 1., np.arange(n_max, 1, -1)),
-    ('closed', 0.75, np.arange(n_max, 1, -1)),
-    ('closed', 0.5, np.arange(n_max, 1, -1)),
-    ('closed', 0.25, np.arange(n_max, 1, -1)),
-    ('closed', 0.0, np.arange(n_max, 1, -1)),
+    ('closed', 2 / 3, np.arange(n_max, 1, -1)),
+    ('closed', 1 / 3, np.arange(n_max, 1, -1)),
+    ('closed', 0 / 3, np.arange(n_max, 1, -1)),
 ]
 
 for state, threshold, n_dots in benchmark_combinations:

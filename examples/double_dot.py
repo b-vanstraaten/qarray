@@ -12,15 +12,15 @@ from qarray import (DotArray, GateVoltageComposer)
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
-    cdd_non_maxwell=np.array([
+    cdd_non_maxwell=6.25 * np.array([
         [0., 0.1],
         [0.1, 0.]
     ]),
-    cgd_non_maxwell=[
+    cgd_non_maxwell=6.25 * np.array([
         [1., 0.2],
         [0.2, 1]
-    ],
-    core='r', charge_carrier='h', polish=True, T=0.01, threshold='auto',
+    ]),
+    core='r', charge_carrier='h', polish=True, T=1e-3, threshold=1.,
 )
 print(np.linalg.eigvals(model.cdd_inv))
 print(np.linalg.eig(model.cdd_inv))
@@ -38,8 +38,8 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -3, 0
-vy_min, vy_max = -3, 0
+vx_min, vx_max = -0.1, 0
+vy_min, vy_max = -0.1, 0
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
 
@@ -58,6 +58,8 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     # z = dot_occupation_changes(n)
     # plotting the result
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
+    z = np.gradient(z, axis=0)
+
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,
                  interpolation='antialiased')
     ax.set_aspect('equal')

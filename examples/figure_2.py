@@ -6,7 +6,7 @@ import time
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from qarray import (DotArray, GateVoltageComposer)
 
 nearest_coupling = 0.1
 diagonal_coupling = 0.05
@@ -34,7 +34,7 @@ model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core='rust',
-    T=0.0
+    T=0.02
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
@@ -48,7 +48,7 @@ voltage_composer = GateVoltageComposer(
     virtual_gate_origin=virtual_gate_origin
 )
 
-N = 1000
+N = 400
 # defining the min and max values for the dot voltage sweep
 vx_min, vx_max = -1.9, 1.9
 vy_min, vy_max = -2.3, 2.8
@@ -76,7 +76,14 @@ n = model.ground_state_closed(vg, 5)
 t1 = time.time()
 print(f'Ground state calculation took {t1 - t0:.2f} seconds')
 
-z = dot_occupation_changes(n)
+coupling = np.array([0.09, 0.05, 0.10, 0.14, 0.10])
+v_sensor = (n * coupling[np.newaxis, np.newaxis, :]).sum(axis=-1)
+v_sensor = (v_sensor - v_sensor.min()) / (v_sensor.max() - v_sensor.min())
+v_sensor = v_sensor + np.random.randn(*v_sensor.shape) * 0.005
+v_gradient = np.gradient(v_sensor, axis=0)
+v_gradient = (v_gradient - v_gradient.min()) / (v_gradient.max() - v_gradient.min())
+
+v_gradient = np.clip(v_gradient, 0.1, 0.9)
 
 names = ['T', 'L', 'M', 'R', 'B']
 
@@ -89,14 +96,14 @@ names = ['T', 'L', 'M', 'R', 'B']
 #
 # plt.figure()
 
-fig, ax = plt.subplots(1, 2)
+fig, ax = plt.subplots(1, 1)
 fig.set_size_inches(8, 4)
 
 # my_data = np.genfromtxt('./closed_array.csv', delimiter=',')
 
 # ax[0].imshow(my_data, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
 #              interpolation='spline16')
-ax[1].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
+ax.imshow(v_gradient, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='RdYlBu', alpha=1.,
              interpolation='None')
 plt.savefig('5_dots.pdf', bbox_inches='tight')
 plt.show()

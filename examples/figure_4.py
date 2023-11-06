@@ -38,7 +38,7 @@ model_rust = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core='r',
-    threshold='auto',
+    threshold=0.,
     charge_carrier='hole',
 )
 

@@ -4,9 +4,9 @@ from matplotlib import pyplot as plt
 from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
 
 cdd_non_maxwell = [
-    [1, -0., -0.004, -0.0],
-    [-0., 1, -0.03, -0.01],
-    [-0.004, -0.03, 1, -0.],
+    [1., -0., -0.004, -0.0],
+    [-0., 1, -0.04, -0.01],
+    [-0.004, -0.04, 1, -0.],
     [-0.0, -0.01, -0., 1.]
 ]
 cgd_non_maxwell = np.array([
@@ -22,7 +22,7 @@ model = DotArray(
     cgd=cgd_non_maxwell,
     core='rust',
     charge_carrier='electron',
-    T=0.01
+    T=0.02
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
@@ -37,7 +37,7 @@ n = model.ground_state_open(vg)
 
 z = dot_occupation_changes(n)
 
-coupling = np.array([0.03, 0.02, 0.005, 0.004])
+coupling = np.array([0.03, 0.03, 0.01, 0.004])
 v_sensor = (n * coupling[np.newaxis, np.newaxis, :]).sum(axis=-1)
 
 
