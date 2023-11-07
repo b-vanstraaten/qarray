@@ -76,7 +76,7 @@ n = model.ground_state_closed(vg, 5)
 t1 = time.time()
 print(f'Ground state calculation took {t1 - t0:.2f} seconds')
 
-coupling = np.array([0.09, 0.05, 0.10, 0.14, 0.10])
+coupling = np.array([0.09, 0.05, 0.11, 0.14, 0.11])
 v_sensor = (n * coupling[np.newaxis, np.newaxis, :]).sum(axis=-1)
 v_sensor = (v_sensor - v_sensor.min()) / (v_sensor.max() - v_sensor.min())
 v_sensor = v_sensor + np.random.randn(*v_sensor.shape) * 0.005

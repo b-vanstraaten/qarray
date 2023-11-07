@@ -85,9 +85,9 @@ benchmark_combinations = [
     # ('jax', 'open', np.arange(16, 1, -1)),
     # ('jax', 'closed', np.arange(16, 1, -1)),
     # ('python', 'open', np.arange(8, 1, -1)),
-    # ('python', 'closed', np.arange(8, 1, -1)),
-    ('jax_brute_force', 'open', np.arange(7, 1, -1)),
-    ('jax_brute_force', 'closed', np.arange(7, 1, -1)),
+    ('python', 'closed', np.arange(12, 1, -1)),
+    # ('jax_brute_force', 'open', np.arange(7, 1, -1)),
+    # ('jax_brute_force', 'closed', np.arange(7, 1, -1)),
 ]
 
 for core, state, n_dots in benchmark_combinations:
