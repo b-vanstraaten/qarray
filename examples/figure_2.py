@@ -34,7 +34,7 @@ model = DotArray(
     cdd_non_maxwell=cdd_non_maxwell,
     cgd_non_maxwell=cgd_non_maxwell,
     core='rust',
-    T=0.02
+    T=0.03
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
@@ -50,8 +50,8 @@ voltage_composer = GateVoltageComposer(
 
 N = 400
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -1.9, 1.9
-vy_min, vy_max = -2.3, 2.8
+vx_min, vx_max = -1.6, 1.6
+vy_min, vy_max = -2.4, 2.4
 
 vg = voltage_composer.do2d_virtual(1, vy_min, vx_max, N, 3, vy_min, vy_max, N)
 
@@ -62,8 +62,8 @@ vg_rt = voltage_composer.do2d_virtual(3, -vx_min, -vx_max, N, 0, vy_min, vy_max,
 vg_rb = voltage_composer.do2d_virtual(3, -vx_min, -vx_max, N, 4, -vy_min, -vy_max, N)
 
 vg = vg_lt + vg_lb + vg_rt + vg_rb
-scale = 1.
-shift = -0.2
+scale = -0.5
+shift = -0.
 
 vg = vg + voltage_composer.do1d(2, shift - scale, shift + scale, N)[:, np.newaxis, :]
 
@@ -83,7 +83,7 @@ v_sensor = v_sensor + np.random.randn(*v_sensor.shape) * 0.005
 v_gradient = np.gradient(v_sensor, axis=0)
 v_gradient = (v_gradient - v_gradient.min()) / (v_gradient.max() - v_gradient.min())
 
-v_gradient = np.clip(v_gradient, 0.1, 0.9)
+v_gradient = np.clip(v_gradient, 0., 0.95)
 
 names = ['T', 'L', 'M', 'R', 'B']
 
@@ -96,14 +96,11 @@ names = ['T', 'L', 'M', 'R', 'B']
 #
 # plt.figure()
 
-fig, ax = plt.subplots(1, 1)
-fig.set_size_inches(8, 4)
+fig = plt.figure()
+fig.set_size_inches(4, 4)
 
-# my_data = np.genfromtxt('./closed_array.csv', delimiter=',')
-
-# ax[0].imshow(my_data, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys', alpha=1.,
-#              interpolation='spline16')
-ax.imshow(v_gradient, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='RdYlBu', alpha=1.,
+plt.imshow(v_gradient, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='RdYlBu', alpha=0.8,
              interpolation='None')
+plt.colorbar()
 plt.savefig('5_dots.pdf', bbox_inches='tight')
 plt.show()

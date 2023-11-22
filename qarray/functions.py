@@ -5,6 +5,7 @@ from typing import Callable
 
 import jax.numpy as jnp
 import numpy as np
+import scipy.linalg
 
 from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad,
                            NegativeValuedMatrix)
@@ -129,5 +130,5 @@ def compute_threshold(cdd: Cdd) -> float:
     :return:
     """
     cdd_diag = np.diag(cdd)
-    c = (cdd - np.diag(cdd_diag)) / cdd_diag[:, np.newaxis]
-    return 2 * np.max(np.sum(np.abs(c), axis=1))
+    c = (cdd - np.diag(cdd_diag)) @ np.linalg.inv(np.diag(cdd_diag))
+    return 2 * scipy.linalg.norm(c, ord='fro')
