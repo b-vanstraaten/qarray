@@ -11,11 +11,7 @@ from qarray import (ground_state_open_rust, ground_state_closed_rust, ground_sta
                     ground_state_closed_python, optimal_Vg, compute_threshold)
 from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
 from tests.helper_functions import randomly_generate_matrices, too_different
-
-N_VOLTAGES = 1000
-N_ITERATIONS = 10
-
-
+from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES
 
 
 class DoubleDotTests(unittest.TestCase):

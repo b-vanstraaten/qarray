@@ -9,11 +9,8 @@ import numpy as np
 
 from qarray.python_core.core_python import init_osqp_problem, compute_analytical_solution_open, \
     compute_analytical_solution_closed
+from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES, ATOL
 from .helper_functions import randomly_generate_model
-
-N_VOLTAGES = 100
-N_ITERATIONS = 10
-ATOL = 5e-3
 
 
 class TestOsqpSolver(unittest.TestCase):

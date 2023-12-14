@@ -34,7 +34,19 @@ def all_positive_or_negative(a):
 @dataclass(config=dict(arbitrary_types_allowed=True, auto_attribs_default=True))
 class DotArray(BaseDataClass):
     """
-    This class holds the capacitance matrices for the dot array and provides methods to compute the ground state.
+    This class holds the capacitance matrices for the dot array and provides methods to compute the ground state
+    :param Cdd: the dot to dot capacitance matrix in its non Maxwell form
+    :param Cgd: the dot to gate capacitance matrix in its non Maxwell form
+    :param cdd: the dot to dot capacitance matrix in its Maxwell form
+    :param cgd: the dot to gate capacitance matrix in its Maxwell form
+    :param core: a string of ['rust', 'jax', 'python', 'brute_force'] to specify which core backend to use.
+    :param charge_carrier: a string of ['electron', 'hole'] to specify the charge carrier
+    :param threshold: a float specifying the threshold, default 1. If 'auto' is passed, the threshold is computed
+    automatically
+    :param polish: a bool specifying whether to polish the result of the ground state computation numberical solution
+    :param T: the temperature of the system, default 0.
+    :param max_charge_carriers: the maximum number of charge carriers, only used for jax_brute_force
+    :param batch_size: the batch size for the jax and brute_force core
     """
     Cdd: CddNonMaxwell | None = None  # an (n_dot, n_dot)the capacitive coupling between dots
     Cgd: CgdNonMaxwell | None = None  # an (n_dot, n_gate) the capacitive coupling between gates and dots
@@ -49,6 +61,10 @@ class DotArray(BaseDataClass):
     batch_size: int = 10000
 
     def __post_init__(self):
+        """
+        This function is called after the initialization of the dataclass. It checks that the capacitance matrices
+        are valid and sets the cdd_inv attribute as the inverse of cdd.
+        """
 
         # checking that either cdd and cgd or Cdd and Cgd are specified
         non_maxwell_pair_passed = not both_none(self.Cdd, self.Cgd)

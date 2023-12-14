@@ -6,11 +6,9 @@ import numpy as np
 from qarray.jax_core.charge_configuration_generators import open_charge_configurations_jax
 from qarray.python_core.charge_configuration_generators import closed_charge_configurations, open_charge_configurations
 from qarray.rust_core.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
+from .GLOBAL_OPTIONS import N_ITERATIONS, N_DOT_MAX, N_CHARGE_MAX
 from .helper_functions import compare_sets_for_equality, to_set
 
-N_ITERATIONS = 100
-N_DOT_MAX = 10
-N_CHARGE_MAX = 5
 
 class ChargeCombinationsTests(unittest.TestCase):
 

@@ -8,9 +8,8 @@ from tqdm import tqdm
 
 from qarray import (optimal_Vg,
                     GateVoltageComposer, dot_occupation_changes)
-
-N_VOLTAGES = 100
-N_ITERATIONS = 10
+from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES
+from .helper_functions import randomly_generate_model
 
 
 class threshold_tests:

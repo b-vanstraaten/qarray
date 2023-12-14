@@ -7,9 +7,7 @@ from tqdm import tqdm
 from qarray import (ground_state_open_rust, ground_state_closed_rust, dot_occupation_changes)
 from qarray.brute_force import ground_state_open_brute_force, ground_state_closed_brute_force
 from tests.helper_functions import randomly_generate_matrices, too_different
-
-N_VOLTAGES = 100
-N_ITERATIONS = 10
+from .GLOBAL_OPTIONS import disable_tqdm, N_ITERATIONS, N_VOLTAGES
 
 
 class BruteForceTests(unittest.TestCase):
@@ -19,7 +17,7 @@ class BruteForceTests(unittest.TestCase):
 
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
-        for _ in tqdm(range(N_ITERATIONS)):
+        for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
             cdd, cdd_inv, cgd = randomly_generate_matrices(2)
 
             vg = np.stack([np.linspace(-5, 5, N_VOLTAGES), np.linspace(-5, 5, N_VOLTAGES)], axis=-1)
@@ -44,7 +42,7 @@ class BruteForceTests(unittest.TestCase):
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
 
-        for _ in tqdm(range(N_ITERATIONS)):
+        for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
             for n in range(5):
                 cdd, cdd_inv, cgd = randomly_generate_matrices(2)
                 vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
@@ -67,7 +65,7 @@ class BruteForceTests(unittest.TestCase):
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
 
-        for _ in tqdm(range(N_ITERATIONS)):
+        for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
             cdd, cdd_inv, cgd = randomly_generate_matrices(3)
 
             meshgrid = np.meshgrid(np.linspace(-5, 5, N_VOLTAGES), np.linspace(-5, 5, N_VOLTAGES), )
@@ -99,7 +97,7 @@ class BruteForceTests(unittest.TestCase):
 
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
-        for _ in tqdm(range(N_ITERATIONS)):
+        for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
             for n in range(5, 2, -1):
                 cdd, cdd_inv, cgd = randomly_generate_matrices(3)
 
