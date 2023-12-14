@@ -12,18 +12,16 @@ from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
-    cdd_non_maxwell=6.25 * np.array([
+    Cdd=6.25 * np.array([
         [0., 0.1],
         [0.1, 0.]
     ]),
-    cgd_non_maxwell=6.25 * np.array([
+    Cgd=6.25 * np.array([
         [1., 0.2],
         [0.2, 1]
     ]),
-    core='r', charge_carrier='h', polish=True, T=0., threshold=1.,
+    core='r', charge_carrier='h', T=0.,
 )
-print(np.linalg.eigvals(model.cdd_inv))
-print(np.linalg.eig(model.cdd_inv))
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d

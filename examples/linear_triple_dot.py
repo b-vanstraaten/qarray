@@ -14,12 +14,12 @@ from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
-    cdd_non_maxwell=[
+    Cdd=[
         [0., 0.1, 0.05],
         [0.1, 0., 0.1],
         [0.05, 0.1, 0]
     ],
-    cgd_non_maxwell=[
+    Cgd=[
         [1., 0.2, 0.05],
         [0.2, 1., 0.2],
         [0.05, 0.2, 1]

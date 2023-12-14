@@ -25,8 +25,8 @@ cgd_non_maxwell = [
 ]
 
 model = DotArray(
-    cdd_non_maxwell=cdd_non_maxwell,
-    cgd_non_maxwell=cgd_non_maxwell,
+    Cdd=cdd_non_maxwell,
+    Cgd=cgd_non_maxwell,
     core='rust',
     charge_carrier='hole',
     threshold='auto',

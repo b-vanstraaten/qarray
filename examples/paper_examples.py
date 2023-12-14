@@ -2,15 +2,7 @@
 Created on 26/10/2023
 @author jdh
 """
-
-import matplotlib
-matplotlib.use('TkAgg')
-import matplotlib.pyplot as plt
-import numpy as np
-
-
-from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
-
+from qarray import (DotArray, GateVoltageComposer)
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
@@ -35,5 +27,3 @@ vg = voltage_composer.do2d(
 
 n = model.ground_state_open(vg)
 n_closed = model.ground_state_closed(vg, n_charges=10)
-
-

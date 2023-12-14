@@ -6,7 +6,8 @@ from pydantic import NonNegativeInt
 from .BaseDataClass import BaseDataClass
 from ._helper_functions import (_ground_state_open, _ground_state_closed)
 from ..functions import convert_to_maxwell, compute_threshold, optimal_Vg
-from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cdd, Cgd_holes, Cgd_electrons, PositiveValuedMatrix
+from ..qarray_types import Cdd as TypeCdd  # to avoid name clash with dataclass Cdd
+from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix
 
 if TYPE_CHECKING:
     from dataclasses import dataclass
@@ -35,9 +36,9 @@ class DotArray(BaseDataClass):
     """
     This class holds the capacitance matrices for the dot array and provides methods to compute the ground state.
     """
-    cdd_non_maxwell: CddNonMaxwell | None = None  # an (n_dot, n_dot)the capacitive coupling between dots
-    cgd_non_maxwell: CgdNonMaxwell | None = None  # an (n_dot, n_gate) the capacitive coupling between gates and dots
-    cdd: Cdd | None = None
+    Cdd: CddNonMaxwell | None = None  # an (n_dot, n_dot)the capacitive coupling between dots
+    Cgd: CgdNonMaxwell | None = None  # an (n_dot, n_gate) the capacitive coupling between gates and dots
+    cdd: TypeCdd | None = None
     cgd: PositiveValuedMatrix | None = None
     core: str = 'rust'  # a string of either 'python' or 'rust' to specify which backend to use
     charge_carrier: str = 'hole'  # a string of either 'electron' or 'hole' to specify the charge carrier
@@ -49,15 +50,15 @@ class DotArray(BaseDataClass):
 
     def __post_init__(self):
 
-        # checking that either cdd and cgd or cdd_non_maxwell and cgd_non_maxwell are specified
-        non_maxwell_pair_passed = not both_none(self.cdd_non_maxwell, self.cgd_non_maxwell)
+        # checking that either cdd and cgd or Cdd and Cgd are specified
+        non_maxwell_pair_passed = not both_none(self.Cdd, self.Cgd)
         maxwell_pair_passed = not both_none(self.cdd, self.cgd)
-        assertion_message = 'Either cdd and cgd or cdd_non_maxwell and cgd_non_maxwell must be specified'
+        assertion_message = 'Either cdd and cgd or Cdd and Cgd must be specified'
         assert (non_maxwell_pair_passed or maxwell_pair_passed), assertion_message
 
         # if the non maxwell pair is passed, convert it to maxwell
         if non_maxwell_pair_passed:
-            self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.cdd_non_maxwell, self.cgd_non_maxwell)
+            self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.Cdd, self.Cgd)
 
         # setting the cdd_inv attribute as the inverse of cdd
         self.cdd_inv = np.linalg.inv(self.cdd)
