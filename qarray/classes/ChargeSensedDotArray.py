@@ -10,11 +10,11 @@ from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwe
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
 class ChargeSensedDotArray(BaseDataClass):
-    cdd_non_maxwell: CddNonMaxwell  # an (n_dot, n_dot) array of the capacitive coupling between dots
-    cgd_non_maxwell: CgdNonMaxwell  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
+    Cdd: CddNonMaxwell  # an (n_dot, n_dot) array of the capacitive coupling between dots
+    Cgd: CgdNonMaxwell  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
 
-    cds_non_maxwell: CdsNonMaxwell  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
-    cgs_non_maxwell: CgsNonMaxwell  # an (n_sensor, n_gate) array of the capacitive coupling between gates and dots
+    Cds: CdsNonMaxwell  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
+    Cgs: CgsNonMaxwell  # an (n_sensor, n_gate) array of the capacitive coupling between gates and dots
 
     noise: float
     gamma: float
@@ -26,35 +26,35 @@ class ChargeSensedDotArray(BaseDataClass):
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 
     def __post_init__(self):
-        self.n_dot = self.cdd_non_maxwell.shape[0]
-        self.n_sensor = self.cds_non_maxwell.shape[0]
-        self.n_gate = self.cgd_non_maxwell.shape[1]
+        self.n_dot = self.Cdd.shape[0]
+        self.n_sensor = self.Cds.shape[0]
+        self.n_gate = self.Cgd.shape[1]
 
-        # checking the shape of the cgd matrix
-        assert self.cgd_non_maxwell.shape[
+        # checking the shape of the Cgd matrix
+        assert self.Cgd.shape[
                    0] == self.n_dot, f'Cgd must be of shape (n_dot, n_gate) = ({self.n_dot}, {self.n_gate})'
-        assert self.cgd_non_maxwell.shape[
+        assert self.Cgd.shape[
                    1] == self.n_gate, f'Cdd must be of shape (n_dot, n_gate) = ({self.n_dot}, {self.n_gate})'
 
         # checking the shape of the cds matrix
-        assert self.cds_non_maxwell.shape[0] == self.n_sensor, 'Cds must be of shape (n_sensor, n_dot)'
-        assert self.cds_non_maxwell.shape[1] == self.n_dot, 'Cds must be of shape (n_sensor, n_dot)'
+        assert self.Cds.shape[0] == self.n_sensor, 'Cds must be of shape (n_sensor, n_dot)'
+        assert self.Cds.shape[1] == self.n_dot, 'Cds must be of shape (n_sensor, n_dot)'
 
         # checking the shape of the cgs matrix
-        assert self.cgs_non_maxwell.shape[0] == self.n_sensor, 'Cgs must be of shape (n_sensor, n_gate)'
-        assert self.cgs_non_maxwell.shape[1] == self.n_gate, 'Cgs must be of shape (n_sensor, n_gate)'
+        assert self.Cgs.shape[0] == self.n_sensor, 'Cgs must be of shape (n_sensor, n_gate)'
+        assert self.Cgs.shape[1] == self.n_gate, 'Cgs must be of shape (n_sensor, n_gate)'
 
-        self.cdd_full, self.cdd_inv_full, self.cgd_full = convert_to_maxwell_with_sensor(self.cdd_non_maxwell,
-                                                                                         self.cgd_non_maxwell,
-                                                                                         self.cds_non_maxwell,
-                                                                                         self.cgs_non_maxwell)
+        self.cdd_full, self.cdd_inv_full, self.cgd_full = convert_to_maxwell_with_sensor(self.Cdd,
+                                                                                         self.Cgd,
+                                                                                         self.Cds,
+                                                                                         self.Cgs)
 
-        self.cdd = self.cdd_full[:self.n_dot, :self.n_dot]
+        self.Cdd = self.cdd_full[:self.n_dot, :self.n_dot]
         self.cdd_inv = self.cdd_inv_full[:self.n_dot, :self.n_dot]
-        self.cgd = self.cgd_full[:self.n_dot, :]
+        self.Cgd = self.cgd_full[:self.n_dot, :]
 
         if self.threshold == 'auto' or self.threshold is None:
-            self.threshold = compute_threshold(self.cdd)
+            self.threshold = compute_threshold(self.Cdd)
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """
@@ -63,7 +63,7 @@ class ChargeSensedDotArray(BaseDataClass):
         :param rcond: the rcond parameter for the least squares solver
         :return: the optimal dot voltages of shape (n_gate,)
         """
-        return optimal_Vg(cdd_inv=self.cdd_inv, cgd=self.cgd, n_charges=n_charges, rcond=rcond)
+        return optimal_Vg(cdd_inv=self.cdd_inv, cgd=self.Cgd, n_charges=n_charges, rcond=rcond)
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
         """
@@ -85,7 +85,6 @@ class ChargeSensedDotArray(BaseDataClass):
             signal = signal + lorentzian(V_sensor, 0, self.gamma)
         noise = np.random.normal(0, self.noise, size=signal.shape)
         return signal + noise
-
 
     def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
         """

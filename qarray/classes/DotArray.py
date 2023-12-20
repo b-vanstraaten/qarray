@@ -63,45 +63,45 @@ class DotArray(BaseDataClass):
     def __post_init__(self):
         """
         This function is called after the initialization of the dataclass. It checks that the capacitance matrices
-        are valid and sets the cdd_inv attribute as the inverse of cdd.
+        are valid and sets the cdd_inv attribute as the inverse of Cdd.
         """
 
-        # checking that either cdd and cgd or Cdd and Cgd are specified
+        # checking that either Cdd and Cgd or Cdd and Cgd are specified
         non_maxwell_pair_passed = not both_none(self.Cdd, self.Cgd)
         maxwell_pair_passed = not both_none(self.cdd, self.cgd)
-        assertion_message = 'Either cdd and cgd or Cdd and Cgd must be specified'
+        assertion_message = 'Either Cdd and Cgd or Cdd and Cgd must be specified'
         assert (non_maxwell_pair_passed or maxwell_pair_passed), assertion_message
 
         # if the non maxwell pair is passed, convert it to maxwell
         if non_maxwell_pair_passed:
             self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.Cdd, self.Cgd)
 
-        # setting the cdd_inv attribute as the inverse of cdd
+        # setting the cdd_inv attribute as the inverse of Cdd
         self.cdd_inv = np.linalg.inv(self.cdd)
 
-        # checking that the cgd matrix has all positive or all negative elements
+        # checking that the Cgd matrix has all positive or all negative elements
         # so that the sign can be matched to the charge carrier
-        assert all_positive_or_negative(self.cgd), 'The elements of cgd must all be positive or all be negative'
+        assert all_positive_or_negative(self.cgd), 'The elements of Cgd must all be positive or all be negative'
 
-        # matching the sign of the cgd matrix to the charge carrier
+        # matching the sign of the Cgd matrix to the charge carrier
         match self.charge_carrier.lower():
             case 'electrons' | 'electron' | 'e' | '-':
                 self.charge_carrier = 'electrons'
-                # the cgd matrix is positive for electrons
+                # the Cgd matrix is positive for electrons
                 self.cgd = Cgd_electrons(np.abs(self.cgd))
             case 'holes' | 'hole' | 'h' | '+':
                 self.charge_carrier = 'holes'
-                # the cgd matrix is negative for holes
+                # the Cgd matrix is negative for holes
                 self.cgd = Cgd_holes(-np.abs(self.cgd))
             case _:
                 raise ValueError(f'charge_carrier must be either "electrons" or "holes {self.charge_carrier}"')
 
-        # by now in the code, the cdd and cgd matrices have been initialized as their specified types. These
-        # types enforce most of the constraints on the matrices like positive-definitness for cdd for example,
+        # by now in the code, the Cdd and Cgd matrices have been initialized as their specified types. These
+        # types enforce most of the constraints on the matrices like positive-definitness for Cdd for example,
         # but not all. The following asserts check the remainder.
         self.n_dot = self.cdd.shape[0]
         self.n_gate = self.cgd.shape[1]
-        assert self.cgd.shape[0] == self.n_dot, 'The number of dots must be the same as the number of rows in cgd'
+        assert self.cgd.shape[0] == self.n_dot, 'The number of dots must be the same as the number of rows in Cgd'
 
         # checking that the threshold is valid
         match self.threshold:

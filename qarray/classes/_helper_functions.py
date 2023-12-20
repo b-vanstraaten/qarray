@@ -41,7 +41,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
     match model.core:
         case 'rust' | 'Rust' | 'RUST' | 'r':
             result = ground_state_open_rust(
-                vg=vg, cgd=model.cgd,
+                vg=vg, cgd=model.Cgd,
                 cdd_inv=model.cdd_inv,
                 threshold=model.threshold,
                 polish=model.polish, T=model.T
@@ -51,7 +51,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
 
             result = ground_state_open_jax(
-                vg=vg, cgd=model.cgd,
+                vg=vg, cgd=model.Cgd,
                 cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
 
@@ -65,7 +65,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
             result = ground_state_open_brute_force(
-                vg=vg, cgd=model.cgd,
+                vg=vg, cgd=model.Cgd,
                 cdd_inv=model.cdd_inv,
                 max_number_of_charge_carriers=model.max_charge_carriers,
                 T=model.T,
@@ -73,7 +73,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
             )
         case 'python' | 'Python' | 'PYTHON' | 'p':
             result = ground_state_open_python(
-                vg=vg, cgd=model.cgd,
+                vg=vg, cgd=model.Cgd,
                 cdd_inv=model.cdd_inv,
                 threshold=model.threshold,
                 polish=model.polish
@@ -108,8 +108,8 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
     match model.core:
         case 'rust' | 'Rust' | 'RUST' | 'r':
             result = ground_state_closed_rust(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv,
+                vg=vg, n_charge=n_charge, cgd=model.Cgd,
+                cdd=model.Cdd, cdd_inv=model.cdd_inv,
                 threshold=model.threshold, polish=model.polish, T=model.T
             )
 
@@ -117,8 +117,8 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using of 1.0')
             result = ground_state_closed_jax(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
+                vg=vg, n_charge=n_charge, cgd=model.Cgd,
+                cdd=model.Cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
 
         case 'brute_force' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
@@ -126,14 +126,14 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
 
             result = ground_state_closed_brute_force(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
+                vg=vg, n_charge=n_charge, cgd=model.Cgd,
+                cdd=model.Cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
 
         case 'python' | 'Python' | 'PYTHON' | 'p':
             result = ground_state_closed_python(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv,
+                vg=vg, n_charge=n_charge, cgd=model.Cgd,
+                cdd=model.Cdd, cdd_inv=model.cdd_inv,
                 threshold=model.threshold, polish=model.polish
             )
         case _:

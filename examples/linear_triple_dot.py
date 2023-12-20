@@ -1,5 +1,5 @@
 """
-Double dot example
+Linear triple dot example
 """
 import time
 from functools import partial

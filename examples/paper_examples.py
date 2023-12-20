@@ -1,6 +1,5 @@
 """
-Created on 26/10/2023
-@author jdh
+This file contains snippets from the paper.
 """
 from qarray import (DotArray, GateVoltageComposer)
 

@@ -29,7 +29,7 @@ def randomly_generate_matrices(n_dot, n_gates=None):
 
 def generate_random_cdd(n_dots):
     """
-    This function generates a random cdd matrix.
+    This function generates a random Cdd matrix.
     """
     cdd = np.random.uniform(0, 1, (n_dots, n_dots))
     cdd = (cdd + cdd.T) / 2
@@ -38,7 +38,7 @@ def generate_random_cdd(n_dots):
 
 def generate_random_cgd(n_dots, n_gates):
     """
-    This function generates a random cgd matrix.
+    This function generates a random Cgd matrix.
     """
     cgd = np.random.uniform(0, 1, (n_dots, n_gates))
     return cgd
