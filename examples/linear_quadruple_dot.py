@@ -2,7 +2,6 @@
 Quadruple dot example
 """
 import time
-from functools import partial
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -43,9 +42,6 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
     model.ground_state_open,
-    partial(model.ground_state_closed, n_charge=1),
-    partial(model.ground_state_closed, n_charge=2),
-    partial(model.ground_state_closed, n_charge=4),
 ]
 
 # defining the min and max values for the dot voltage sweep

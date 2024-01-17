@@ -17,7 +17,7 @@ Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive couplin
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    gamma=0.05, noise=0.01, threshold=1., core='r', T=0.001
+    gamma=0.05, noise=0.01, threshold=1., core='r', T=0.01
 )
 
 # creating the voltage composer
@@ -35,7 +35,7 @@ ground_state_funcs = [
 vx_min, vx_max = -5, 5
 vy_min, vy_max = -5, 5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 1, vy_min, vy_max, 200)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 1, vy_min, vy_max, 1000)
 vg += model.optimal_Vg(np.zeros(model.n_dot))
 
 # creating the figure and axes
