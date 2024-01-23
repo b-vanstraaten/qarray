@@ -54,8 +54,9 @@ class GateVoltageComposer(BaseDataClass):
                 raise ValueError(f'Incompatible names and gates arguments {name}, {gate}')
 
     def _check_gate(self, gate: int):
-        if (gate <= - self.n_gate or gate > self.n_gate - 1):
-            raise ValueError(f'Invalid dot {gate}')
+        pass
+        # if (gate <= - self.n_gate or gate > self.n_gate - 1):
+        #     raise ValueError(f'Invalid dot {gate}')
 
     def _check_dot(self, dot: int):
         if (dot <= - self.n_dot or dot > self.n_dot - 1):

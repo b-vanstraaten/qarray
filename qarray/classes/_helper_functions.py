@@ -1,7 +1,8 @@
 import numpy as np
 from pydantic import NonNegativeInt
 
-from ..brute_force import ground_state_open_brute_force, ground_state_closed_brute_force
+from ..brute_force_jax import ground_state_open_brute_force_jax, ground_state_closed_brute_force_jax
+from ..brute_force_python import ground_state_open_brute_force_python
 from ..jax_core import ground_state_open_jax, ground_state_closed_jax
 from ..python_core import ground_state_open_python, ground_state_closed_python
 from ..qarray_types import VectorList
@@ -55,7 +56,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
 
-        case 'brute_force' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
+        case 'brute_force_jax' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
 
             if model.max_charge_carriers is None:
                 message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
@@ -64,13 +65,30 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
 
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
-            result = ground_state_open_brute_force(
+            result = ground_state_open_brute_force_jax(
                 vg=vg, cgd=model.Cgd,
                 cdd_inv=model.cdd_inv,
                 max_number_of_charge_carriers=model.max_charge_carriers,
                 T=model.T,
                 batch_size=model.batch_size
             )
+
+        case 'python_brute_force' | 'Python_brute_force' | 'PYTHON_BRUTE_FORCE' | 'bp' | 'brute_force_python' | 'Brute_force_python' | 'BRUTE_FORCE_PYTHON' | 'bpy':
+            if model.max_charge_carriers is None:
+                message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
+                           '\nmodel.max_charge_carriers = #')
+                raise ValueError(message)
+
+            if model.threshold < 1.:
+                print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
+
+            result = ground_state_open_brute_force_python(
+                vg=vg, cgd=model.Cgd,
+                cdd_inv=model.cdd_inv,
+                max_number_of_charge_carriers=model.max_charge_carriers,
+                T=model.T
+            )
+
         case 'python' | 'Python' | 'PYTHON' | 'p':
             result = ground_state_open_python(
                 vg=vg, cgd=model.Cgd,
@@ -121,11 +139,11 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 cdd=model.Cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
 
-        case 'brute_force' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
+        case 'brute_force_jax' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
             if model.threshold < 1.:
                 print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
 
-            result = ground_state_closed_brute_force(
+            result = ground_state_closed_brute_force_jax(
                 vg=vg, n_charge=n_charge, cgd=model.Cgd,
                 cdd=model.Cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
             )
