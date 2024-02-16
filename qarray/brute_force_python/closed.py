@@ -41,7 +41,8 @@ def _ground_state_closed_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray
     :return: the lowest energy charge configuration
     """
 
-    mask = (np.sum(n_list, axis=-1) != n_charge) * np.inf
+    mask = (np.sum(n_list, axis=-1) != n_charge)
+    mask = np.where(mask, np.inf, 0.)
     v_dash = cgd @ vg
     # computing the free energy of the change configurations
     F = np.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)

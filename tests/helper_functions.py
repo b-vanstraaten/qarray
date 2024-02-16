@@ -25,7 +25,7 @@ def randomly_generate_matrices(n_dot, n_gates=None):
     cgd_non_maxwell = np.clip(cgd_non_maxwell, 0, None)
 
     cdd, cdd_inv, cgd_non_maxwell = convert_to_maxwell(cdd_non_maxwell, cgd_non_maxwell)
-    return Cdd(cdd), CddInv(cdd_inv), Cgd_holes(cgd_non_maxwell)
+    return Cdd(cdd), CddInv(cdd_inv), Cgd_holes(-cgd_non_maxwell)
 
 def generate_random_cdd(n_dots):
     """

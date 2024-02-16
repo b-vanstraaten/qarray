@@ -88,11 +88,11 @@ class DotArray(BaseDataClass):
             case 'electrons' | 'electron' | 'e' | '-':
                 self.charge_carrier = 'electrons'
                 # the Cgd matrix is positive for electrons
-                self.cgd = Cgd_electrons(np.abs(self.cgd))
+                self.cgd = Cgd_electrons(-np.abs(self.cgd))
             case 'holes' | 'hole' | 'h' | '+':
                 self.charge_carrier = 'holes'
                 # the Cgd matrix is negative for holes
-                self.cgd = Cgd_holes(-np.abs(self.cgd))
+                self.cgd = Cgd_holes(np.abs(self.cgd))
             case _:
                 raise ValueError(f'charge_carrier must be either "electrons" or "holes {self.charge_carrier}"')
 

@@ -26,9 +26,9 @@ cgd_non_maxwell = [
 model = DotArray(
     Cdd=cdd_non_maxwell,
     Cgd=cgd_non_maxwell,
-    core='rust',
+    core='python',
     charge_carrier='hole',
-    threshold='auto',
+    threshold=1.,
     T=0.001,
 )
 model.max_charge_carriers = 4
@@ -49,7 +49,7 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 150, 3, vy_min, vy_max, 150)
 
 
 # creating the figure and axes

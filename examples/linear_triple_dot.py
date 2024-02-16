@@ -2,7 +2,6 @@
 Linear triple dot example
 """
 import time
-from functools import partial
 
 import matplotlib
 import matplotlib.pyplot as plt
@@ -25,7 +24,7 @@ model = DotArray(
         [0.05, 0.2, 1]
     ],
     core='r',
-    T=0.005
+    T=1.
 )
 print(model.threshold)
 model.max_charge_carriers = 3
@@ -37,15 +36,15 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
     model.ground_state_open,
-    partial(model.ground_state_closed, n_charge=1),
-    partial(model.ground_state_closed, n_charge=2),
-    partial(model.ground_state_closed, n_charge=3),
+    # partial(model.ground_state_closed, n_charge=1),
+    # partial(model.ground_state_closed, n_charge=2),
+    # partial(model.ground_state_closed, n_charge=3),
 ]
 
-vx_min, vx_max = -2, 0
-vy_min, vy_max = -2, 0
+vx_min, vx_max = -5, 10
+vy_min, vy_max = -5, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 2, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 2, vy_min, vy_max, 1000)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
