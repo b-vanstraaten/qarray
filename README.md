@@ -1,4 +1,4 @@
-# Rusty Capacitance Model
+# Qarray
 
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/rusty_capacitance_model/workflows/tests/badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/rusty-capacitance-model)
