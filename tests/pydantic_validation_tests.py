@@ -7,13 +7,13 @@ from qarray.classes.BaseDataClass import ValidationException
 class PydanticTests(unittest.TestCase):
 
     def test_DotArray_validation(self):
-        # fails because Cdd is not square
+        # fails because cdd is not square
         self.assertRaises(ValidationException, lambda: DotArray(
             cdd=[[0, 1]],
             cgd=[[1, 0], [0, 1]],
         ))
 
-        # fails because Cdd is not symmetric
+        # fails because cdd is not symmetric
         self.assertRaises(ValidationException, lambda: DotArray(
             cdd=[[1, 0.1], [0, 1]],
             cgd=[[1, 0], [0, 1]],
@@ -25,7 +25,7 @@ class PydanticTests(unittest.TestCase):
             cgd=[[1, 0], [0, 1]],
         ))
 
-        # fails because Cdd is not square
+        # fails because cdd is not square
         self.assertRaises(ValidationException, lambda: DotArray(
             cdd=[[0, 1], [0, 1]],
             cgd=[[1, 0, 0], [0, 1, 0]],

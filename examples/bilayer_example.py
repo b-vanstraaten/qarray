@@ -44,7 +44,7 @@ vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 1, vy_min, vy_max, 400)
 vg_correction = optimal_Vg(model.cdd_inv, model.cgd, np.random.randn(4))
 vg += vg_correction
 
-s = model.ground_state_open(-vg)
+s = model.ground_state_open(vg)
 z = dot_occupation_changes(s)
 
 plt.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='Greys')

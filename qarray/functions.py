@@ -100,7 +100,7 @@ def convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwe
     cdd_non_maxwell_full[:n_dot, n_dot:] = cds_non_maxwell.T
     cdd_non_maxwell_full = CddNonMaxwell(cdd_non_maxwell_full)
 
-    # populating the Cgd matrix, with zeros for the sensor dots
+    # populating the cgd matrix, with zeros for the sensor dots
     cgd_non_maxwell_full = np.zeros((n_dot + n_sensor, n_gate))
     cgd_non_maxwell_full[:n_dot, :] = cgd_non_maxwell
     cgd_non_maxwell_full[n_dot:, :] = cgs_non_maxwell
@@ -109,7 +109,8 @@ def convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwe
     return convert_to_maxwell(cdd_non_maxwell_full, cgd_non_maxwell_full)
 
 
-def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (Cdd, Cgd_holes):
+def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (
+        Cdd, CddInv, NegativeValuedMatrix):
     """
     Function to convert the non Maxwell capacitance matrices to their maxwell form.
     :param cdd_non_maxwell:

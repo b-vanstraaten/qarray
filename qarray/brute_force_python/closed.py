@@ -36,7 +36,7 @@ def _ground_state_closed_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray
     :param vg: the dot voltage coordinate vector
     :param cgd: the dot to dot capacitance matrix
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
-    :param Cdd: the dot to dot capacitance matrix
+    :param cdd: the dot to dot capacitance matrix
     :param n_charge: the total number of charge carriers in the array
     :return: the lowest energy charge configuration
     """

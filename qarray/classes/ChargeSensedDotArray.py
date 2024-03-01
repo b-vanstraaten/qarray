@@ -30,7 +30,7 @@ class ChargeSensedDotArray(BaseDataClass):
         self.n_sensor = self.Cds.shape[0]
         self.n_gate = self.Cgd.shape[1]
 
-        # checking the shape of the Cgd matrix
+        # checking the shape of the cgd matrix
         assert self.Cgd.shape[
                    0] == self.n_dot, f'Cgd must be of shape (n_dot, n_gate) = ({self.n_dot}, {self.n_gate})'
         assert self.Cgd.shape[
@@ -49,12 +49,12 @@ class ChargeSensedDotArray(BaseDataClass):
                                                                                          self.Cds,
                                                                                          self.Cgs)
 
-        self.Cdd = self.cdd_full[:self.n_dot, :self.n_dot]
+        self.cdd = self.cdd_full[:self.n_dot, :self.n_dot]
         self.cdd_inv = self.cdd_inv_full[:self.n_dot, :self.n_dot]
-        self.Cgd = self.cgd_full[:self.n_dot, :]
+        self.cgd = self.cgd_full[:self.n_dot, :]
 
         if self.threshold == 'auto' or self.threshold is None:
-            self.threshold = compute_threshold(self.Cdd)
+            self.threshold = compute_threshold(self.cdd)
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """
@@ -63,7 +63,7 @@ class ChargeSensedDotArray(BaseDataClass):
         :param rcond: the rcond parameter for the least squares solver
         :return: the optimal dot voltages of shape (n_gate,)
         """
-        return optimal_Vg(cdd_inv=self.cdd_inv, cgd=self.Cgd, n_charges=n_charges, rcond=rcond)
+        return optimal_Vg(cdd_inv=self.cdd_inv, cgd=self.cgd, n_charges=n_charges, rcond=rcond)
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
         """
