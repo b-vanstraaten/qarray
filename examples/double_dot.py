@@ -36,10 +36,10 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -0.4, 0.2
-vy_min, vy_max = -0.4, 0.2
+vx_min, vx_max = -2, 2
+vy_min, vy_max = -2, 2
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 1, vy_min, vy_max, 400)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

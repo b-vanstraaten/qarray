@@ -143,14 +143,14 @@ class CdsNonMaxwell(PositiveValuedMatrix):
     pass
 
 
-class Cgd_holes(PositiveValuedMatrix):
+class Cgd_holes(NegativeValuedMatrix):
     """
     Class for the dot-dot capacitance matrix.
     """
     pass
 
 
-class Cgd_electrons(NegativeValuedMatrix):
+class Cgd_electrons(PositiveValuedMatrix):
     """
     Class for the dot-dot capacitance matrix.
     """
