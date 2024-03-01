@@ -10,13 +10,27 @@ from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes, optim
 r = 0.7
 
 # setting up the constant capacitance model_threshold_1
-cdd_non_maxwell = [
-    [0., 0.1, 0.1, 0.08],
-    [0.1, 0., 0.1, 0.05],
-    [0.1, 0.1, 0., 0.1],
-    [0.08, 0.05, 0.1, 0]
+# cdd_non_maxwell = [
+#     [0., 0.1, 0.1, 0.08],
+#     [0.1, 0., 0.1, 0.05],
+#     [0.1, 0.1, 0., 0.1],
+#     [0.08, 0.05, 0.1, 0]
+# ]
+# cgd_non_maxwell = [
+#     [1., 0.1],
+#     [r, 0.2],
+#     [0.1, 1],
+#     [0., 0]
+# ]
+
+
+cdd = [
+    [1., -0.1, -0.1, -0.08],
+    [-0.1, 1., -0.1, -0.05],
+    [-0.1, -0.1, 1., -0.1],
+    [-0.08, -0.05, -0.1, 1.]
 ]
-cgd_non_maxwell = [
+cgd = [
     [1., 0.1],
     [r, 0.2],
     [0.1, 1],
@@ -24,8 +38,8 @@ cgd_non_maxwell = [
 ]
 
 model = DotArray(
-    Cdd=cdd_non_maxwell,
-    Cgd=cgd_non_maxwell,
+    cdd=cdd,
+    cgd=cgd,
     core='rust',
     charge_carrier='h',
     threshold=1.
