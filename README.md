@@ -1,7 +1,7 @@
 # Qarray
 
-![GitHub Workflow Status](https://github.com/b-vanstraaten/rusty_capacitance_model/workflows/tests/badge.svg)
-![PyPI](https://img.shields.io/pypi/v/rusty-capacitance-model)
+![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/workflows/tests/badge.svg)
+![PyPI](https://img.shields.io/pypi/v/qarray)
 
 **Qarray** is a high-performance Python package that leverages the power of Rust and Jax to provide a fully parallelised
 and optimised simulation environment for quantum dots with constant capacitance. It can run on both CPUs and GPUs,
