@@ -58,12 +58,11 @@ vg = voltage_composer.do2d(
 )
 
 # run the simulation with the quantum dot array open such that the number of charge carriers is not fixed
-n_open = model.ground_state_open(
-  vg)  # n_open is a (100, 100, 2) array encoding the number of charge carriers in each dot for each gate voltage
+n_open = model.ground_state_open(vg)  # n_open is a (100, 100, 2) array encoding the 
+# number of charge carriers in each dot for each gate voltage
 # run the simulation with the quantum dot array closed such that the number of charge carriers is fixed to 2
-n_closed = model.ground_state_closed(vg,
-                                     n_charge_carriers=2)  # n_closed is a (100, 100, 2) array encoding the number of charge carriers in each dot for each gate voltage
-
+n_closed = model.ground_state_closed(vg, n_charge_carriers=2)  # n_closed is a (100, 100, 2) array encoding the 
+# number of charge carriers in each dot for each gate voltage
 ```
 ## Examples
 
