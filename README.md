@@ -1,6 +1,6 @@
 # Qarray
 
-![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/tests.yaml//badge.svg)
+![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
 
 **Qarray** is a high-performance Python package that leverages the power of Rust and Jax to provide a fully parallelised
