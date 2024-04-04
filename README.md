@@ -58,20 +58,20 @@ vg = voltage_composer.do2d(
 )
 
 # run the simulation with the quantum dot array open such that the number of charge carriers is not fixed
-n_open = model.get_n(
-    vg)  # n_open is a (100, 100, 2) array encoding the number of charge carriers in each dot for each gate voltage
+n_open = model.ground_state_open(
+  vg)  # n_open is a (100, 100, 2) array encoding the number of charge carriers in each dot for each gate voltage
 # run the simulation with the quantum dot array closed such that the number of charge carriers is fixed to 2
-n_closed = model.get_n(vg, n_charge=2)
+n_closed = model.ground_state_closed(vg,
+                                     n_charge_carriers=2)  # n_closed is a (100, 100, 2) array encoding the number of charge carriers in each dot for each gate voltage
 
 ```
-
 ## Examples
 
 The examples folder contains a number of examples that demonstrate how to use the package to simulate different quantum
 dot systems.
 
-1. [Double Quantum Dot]()
-2. [Linear Triple Quantum Dot]()
-3. [Linear Quadruple Quantum Dot]()
-4. [Charge sensed double quantum dot]()
+1. [Double Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/double_dot.py)
+2. [Linear Triple Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/linear_triple_dot.py)
+3. [Linear Quadruple Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/linear_quadruple_dot.py)
+4. [Charge sensed double quantum dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/charge_sensing.py)
 
