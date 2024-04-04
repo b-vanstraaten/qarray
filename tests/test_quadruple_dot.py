@@ -10,8 +10,8 @@ import numpy as np
 from qarray import (ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
                     ground_state_closed_python, optimal_Vg, compute_threshold)
 from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
-from tests.helper_functions import randomly_generate_matrices, too_different
 from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES
+from .helper_functions import randomly_generate_matrices, too_different
 
 
 class DoubleDotTests(unittest.TestCase):

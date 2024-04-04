@@ -1,7 +1,7 @@
 import unittest
 
 from qarray import (DotArray, GateVoltageComposer)
-from tests.helper_functions import if_errors
+from .helper_functions import if_errors
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(

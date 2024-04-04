@@ -6,8 +6,8 @@ from tqdm import tqdm
 
 from qarray import (ground_state_open_rust, ground_state_closed_rust, dot_occupation_changes)
 from qarray.brute_force_jax import ground_state_open_brute_force_jax, ground_state_closed_brute_force_jax
-from tests.helper_functions import randomly_generate_matrices, too_different
 from .GLOBAL_OPTIONS import disable_tqdm, N_ITERATIONS, N_VOLTAGES
+from .helper_functions import randomly_generate_matrices, too_different
 
 
 class BruteForceTests(unittest.TestCase):
