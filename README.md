@@ -3,7 +3,7 @@
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
 
-![structure.jpg](misc%2Fstructure.jpg)
+![structure.jpg](./misc/structure.jpg)
 
 **Qarray** is a high-performance Python package that leverages the power of Rust and Jax to provide a fully parallelised
 and optimised simulation environment for quantum dots with constant capacitance. It can run on both CPUs and GPUs,
@@ -12,7 +12,7 @@ and is designed to be easy to use and integrate into your existing workflow.
 Harnesses the speed of Rust or the compute power of GPUs using Jax to deliver charge stability diagrams in seconds or
 millisecond
 
-![recreations.jpg](misc%2Frecreations.jpg)
+![recreations.jpg](./misc/recreations.jpg)
 
 ## Installation
 
