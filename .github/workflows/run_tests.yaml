@@ -21,7 +21,7 @@ jobs:
                     python-version: ${{ matrix.python-version }}
 
             -   name: Install dependencies
-                run: pip install -r requirements.txt
+                run: pip install .
 
             -   name: Run unit tests
                 run: python -m unittest discover -s tests
@@ -42,7 +42,7 @@ jobs:
                     python-version: ${{ matrix.python-version }}
 
             -   name: Install dependencies
-                run: pip install -r requirements.txt
+                run: pip install .
 
             -   name: Run unit tests
                 run: python -m unittest discover -s tests
