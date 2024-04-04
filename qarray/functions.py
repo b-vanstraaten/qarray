@@ -132,4 +132,4 @@ def compute_threshold(cdd: Cdd) -> float:
     """
     cdd_diag = np.diag(cdd)
     c = (cdd - np.diag(cdd_diag)) @ np.linalg.inv(np.diag(cdd_diag))
-    return 2 * scipy.linalg.norm(c, ord='fro')
+    return scipy.linalg.norm(c, ord='fro')

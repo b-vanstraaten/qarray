@@ -12,8 +12,7 @@ from ..qarray_types import VectorList, CddInv, Cgd_holes, Cdd
 
 
 def ground_state_closed_brute_force_python(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
-                                           n_charge: NonNegativeInt, T: float = 0,
-                                           batch_size: int = 10000) -> VectorList:
+                                           n_charge: NonNegativeInt, T: float = 0) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at

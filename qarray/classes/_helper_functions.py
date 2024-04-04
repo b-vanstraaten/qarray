@@ -159,7 +159,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
 
             result = ground_state_closed_brute_force_python(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
+                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T
             )
 
         case 'python' | 'Python' | 'PYTHON' | 'p':

@@ -17,7 +17,7 @@ Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive couplin
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    gamma=0.05, noise=0.01, threshold=1., core='r', T=0.01
+    gamma=0.05, noise=0.0, threshold=1., core='r', T=0.1
 )
 
 # creating the voltage composer
@@ -45,7 +45,7 @@ fig.set_size_inches(3, 3)
 for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     s = func(vg)  # computing the ground state by calling the function
     z = s[..., 0]
-    # z = np.sqrt(np.gradient(z, axis=1, edge_order=2) ** 2 + np.gradient(z, axis=0, edge_order=2) ** 2)
+    z = np.sqrt(np.gradient(z, axis=1, edge_order=2) ** 2 + np.gradient(z, axis=0, edge_order=2) ** 2)
 
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
               interpolation='none')

@@ -41,7 +41,6 @@ class BruteForceTests(unittest.TestCase):
 
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
-
         for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
             for n in range(5):
                 cdd, cdd_inv, cgd = randomly_generate_matrices(2)
