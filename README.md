@@ -7,14 +7,8 @@
 and optimised simulation environment for quantum dots with constant capacitance. It can run on both CPUs and GPUs,
 and is designed to be easy to use and integrate into your existing workflow.
 
-## Features
-
-- **Ultra-fast Simulation:** Harnesses the speed of Rust or the compute power of GPUs using Jax to deliver
-  lightning-fast simulations.
-- **Constant Capacitance:** Specialized for simulating quantum dots with constant capacitance, allowing precise
-  modelling of charge stability diagrams.
-- **User-Friendly:** Designed with ease of use in mind, making it accessible to both experts and newcomers in quantum dot simulations.
-- **Extensive Documentation:** Comprehensive documentation and examples to help you get started quickly.
+Harnesses the speed of Rust or the compute power of GPUs using Jax to deliver charge stability diagrams in seconds or
+millisecond
 
 ## Installation
 
