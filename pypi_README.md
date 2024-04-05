@@ -1,7 +1,9 @@
-# Qarray
+# QArray
 
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
+
+<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/structure.jpg" alt="structure" width="600">
 
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA
 to deliver constant capacitance model charge stability diagrams in seconds or millisecond. It couples
@@ -15,7 +17,15 @@ It was developed on MacOS running on Apple Silicon and is continuously tested, L
 Finally, QArray captures physical effects such as measuring the charge stability diagram
 of with a SET and thermal broadening of charge transitions. The combination of these effects
 permits the simulation of charge stability diagrams which are visually similar to those measured experimentally.
+The plots on the right below are measured experimentally, and the plots on the left are simulated using QArray.
 
+<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg" alt="structure" width="600">
+
+Figures from (a) to (c) are recreated with permission from:
+
+[Full control of quadruple quantum dot circuit charge states in the single electron regime](https://pubs.aip.org/aip/apl/article/104/18/183111/24127/Full-control-of-quadruple-quantum-dot-circuit)
+
+[Coherent control of individual electron spins in a two-dimensional quantum dot array](https://www.nature.com/articles/s41565-020-00816-w)
 ## Installation
 
 Install Quantum Dot Constant Capacitance Simulator using pip:
@@ -64,7 +74,6 @@ n_open = model.ground_state_open(vg)  # n_open is a (100, 100, 2) array encoding
 n_closed = model.ground_state_closed(vg, n_charge_carriers=2)  # n_closed is a (100, 100, 2) array encoding the 
 # number of charge carriers in each dot for each gate voltage
 ```
-
 ## Examples
 
 The examples folder contains a number of examples that demonstrate how to use the package to simulate different quantum
