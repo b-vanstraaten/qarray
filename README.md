@@ -3,17 +3,29 @@
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
 
-![structure](https://github.com/b-vanstraaten/qarray/blob/main/misc/structure)
+![structure](https://github.com/b-vanstraaten/qarray/blob/main/misc/structure.jpg)
 
-**QArray** is a high-performance Python package that leverages the power of Rust and JAX to provide a fully parallelised
-and optimised simulation environment for quantum dots with constant capacitance. It can run on both CPUs and GPUs,
-and is designed to be easy to use and integrate into your existing workflow.
+**QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA
+to deliver constant capacitance model charge stability diagrams in seconds or millisecond. It couples
+highly optimised and parrelised code with two new algorithms to compute the ground state charge configuration. These
+algorithms scale better than the traditional brute-force approach and do not require the user to maxmimum specify
+the maxmimum number of charge carrier a priori.
 
-Harnesses the speed of Rust or the compute power of GPUs using JAX to deliver charge stability diagrams in seconds or
-millisecond
+QArray runs on both CPUs and GPUs, and is designed to be easy to use and integrate into your existing workflow.
+It was developed on MacOS running on Apple Silicon and is continuously tested, Linux and Windows.
 
-![recreations](https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations)
+Finally, QArray captures physical effects such as measuring the charge stability diagram
+of with a SET and thermal broadening of charge transitions. The combination of these effects
+permits the simulation of charge stability diagrams which are visually similar to those measured experimentally.
+The plots on the right below are measured experimentally and the plots on the left are simulated using QArray.
 
+![recreations](https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg)
+
+Figures from (a) to (c) are recreated with permission from:
+
+[Full control of quadruple quantum dot circuit charge states in the single electron regime](https://pubs.aip.org/aip/apl/article/104/18/183111/24127/Full-control-of-quadruple-quantum-dot-circuit)
+
+[Coherent control of individual electron spins in a two-dimensional quantum dot array](https://www.nature.com/articles/s41565-020-00816-w)
 ## Installation
 
 Install Quantum Dot Constant Capacitance Simulator using pip:
