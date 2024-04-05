@@ -32,9 +32,6 @@ of the charge stability diagram recreated with permission from [1] while (b) is 
 Figure (c) shows the charge stability diagram of closed five dot quantum recreated with permission from [2] and (d) is
 simulated using QArray.
 
-[1] [Full control of quadruple quantum dot circuit charge states in the single electron regime](https://pubs.aip.org/aip/apl/article/104/18/183111/24127/Full-control-of-quadruple-quantum-dot-circuit)
-
-[2] [Coherent control of individual electron spins in a two-dimensional quantum dot array](https://www.nature.com/articles/s41565-020-00816-w)
 ## Installation
 
 Install Quantum Dot Constant Capacitance Simulator using pip:
@@ -93,3 +90,8 @@ dot systems.
 3. [Linear Quadruple Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/linear_quadruple_dot.py)
 4. [Charge sensed double quantum dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/charge_sensing.py)
 
+## References
+
+[1] [Full control of quadruple quantum dot circuit charge states in the single electron regime](https://pubs.aip.org/aip/apl/article/104/18/183111/24127/Full-control-of-quadruple-quantum-dot-circuit)
+
+[2] [Coherent control of individual electron spins in a two-dimensional quantum dot array](https://www.nature.com/articles/s41565-020-00816-w)
