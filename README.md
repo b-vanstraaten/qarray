@@ -3,8 +3,9 @@
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
 
-<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/structure.jpg" alt="structure" width="600", class="
-center">
+<div style="text-align: center;">
+    <img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/structure.jpg" alt="structure" width="600">
+</div>
 
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA
 to deliver constant capacitance model charge stability diagrams in seconds or millisecond. It couples
@@ -20,8 +21,7 @@ of with a SET and thermal broadening of charge transitions. The combination of t
 permits the simulation of charge stability diagrams which are visually similar to those measured experimentally.
 The plots on the right below are measured experimentally, and the plots on the left are simulated using QArray.
 
-<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg" alt="structure" width="400", class="
-center">
+<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg" alt="structure" width="400">
 
 Figure (a) shows the charge stability diagram of an open quadruple quantum dot array. (a) is a recreation
 of the charge stability diagram recreated with permission from [1] while (b) is a simulated using QArray.
