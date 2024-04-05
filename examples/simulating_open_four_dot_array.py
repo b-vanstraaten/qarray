@@ -1,6 +1,7 @@
 import time
 
 import numpy as np
+import scipy
 from matplotlib import pyplot as plt
 
 from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
@@ -21,10 +22,10 @@ cgd = np.array([
 model = DotArray(
     cdd=cdd,
     cgd=cgd,
-    core='python',
+    core='rust',
     charge_carrier='electron',
-    T=0.02,
-    threshold=0.5
+    T=0.01 / 8.617333262145e-5,
+    threshold=1.
 )
 model.max_charge_carriers = 2
 
@@ -54,9 +55,12 @@ def lorentzian(x, x0, gamma):
 
 z = lorentzian(v_sensor, 0.5, 0.1)
 
+n = scipy.ndimage.gaussian_filter(np.random.randn(z.size), 1).reshape(z.shape)
+z += n * 0.00015
+
+
 z = -np.gradient(z, axis=0)
 z = (z - z.min()) / (z.max() - z.min())
-z = z + np.random.randn(*z.shape) * 0.05
 
 fig, ax = plt.subplots()
 ax.imshow(z.T, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', interpolation='None',

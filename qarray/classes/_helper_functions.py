@@ -8,6 +8,8 @@ from ..python_core import ground_state_open_python, ground_state_closed_python
 from ..qarray_types import VectorList
 from ..rust_core import ground_state_open_rust, ground_state_closed_rust
 
+# Boltzmann constant in eV/K
+k_B = 8.617333262145e-5  # eV/K
 
 def _validate_vg(vg: VectorList, n_gate: NonNegativeInt):
     """
@@ -38,6 +40,8 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
     if not isinstance(vg, VectorList):
         vg = VectorList(vg)
 
+    kB_T = 8.617333262145e-5 * model.T
+
     # calling the appropriate core function to compute the ground state
     match model.core:
         case 'rust' | 'Rust' | 'RUST' | 'r':
@@ -45,7 +49,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
                 threshold=model.threshold,
-                polish=model.polish, T=model.T
+                polish=model.polish, T=kB_T
             )
         case 'jax' | 'Jax' | 'JAX' | 'j':
             if model.threshold < 1.:
@@ -53,7 +57,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
 
             result = ground_state_open_jax(
                 vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
+                cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size
             )
 
         case 'brute_force_jax' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
@@ -69,7 +73,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
                 max_number_of_charge_carriers=model.max_charge_carriers,
-                T=model.T,
+                T=kB_T,
                 batch_size=model.batch_size
             )
 
@@ -86,7 +90,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
                 max_number_of_charge_carriers=model.max_charge_carriers,
-                T=model.T
+                T=kB_T
             )
 
         case 'python' | 'Python' | 'PYTHON' | 'p':
@@ -122,13 +126,15 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
     if not isinstance(vg, VectorList):
         vg = VectorList(vg)
 
+    kB_T = 8.617333262145e-5 * model.T
+
     # calling the appropriate core function to compute the ground state
     match model.core:
         case 'rust' | 'Rust' | 'RUST' | 'r':
             result = ground_state_closed_rust(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
                 cdd=model.cdd, cdd_inv=model.cdd_inv,
-                threshold=model.threshold, polish=model.polish, T=model.T
+                threshold=model.threshold, polish=model.polish, T=kB_T
             )
 
         case 'jax' | 'Jax' | 'JAX' | 'j':
@@ -136,7 +142,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                 print('Warning: JAX core does not support threshold < 1.0, using of 1.0')
             result = ground_state_closed_jax(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
+                cdd=model.cdd, cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size
             )
 
         case 'brute_force_jax' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
@@ -145,7 +151,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
 
             result = ground_state_closed_brute_force_jax(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T, batch_size=model.batch_size
+                cdd=model.cdd, cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size
             )
 
         case 'python_brute_force' | 'Python_brute_force' | 'PYTHON_BRUTE_FORCE' | 'bp' | 'brute_force_python' | 'Brute_force_python' | 'BRUTE_FORCE_PYTHON' | 'bpy':
@@ -159,7 +165,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
 
             result = ground_state_closed_brute_force_python(
                 vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=model.T
+                cdd=model.cdd, cdd_inv=model.cdd_inv, T=kB_T
             )
 
         case 'python' | 'Python' | 'PYTHON' | 'p':
