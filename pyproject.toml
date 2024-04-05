@@ -30,7 +30,7 @@ keywords = [
     "quantum computing",
     "quantum programming",
     "quantum simulation",
-    "quantum optimization
+    "quantum optimization"
 ]
 
 dynamic = ["version", "description"]
