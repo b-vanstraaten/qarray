@@ -17,7 +17,7 @@ It was developed on MacOS running on Apple Silicon and is continuously tested, L
 Finally, QArray captures physical effects such as measuring the charge stability diagram
 of with a SET and thermal broadening of charge transitions. The combination of these effects
 permits the simulation of charge stability diagrams which are visually similar to those measured experimentally.
-The plots on the right below are measured experimentally and the plots on the left are simulated using QArray.
+The plots on the right below are measured experimentally, and the plots on the left are simulated using QArray.
 
 ![recreations](https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg)
 
