@@ -4,8 +4,6 @@
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
 
-<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/structure.jpg" alt="structure" width="600">
-
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA
 to deliver constant capacitance model charge stability diagrams in seconds or millisecond. It couples
 highly optimised and parrelised code with two new algorithms to compute the ground state charge configuration. These
@@ -20,17 +18,6 @@ of with a SET and thermal broadening of charge transitions. The combination of t
 permits the simulation of charge stability diagrams which are visually similar to those measured experimentally.
 The plots on the right below are measured experimentally, and the plots on the left are simulated using QArray.
 
-<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg" alt="structure" width="400">
-
-Figure (a) shows the charge stability diagram of an open quadruple quantum dot array. (a) is a recreation
-of the charge stability diagram recreated with permission from [1] while (b) is a simulated using QArray.
-
-Figure (c) shows the charge stability diagram of closed five dot quantum recreated with permission from [2] and (d) is
-simulated using QArray.
-
-[1] [Full control of quadruple quantum dot circuit charge states in the single electron regime](https://pubs.aip.org/aip/apl/article/104/18/183111/24127/Full-control-of-quadruple-quantum-dot-circuit)
-
-[2] [Coherent control of individual electron spins in a two-dimensional quantum dot array](https://www.nature.com/articles/s41565-020-00816-w)
 ## Installation
 
 Install Quantum Dot Constant Capacitance Simulator using pip:
