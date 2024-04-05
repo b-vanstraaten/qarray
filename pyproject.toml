@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "qarray"
 authors = [{ name = "Barnaby van Straaten", email = "barnaby.vanstraaten@kellogg.ox.ac.uk" }]
-readme = "README.md"
+readme = "pypi_README.md"
 license = { file = "LICENSE" }
 classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]

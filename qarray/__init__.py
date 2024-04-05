@@ -1,7 +1,8 @@
 """
-Qarray is a Python package for simulating quantum dot arrays.
+Qarray, a GPU accelerated quantum dot array simulator, leveraging parallelised Rust and just in time compiled JAX
+to compute charge stability diagrams of large both open and closed arrays in milliseconds.
 """
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 from .classes import (DotArray, GateVoltageComposer, ChargeSensedDotArray)
 from .functions import (optimal_Vg, compute_threshold, convert_to_maxwell, dot_occupation_changes, lorentzian,

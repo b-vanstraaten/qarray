@@ -3,16 +3,12 @@
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
 
-![structure](https://github.com/b-vanstraaten/qarray/blob/main/misc/structure)
-
 **QArray** is a high-performance Python package that leverages the power of Rust and JAX to provide a fully parallelised
 and optimised simulation environment for quantum dots with constant capacitance. It can run on both CPUs and GPUs,
 and is designed to be easy to use and integrate into your existing workflow.
 
 Harnesses the speed of Rust or the compute power of GPUs using JAX to deliver charge stability diagrams in seconds or
 millisecond
-
-![recreations](https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations)
 
 ## Installation
 
@@ -62,6 +58,7 @@ n_open = model.ground_state_open(vg)  # n_open is a (100, 100, 2) array encoding
 n_closed = model.ground_state_closed(vg, n_charge_carriers=2)  # n_closed is a (100, 100, 2) array encoding the 
 # number of charge carriers in each dot for each gate voltage
 ```
+
 ## Examples
 
 The examples folder contains a number of examples that demonstrate how to use the package to simulate different quantum
