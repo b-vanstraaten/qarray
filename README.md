@@ -27,9 +27,10 @@ The plots on the right below are measured experimentally, and the plots on the l
 </p>
 
 Figure (a) shows the charge stability diagram of an open quadruple quantum dot array. (a) is a recreation
-of the charge stability diagram recreated with permission from [1] while (b) is a simulated using QArray.
+of the charge stability diagram recreated with permission from [[1]](#[1]) while (b) is a simulated using QArray.
 
-Figure (c) shows the charge stability diagram of closed five dot quantum recreated with permission from [2] and (d) is
+Figure (c) shows the charge stability diagram of closed five dot quantum recreated with permission from  [[2]](#[2])
+and (d) is
 simulated using QArray.
 
 ## Installation
@@ -92,6 +93,8 @@ dot systems.
 
 ## References
 
+<a name="[1]"></a>
 [1] [Full control of quadruple quantum dot circuit charge states in the single electron regime](https://pubs.aip.org/aip/apl/article/104/18/183111/24127/Full-control-of-quadruple-quantum-dot-circuit)
 
+<a name="[2]"></a>
 [2] [Coherent control of individual electron spins in a two-dimensional quantum dot array](https://www.nature.com/articles/s41565-020-00816-w)
