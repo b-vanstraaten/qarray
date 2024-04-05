@@ -7,7 +7,32 @@ name = "qarray"
 authors = [{ name = "Barnaby van Straaten", email = "barnaby.vanstraaten@kellogg.ox.ac.uk" }]
 readme = "pypi_README.md"
 license = { file = "LICENSE" }
-classifiers = ["License :: OSI Approved :: MIT License"]
+classifiers = [
+    "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+    "Topic :: Scientific/Engineering",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Rust",
+    "JAX",
+    "GPU",
+]
+keywords = [
+    "semiconducting",
+    "quantum dots",
+    "quantum",
+    "simulation",
+    "GPU",
+    "rust",
+    "jax",
+    "quantum computing",
+    "quantum programming",
+    "quantum simulation",
+    "quantum optimization
+]
+
 dynamic = ["version", "description"]
 requires-python = ">=3.10"
 dependencies = [
@@ -23,6 +48,7 @@ dependencies = [
     'tqdm>=4.62',
 ]
 
-
 [project.urls]
 Home = "https://github.com/b-vanstraaten/qarray"
+Repository = "https://github.com/b-vanstraaten/qarray"
+Issues = "https://github.com/b-vanstraaten/qarray/issues"
