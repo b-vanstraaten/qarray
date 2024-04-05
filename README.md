@@ -19,7 +19,7 @@ of with a SET and thermal broadening of charge transitions. The combination of t
 permits the simulation of charge stability diagrams which are visually similar to those measured experimentally.
 The plots on the right below are measured experimentally, and the plots on the left are simulated using QArray.
 
-![recreations](https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg)
+<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg" alt="structure" width="600">
 
 Figures from (a) to (c) are recreated with permission from:
 
