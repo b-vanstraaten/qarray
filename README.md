@@ -89,9 +89,9 @@ n_closed = model.ground_state_closed(vg, n_charge_carriers=2)  # n_closed is a (
 The examples folder contains a number of examples that demonstrate how to use the package to simulate different quantum
 dot systems.
 
-1. [Double Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/double_dot.py)
-2. [Linear Triple Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/linear_triple_dot.py)
-3. [Linear Quadruple Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/linear_quadruple_dot.py)
+1. [Double Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/double_dot.ipynb)
+2. [Linear Triple Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/triple_dot.ipynb)
+3. [Linear Quadruple Quantum Dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/quadruple_dot.ipynb)
 4. [Charge sensed double quantum dot](https://github.com/b-vanstraaten/qarray/blob/main/examples/charge_sensing.py)
 
 ## References
