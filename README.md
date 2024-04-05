@@ -47,15 +47,15 @@ pip install qarray
 If you slip through the gaps then the pip install will try to compile the binaries for you. This might require
 you to install some additional dependencies. In particular, might need to have cmake and rust installed.
 
-Install rust from:
+Install Rust from:
 [https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
 
 Install CMake from:
 [https://cmake.org/download/](https://cmake.org/download/)
-However, on macOS and Ubuntu you can install cmake using homebrew and apt respectively.
+however, on macOS and Ubuntu you can install cmake using homebrew and apt respectively.
 
 Also setting up JAX on macOS running on M series chips can be a bit finicky. We outline the steps
-than worked for us in [macOS installation](#macOS installation). Alternatively, just spin up
+than worked for us in [macOS installation](#macOS-installation). Alternatively, just spin up
 a [Github Codespace](https://github.com/codespaces), then ```pip install qarray``` and
 you are done.
 
@@ -117,9 +117,9 @@ dot systems.
 <a name="[2]"></a>
 [2] [Coherent control of individual electron spins in a two-dimensional quantum dot array](https://www.nature.com/articles/s41565-020-00816-w)
 
-## <a name="macOS installation"></a> macOS M1 installation
+## macOS installation
 
-If installing on macOS getting JAX to work can be rather finicky. Here are the steps we used to get everything working
+Getting JAX to work macOS on M Series chips can be rather finicky. Here are the steps we used to get everything working
 starting from a fresh OS install.
 
 1. Install homebrew from https://brew.sh and run through the install script
@@ -148,7 +148,6 @@ conda install pip
 ```zsh
 pip install qarray
 ```
-
 This installation scipt has been demonstrated to work on macOS Ventura 13.4 and Sonoma 14.4. 
 
 

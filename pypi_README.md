@@ -40,7 +40,7 @@ Install CMake from:
 However, on macOS and Ubuntu you can install cmake using homebrew and apt respectively.
 
 Also setting up JAX on macOS running on M series chips can be a bit finicky. We outline the steps
-than worked for us in [M Series macOS installation](#M Series macOS installation). Alternatively, just spin up
+than worked for us in [macOS installation](#macOS-installation). Alternatively, just spin up
 a [Github Codespace](https://github.com/codespaces), then ```pip install qarray``` and
 you are done.
 
@@ -96,7 +96,7 @@ dot systems.
 
 ## M Series macOS installation
 
-If installing on macOS getting JAX to work can be rather finicky. Here are the steps we used to get everything working
+Getting JAX to work macOS on M Series chips can be rather finicky. Here are the steps we used to get everything working
 starting from a fresh OS install.
 
 1. Install homebrew from https://brew.sh and run through the install script.
