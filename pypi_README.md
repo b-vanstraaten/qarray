@@ -13,7 +13,8 @@ algorithms scale better than the traditional brute-force approach and do not req
 the maxmimum number of charge carrier a priori.
 
 QArray runs on both CPUs and GPUs, and is designed to be easy to use and integrate into your existing workflow.
-It was developed on macOS running on Apple Silicon and is continuously tested, Linux and Windows.
+It was developed on macOS running on Apple Silicon and is continuously tested on Ubuntu-latest, macOS13, macos14,
+Windows-latest.
 
 Finally, QArray captures physical effects such as measuring the charge stability diagram
 of with a SET and thermal broadening of charge transitions. The combination of these effects

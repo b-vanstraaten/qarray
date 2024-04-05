@@ -1,4 +1,4 @@
-qarray-rust-core==1.2.0
+qarray-rust-core==1.2.3
 osqp==0.6.3
 numpy>=1.26
 pydantic>=2.3
