@@ -1,8 +1,9 @@
 
 # QArray
 
-![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
+![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/windows_tests.yaml//badge.svg)
+![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/linux_tests.yaml//badge.svg)
 
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA
 to deliver constant capacitance model charge stability diagrams in seconds or millisecond. It couples
@@ -11,7 +12,7 @@ algorithms scale better than the traditional brute-force approach and do not req
 the maxmimum number of charge carrier a priori.
 
 QArray runs on both CPUs and GPUs, and is designed to be easy to use and integrate into your existing workflow.
-It was developed on MacOS running on Apple Silicon and is continuously tested, Linux and Windows.
+It was developed on macOS running on Apple Silicon and is continuously tested, Linux and Windows.
 
 Finally, QArray captures physical effects such as measuring the charge stability diagram
 of with a SET and thermal broadening of charge transitions. The combination of these effects

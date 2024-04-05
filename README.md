@@ -1,7 +1,9 @@
 # QArray
 
-![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/test.yaml//badge.svg)
 ![PyPI](https://img.shields.io/pypi/v/qarray)
+![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/windows_tests.yaml//badge.svg)
+![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/linux_tests.yaml//badge.svg)
+
 
 <p align="center">
     <img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/structure.jpg" alt="structure" width="600">
@@ -15,7 +17,7 @@ algorithms scale better than the traditional brute-force approach and do not req
 the maxmimum number of charge carrier a priori.
 
 QArray runs on both CPUs and GPUs, and is designed to be easy to use and integrate into your existing workflow.
-It was developed on MacOS running on Apple Silicon and is continuously tested, Linux and Windows.
+It was developed on macOS running on Apple Silicon and is continuously tested, Linux and Windows.
 
 Finally, QArray captures physical effects such as measuring the charge stability diagram
 of with a SET and thermal broadening of charge transitions. The combination of these effects
@@ -26,8 +28,8 @@ The plots on the right below are measured experimentally, and the plots on the l
 <img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg" alt="structure" width="400">
 </p>
 
-Figure (a) shows the charge stability diagram of an open quadruple quantum dot array. (a) is a recreation
-of the charge stability diagram recreated with permission from [[1]](#[1]) while (b) is a simulated using QArray.
+Figure (a) shows the charge stability diagram of an open quadruple quantum dot array recreated with permission
+from [[1]](#[1]) while (b) is a simulated using QArray.
 
 Figure (c) shows the charge stability diagram of closed five dot quantum recreated with permission from  [[2]](#[2])
 and (d) is
