@@ -1,7 +1,7 @@
 """
 Qarray is a Python package for simulating quantum dot arrays.
 """
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 from .classes import (DotArray, GateVoltageComposer, ChargeSensedDotArray)
 from .functions import (optimal_Vg, compute_threshold, convert_to_maxwell, dot_occupation_changes, lorentzian,
