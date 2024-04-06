@@ -24,7 +24,7 @@ model = DotArray(
     cgd=cgd,
     core='rust',
     charge_carrier='electron',
-    T=0.01 / 8.617333262145e-5,
+    T=150,
     threshold=1.
 )
 model.max_charge_carriers = 2

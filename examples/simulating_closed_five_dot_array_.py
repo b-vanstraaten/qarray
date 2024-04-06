@@ -5,6 +5,7 @@ import time
 
 import matplotlib.pyplot as plt
 import numpy as np
+import scipy
 
 from qarray import (DotArray, GateVoltageComposer)
 
@@ -34,7 +35,7 @@ model = DotArray(
     Cgd=cgd_non_maxwell,
     core='rust',
     T=300,
-    threshold=0.5
+    threshold=1.
 )
 model.max_charge_carriers = 5
 
@@ -78,14 +79,15 @@ n = model.ground_state_closed(vg, 5)
 t1 = time.time()
 print(f'Ground state calculation took {t1 - t0:.2f} seconds')
 
-coupling = np.array([0.09, 0.05, 0.11, 0.14, 0.11])
+coupling = np.array([0.09, 0.05, 0.11, 0.14, 0.10])
 v_sensor = (n * coupling[np.newaxis, np.newaxis, :]).sum(axis=-1)
 v_sensor = (v_sensor - v_sensor.min()) / (v_sensor.max() - v_sensor.min())
-v_sensor = v_sensor + np.random.randn(*v_sensor.shape) * 0.005
+
+n = scipy.ndimage.gaussian_filter(np.random.randn(v_sensor.size), 5).reshape(v_sensor.shape).T
+
+v_sensor = v_sensor + 0.05 * n
 v_gradient = np.gradient(v_sensor, axis=0)
 v_gradient = (v_gradient - v_gradient.min()) / (v_gradient.max() - v_gradient.min())
-
-v_gradient = np.clip(v_gradient, 0., 0.95)
 
 names = ['T', 'L', 'M', 'R', 'B']
 
