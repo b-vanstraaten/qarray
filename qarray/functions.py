@@ -8,7 +8,7 @@ import numpy as np
 import scipy.linalg
 
 from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad,
-                           NegativeValuedMatrix)
+                           NegativeValuedMatrix, Vector)
 
 
 def batched_vmap(f: Callable, Vg: VectorList, n_dot: int, batch_size: int) -> VectorList:
@@ -40,6 +40,22 @@ def batched_vmap(f: Callable, Vg: VectorList, n_dot: int, batch_size: int) -> Ve
 def lorentzian(x, x0, gamma):
     return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
 
+
+def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
+    """
+    Function to compute the charge state contrast
+    :param n: the dot occupation vector
+    :param n_charges: the charge state vector
+    :return:
+    """
+    if not isinstance(n, Tetrad):
+        n = Tetrad(n)
+
+    if not isinstance(values, Vector):
+        values = Vector(values)
+
+    values = values[np.newaxis, np.newaxis, :]
+    return (n * values).sum(axis=-1)
 
 def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     """

@@ -11,19 +11,20 @@
 </p>
 
 
-**QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA
-to deliver constant capacitance model charge stability diagrams in seconds or millisecond. It couples
-highly optimised and parrelised code with two new algorithms to compute the ground state charge configuration. These
-algorithms scale better than the traditional brute-force approach and do not require the user to maxmimum specify
-the maxmimum number of charge carrier a priori.
+**QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA to
+deliver constant capacitance model charge stability diagrams in seconds or milliseconds. It couples highly optimised and
+parallelised code with two new algorithms to compute the ground state charge configuration. These algorithms scale
+better than the traditional brute-force approach and do not require the user to specify
+the maximum number of charge carriers a priori.
 
-QArray runs on both CPUs and GPUs, and is designed to be easy to use and integrate into your existing workflow.
-It was developed on macOS running on Apple Silicon and is continuously tested, Linux and Windows.
+QArray runs on both CPUs and GPUs and is designed to be easy to use and integrate into your existing workflow. It was
+developed on macOS running on Apple Silicon and is continuously tested on Windows-lastest, macOs13, macOS14 and
+Ubuntu-latest.
 
-Finally, QArray captures physical effects such as measuring the charge stability diagram
-of with a SET and thermal broadening of charge transitions. The combination of these effects
-permits the simulation of charge stability diagrams which are visually similar to those measured experimentally.
-The plots on the right below are measured experimentally, and the plots on the left are simulated using QArray.
+Finally, QArray captures physical effects such as measuring the charge stability diagram with a SET and thermal
+broadening of charge transitions. The combination of these effects permits the simulation of charge stability diagrams
+that are visually similar to those measured experimentally. The plots on the right below are measured experimentally,
+and the plots on the left are simulated using QArray.
 
 <p align="center">
 <img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg" alt="structure" width="400">
@@ -32,30 +33,30 @@ The plots on the right below are measured experimentally, and the plots on the l
 Figure (a) shows the charge stability diagram of an open quadruple quantum dot array recreated with permission
 from [[1]](#[1]) while (b) is a simulated using QArray.
 
-Figure (c) shows the charge stability diagram of closed five dot quantum recreated with permission from  [[2]](#[2])
+Figure (c) shows the charge stability diagram of a closed five dot quantum recreated with permission from  [[2]](#[2])
 and (d) is
 simulated using QArray.
 
 ## Installation
 
-We have tried to precompile the binaries for as many platforms as possible, if you are running one
-of those operating systems you can install QArray with just pip:
+We have tried to precompile the binaries for as many platforms as possible if you are running one of those operating
+systems, you can install QArray with just pip:
 ```bash
 pip install qarray
 ```
 
-If you slip through the gaps then the pip install will try to compile the binaries for you. This might require
-you to install some additional dependencies. In particular, might need to have cmake and rust installed.
+If you slip through the gaps, then the pip install will try to compile the binaries for you. This might require you to
+install some additional dependencies. In particular, might need to have cmake and rust installed.
 
 Install Rust from:
 [https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
 
 Install CMake from:
 [https://cmake.org/download/](https://cmake.org/download/)
-however, on macOS and Ubuntu you can install cmake using homebrew and apt respectively.
+however, on macOS and Ubuntu, you can install cmake using homebrew and apt, respectively.
 
-Also setting up JAX on macOS running on M series chips can be a bit finicky. We outline the steps
-than worked for us in [macOS installation](#macOS-installation). Alternatively, just spin up
+Also, setting up JAX on macOS running on M series chips can be a bit finicky. We outline the steps that worked for us
+in [macOS installation](#macOS-installation). Alternatively, just spin up
 a [Github Codespace](https://github.com/codespaces), then ```pip install qarray``` and
 you are done.
 
@@ -148,6 +149,7 @@ conda install pip
 ```zsh
 pip install qarray
 ```
-This installation scipt has been demonstrated to work on macOS Ventura 13.4 and Sonoma 14.4. 
+
+This installation script has been demonstrated to work on macOS Ventura 13.4 and Sonoma 14.4. 
 
 

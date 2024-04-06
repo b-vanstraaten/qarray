@@ -33,7 +33,7 @@ model = DotArray(
     Cdd=cdd_non_maxwell,
     Cgd=cgd_non_maxwell,
     core='rust',
-    T=0.03,
+    T=300,
     threshold=0.5
 )
 model.max_charge_carriers = 5

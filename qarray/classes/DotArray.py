@@ -56,7 +56,7 @@ class DotArray(BaseDataClass):
     charge_carrier: str = 'hole'  # a string of either 'electron' or 'hole' to specify the charge carrier
     threshold: float | str = 1.  # a float specifying the threshold for the charge sensing
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
-    T: float = 0.  # the temperature of the system, only used for jax and jax_brute_force cores
+    T: float | int = 0.  # the temperature of the system, only used for jax and jax_brute_force cores
     max_charge_carriers: int | None = None  # the maximum number of change carriers, only used for jax_brute_force
     batch_size: int = 10000
 
@@ -102,6 +102,9 @@ class DotArray(BaseDataClass):
         self.n_dot = self.cdd.shape[0]
         self.n_gate = self.cgd.shape[1]
         assert self.cgd.shape[0] == self.n_dot, 'The number of dots must be the same as the number of rows in cgd'
+
+        # type casting the temperature to a float
+        self.T = float(self.T)
 
         # checking that the threshold is valid
         match self.threshold:

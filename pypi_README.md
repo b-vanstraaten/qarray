@@ -7,40 +7,39 @@
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/linux_tests.yaml//badge.svg)
 
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA
-to deliver constant capacitance model charge stability diagrams in seconds or millisecond. It couples
-highly optimised and parrelised code with two new algorithms to compute the ground state charge configuration. These
-algorithms scale better than the traditional brute-force approach and do not require the user to maxmimum specify
-the maxmimum number of charge carrier a priori.
+to deliver constant capacitance model charge stability diagrams in seconds or milliseconds. It couples
+highly optimised and parallelised code with two new algorithms to compute the ground state charge configuration. These
+algorithms scale better than the traditional brute-force approach and do not require the user to specify
+the maximum number of charge carriers a priori.
 
-QArray runs on both CPUs and GPUs, and is designed to be easy to use and integrate into your existing workflow.
-It was developed on macOS running on Apple Silicon and is continuously tested on Ubuntu-latest, macOS13, macos14,
+QArray runs on both CPUs and GPUs and is designed to be easy to use and integrate into existing workflows. It was
+developed on macOS running on Apple Silicon and is continuously tested on Ubuntu-latest, macOS13, macos14,
 Windows-latest.
 
-Finally, QArray captures physical effects such as measuring the charge stability diagram
-of with a SET and thermal broadening of charge transitions. The combination of these effects
-permits the simulation of charge stability diagrams which are visually similar to those measured experimentally.
-The plots on the right below are measured experimentally, and the plots on the left are simulated using QArray.
+Finally, QArray captures physical effects, such as measuring the charge stability diagram with a SET and thermal
+broadening of charge transitions. The combination of these effects permits the simulation of charge stability diagrams,
+which are visually similar to those measured experimentally.
 
 ## Installation
 
-We have tried to precompile the binaries for as many platforms as possible, if you are running one
-of those operating systems you can install QArray with just pip:
+We have tried to precompile the binaries for as many platforms as possible if you are running one
+of those operating systems, you can install QArray with just pip:
 ```bash
 pip install qarray
 ```
 
-If you slip through the gaps then the pip install will try to compile the binaries for you. This might require
-you to install some additional dependencies. In particular, might need to have cmake and Rust installed.
+If you slip through the gaps, then the pip install will try to compile the binaries for you. This might require you to
+install some additional dependencies. In particular, you might need to have cmake and Rust installed.
 
 Install rust from:
 [https://www.rust-lang.org/tools/install](https://www.rust-lang.org/tools/install)
 
 Install CMake from:
 [https://cmake.org/download/](https://cmake.org/download/).
-However, on macOS and Ubuntu you can install cmake using homebrew and apt respectively.
+However, on macOS and Ubuntu, you can install cmake using homebrew and apt, respectively.
 
-Also setting up JAX on macOS running on M series chips can be a bit finicky. We outline the steps
-than worked for us in [macOS installation](#macOS-installation). Alternatively, just spin up
+Also, setting up JAX on macOS running on M series chips can be a bit finicky. We outline the steps
+that worked for us in the macOS installation section below. Alternatively, just spin up
 a [Github Codespace](https://github.com/codespaces), then ```pip install qarray``` and
 you are done.
 
@@ -126,4 +125,4 @@ conda install pip
 pip install qarray
 ```
 
-This installation scipt has been demonstrated to work on fresh installations of macOS Ventura 13.4 and Sonoma 14.4. 
+This installation script has been demonstrated to work on fresh installations of macOS Ventura 13.4 and Sonoma 14.4. 
