@@ -69,25 +69,33 @@ shift = -0.
 
 vg = vg + voltage_composer.do1d(2, shift - scale, shift + scale, N)[:, np.newaxis, :]
 
-# creating the figure and axes
-# fig, axes = plt.subplots(1, 5, sharex=True, sharey=True)
-# fig.set_size_inches(15, 4)
-
-
 t0 = time.time()
 n = model.ground_state_closed(vg, 5)
 t1 = time.time()
 print(f'Ground state calculation took {t1 - t0:.2f} seconds')
 
+# the measurement this simulation is trying to replicate measured the charge stability diagram through a system of
+# four QPC sensor and combined their responses. We will assume that the charge in the QPC impedance is linear
+# with the charge in the dots. Exploiting this assumption, we can combine the responses of the QPC sensors to
+# create a single response, which will also linear with the charge in the dots. We encapsulate this into the coupling
+# array
 coupling = np.array([0.09, 0.05, 0.11, 0.14, 0.10])
-v_sensor = (n * coupling[np.newaxis, np.newaxis, :]).sum(axis=-1)
-v_sensor = (v_sensor - v_sensor.min()) / (v_sensor.max() - v_sensor.min())
 
-n = scipy.ndimage.gaussian_filter(np.random.randn(v_sensor.size), 5).reshape(v_sensor.shape).T
+# computing the potential on the combined QPC sensor
+V_sensor = (n * coupling[np.newaxis, np.newaxis, :]).sum(axis=-1)
 
-v_sensor = v_sensor + 0.05 * n
-v_gradient = np.gradient(v_sensor, axis=0)
-v_gradient = (v_gradient - v_gradient.min()) / (v_gradient.max() - v_gradient.min())
+# using the assumption that the charge in the QPC impedance is linear with the charge in the dots, we can create a
+# response that is linear with the charge in the dots (this is a simplification)
+I_sensor = (V_sensor - V_sensor.min()) / (V_sensor.max() - V_sensor.min())
+
+# adding noise to the sensor response, Gaussian filtering is used to smooth the noise
+n = scipy.ndimage.gaussian_filter(np.random.randn(I_sensor.size), 5).reshape(I_sensor.shape).T
+
+# adding the noise to the sensor response
+I_sensor = I_sensor + 0.05 * n
+
+# taking the gradient
+v_gradient = np.gradient(I_sensor, axis=0)
 
 names = ['T', 'L', 'M', 'R', 'B']
 
