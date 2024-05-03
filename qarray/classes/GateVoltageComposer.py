@@ -18,6 +18,7 @@ class GateVoltageComposer(BaseDataClass):
     This class is used to compose dot voltages for the dot array.
     """
     n_gate: int  # the number of gates
+    n_dot: int | None = None
     gate_voltages: Vector | None = None  # vector of dot voltages encoding the current DC voltages set to the array
     gate_names: dict[str, int] | None = None  # a dictionary of dot names which can be defined for convenience
     virtual_gate_origin: np.ndarray | None = None  # the origin to consider virtual gates from
@@ -193,7 +194,7 @@ class GateVoltageComposer(BaseDataClass):
                 i = dots.index(dot)
                 Vd[..., dot] = V[i]
 
-        return np.einsum('ij,...j->...i', self.virtual_gate_matrix, Vd) + self.virtual_gate_origin
+        return np.einsum('ji,...j->...i', self.virtual_gate_matrix, Vd) + self.virtual_gate_origin
 
     def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_res: int) -> np.ndarray:
         """
