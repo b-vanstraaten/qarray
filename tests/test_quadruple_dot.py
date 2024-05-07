@@ -7,9 +7,10 @@ import unittest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (ground_state_open_rust, ground_state_closed_rust, ground_state_open_python,
-                    ground_state_closed_python, optimal_Vg, compute_threshold)
-from qarray.jax_core import ground_state_open_jax, ground_state_closed_jax
+from qarray import (ground_state_open_default_or_thresholded_rust, ground_state_closed_default_or_thresholded_rust,
+                    ground_state_open_default_or_thresholded_python,
+                    ground_state_closed_default_or_thresholded_python, optimal_Vg, compute_threshold)
+from qarray.jax_implementations.default_jax import ground_state_open_default_jax, ground_state_closed_default_jax
 from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES
 from .helper_functions import randomly_generate_matrices, too_different
 
@@ -25,9 +26,9 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = randomly_generate_matrices(4)
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 4))
-            n_rust = ground_state_open_rust(vg, cgd, cdd_inv, 1)
-            n_python = ground_state_open_python(vg, cgd, cdd_inv, 1)
-            n_jax = ground_state_open_jax(vg, cgd, cdd_inv)
+            n_rust = ground_state_open_default_or_thresholded_rust(vg, cgd, cdd_inv, 1)
+            n_python = ground_state_open_default_or_thresholded_python(vg, cgd, cdd_inv, 1)
+            n_jax = ground_state_open_default_jax(vg, cgd, cdd_inv)
 
             debug = False
             if debug:
@@ -52,10 +53,10 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = randomly_generate_matrices(4)
             vg = np.random.uniform(-10, 5, size=(N_VOLTAGES, 4))
-            n_threshold_of_1 = ground_state_open_rust(vg, cgd, cdd_inv, 1.)
+            n_threshold_of_1 = ground_state_open_default_or_thresholded_rust(vg, cgd, cdd_inv, 1.)
 
             threshold = compute_threshold(cdd)
-            n_threshold_not_of_1 = ground_state_open_rust(vg, cgd, cdd_inv, threshold)
+            n_threshold_not_of_1 = ground_state_open_default_or_thresholded_rust(vg, cgd, cdd_inv, threshold)
 
             self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1),
                             msg=f"threshold {threshold}"
@@ -72,9 +73,11 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = randomly_generate_matrices(4)
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 4))
-            n_rust = ground_state_closed_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
-            n_python = ground_state_closed_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
-            n_jax = ground_state_closed_jax(vg, n_charge=1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
+            n_rust = ground_state_closed_default_or_thresholded_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
+                                                                     threshold=1)
+            n_python = ground_state_closed_default_or_thresholded_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
+                                                                         threshold=1)
+            n_jax = ground_state_closed_default_jax(vg, n_charge=1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
 
             self.assertFalse(too_different(n_rust, n_python))
             self.assertFalse(too_different(n_rust, n_jax))
@@ -89,9 +92,11 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = randomly_generate_matrices(4)
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 4))
-            n_rust = ground_state_closed_rust(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
-            n_python = ground_state_closed_python(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
-            n_jax = ground_state_closed_jax(vg, n_charge=2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
+            n_rust = ground_state_closed_default_or_thresholded_rust(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
+                                                                     threshold=1)
+            n_python = ground_state_closed_default_or_thresholded_python(vg, 2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
+                                                                         threshold=1)
+            n_jax = ground_state_closed_default_jax(vg, n_charge=2, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
 
             self.assertFalse(too_different(n_rust, n_python))
             self.assertFalse(too_different(n_rust, n_jax))
@@ -106,10 +111,12 @@ class DoubleDotTests(unittest.TestCase):
         for _ in range(N_ITERATIONS):
             cdd, cdd_inv, cgd = randomly_generate_matrices(4)
             vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 4))
-            n_rust = ground_state_closed_rust(vg, 4, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
-            n_python = ground_state_closed_python(vg, 4, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd, threshold=1)
+            n_rust = ground_state_closed_default_or_thresholded_rust(vg, 4, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
+                                                                     threshold=1)
+            n_python = ground_state_closed_default_or_thresholded_python(vg, 4, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
+                                                                         threshold=1)
 
-            n_jax = ground_state_closed_jax(vg, n_charge=4, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
+            n_jax = ground_state_closed_default_jax(vg, n_charge=4, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
 
             self.assertFalse(too_different(n_rust, n_python))
             self.assertFalse(too_different(n_rust, n_jax))
@@ -126,7 +133,7 @@ class DoubleDotTests(unittest.TestCase):
             cdd, cdd_inv, cgd = randomly_generate_matrices(4)
             n_charges = np.random.choice(np.arange(0, 10), size=(N_VOLTAGES, 4)).astype(int)
             vg = optimal_Vg(cdd_inv=cdd_inv, cgd=cgd, n_charges=n_charges)
-            n_rust = ground_state_open_rust(vg, cgd, cdd_inv, 1).astype(int)
+            n_rust = ground_state_open_default_or_thresholded_rust(vg, cgd, cdd_inv, 1).astype(int)
             self.assertTrue(np.allclose(n_rust, n_charges))
 
 

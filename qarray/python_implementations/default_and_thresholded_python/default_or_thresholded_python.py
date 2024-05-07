@@ -11,8 +11,10 @@ from loguru import logger
 from pydantic import NonNegativeInt
 from scipy import sparse
 
-from .charge_configuration_generators import (open_charge_configurations, closed_charge_configurations)
-from ..qarray_types import CddInv, Cgd_holes, VectorList, Cdd
+from qarray.python_implementations.default_and_thresholded_python.charge_configuration_generators import (
+    open_charge_configurations, closed_charge_configurations)
+from qarray.python_implementations.helper_functions import softargmin, hardargmin
+from qarray.qarray_types import CddInv, Cgd_holes, VectorList, Cdd
 
 
 def compute_analytical_solution_open(cgd, vg):
@@ -105,8 +107,8 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd_holes, cdd: 
                                  threshold=threshold)
 
 
-def ground_state_open_python(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, threshold: float,
-                             polish: bool = True) -> VectorList:
+def ground_state_open_default_or_thresholded_python(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, threshold: float,
+                                                    polish: bool = True) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
         :param vg: the list of dot voltage coordinate vectors to evaluate the ground state at
@@ -121,8 +123,10 @@ def ground_state_open_python(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, th
     return VectorList(list(N))
 
 
-def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes, cdd: Cdd,
-                               cdd_inv: CddInv, threshold: float, polish: bool = True) -> VectorList:
+def ground_state_closed_default_or_thresholded_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes,
+                                                      cdd: Cdd,
+                                                      cdd_inv: CddInv, threshold: float,
+                                                      polish: bool = True) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param polish:
@@ -141,22 +145,27 @@ def ground_state_closed_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cg
     return VectorList(list(N))
 
 
-def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, vg):
+def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, vg, T=0.):
     # computing the remainder
     n_list = open_charge_configurations(n_continuous, threshold)
     # computing the free energy of the change configurations
     F = np.einsum('...i, ij, ...j', n_list - cgd @ vg, cdd_inv, n_list - cgd @ vg)
     # returning the lowest energy change configuration
-    return n_list[np.argmin(F), :]
+
+    if T > 0.:
+        return softargmin(F, n_list, T)
+    else:
+        return hardargmin(F, n_list)
 
 
-def compute_argmin_closed(n_continuous, cdd_inv, cgd, vg, n_charge, threshold):
+def compute_argmin_closed(n_continuous, cdd_inv, cgd, vg, n_charge, threshold, T=0.):
     n_list = closed_charge_configurations(n_continuous, n_charge, threshold)
 
     v_dash = cgd @ vg
     # computing the free energy of the change configurations
     F = np.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
-    # returning the lowest energy change configuration
-    return n_list[np.argmin(F), :]
 
-
+    if T > 0.:
+        return softargmin(F, n_list, T)
+    else:
+        return hardargmin(F, n_list)

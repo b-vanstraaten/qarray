@@ -1,12 +1,16 @@
 import numpy as np
 from pydantic import NonNegativeInt
 
-from ..brute_force_jax import ground_state_open_brute_force_jax, ground_state_closed_brute_force_jax
-from ..brute_force_python import ground_state_open_brute_force_python, ground_state_closed_brute_force_python
-from ..jax_core import ground_state_open_jax, ground_state_closed_jax
-from ..python_core import ground_state_open_python, ground_state_closed_python
+from qarray.jax_implementations.brute_force_jax import ground_state_closed_brute_force_jax, \
+    ground_state_open_brute_force_jax
+from qarray.jax_implementations.default_jax import ground_state_open_default_jax, ground_state_closed_default_jax
+from qarray.python_implementations.brute_force_python import ground_state_open_brute_force_python, \
+    ground_state_closed_brute_force_python
+from ..python_implementations import ground_state_open_default_or_thresholded_python, \
+    ground_state_closed_default_or_thresholded_python
 from ..qarray_types import VectorList
-from ..rust_core import ground_state_open_rust, ground_state_closed_rust
+from ..rust_implemenations import ground_state_open_default_or_thresholded_rust, \
+    ground_state_closed_default_or_thresholded_rust
 
 # Boltzmann constant in eV/K
 k_B = 8.617333262145e-5  # eV/K
@@ -43,65 +47,89 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
     kB_T = 8.617333262145e-5 * model.T
 
     # calling the appropriate core function to compute the ground state
-    match model.core:
+    match model.implementation:
         case 'rust' | 'Rust' | 'RUST' | 'r':
-            result = ground_state_open_rust(
+
+            # matching to the algorithm
+            match model.algorithm.lower():
+                case 'thresholded':
+                    threshold = model.threshold
+                case 'default':
+                    threshold = 1
+                case _:
+                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
+
+            result = ground_state_open_default_or_thresholded_rust(
                 vg=vg, cgd=model.cgd,
                 cdd_inv=model.cdd_inv,
-                threshold=model.threshold,
+                threshold=threshold,
                 polish=model.polish, T=kB_T
             )
+
         case 'jax' | 'Jax' | 'JAX' | 'j':
-            if model.threshold < 1.:
-                print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
 
-            result = ground_state_open_jax(
-                vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size
-            )
+            match model.algoritm.lower():
+                case 'default':
+                    result = ground_state_open_default_jax(
+                        vg=vg, cgd=model.cgd,
+                        cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size
+                    )
+                case 'brute_force':
 
-        case 'brute_force_jax' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
+                    if model.max_charge_carriers is None:
+                        message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
+                                   '\nmodel.max_charge_carriers = #')
+                        raise ValueError(message)
 
-            if model.max_charge_carriers is None:
-                message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
-                           '\nmodel.max_charge_carriers = #')
-                raise ValueError(message)
+                    result = ground_state_open_brute_force_jax(
+                        vg=vg, cgd=model.cgd,
+                        cdd_inv=model.cdd_inv,
+                        max_number_of_charge_carriers=model.max_charge_carriers,
+                        T=kB_T,
+                        batch_size=model.batch_size
+                    )
+                case _:
+                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
 
-            if model.threshold < 1.:
-                print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
-            result = ground_state_open_brute_force_jax(
-                vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv,
-                max_number_of_charge_carriers=model.max_charge_carriers,
-                T=kB_T,
-                batch_size=model.batch_size
-            )
+        case 'python' | 'Python' | 'python':
+            match model.algoritm.lower():
+                case 'default':
 
-        case 'python_brute_force' | 'Python_brute_force' | 'PYTHON_BRUTE_FORCE' | 'bp' | 'brute_force_python' | 'Brute_force_python' | 'BRUTE_FORCE_PYTHON' | 'bpy':
-            if model.max_charge_carriers is None:
-                message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
-                           '\nmodel.max_charge_carriers = #')
-                raise ValueError(message)
+                    result = ground_state_open_default_or_thresholded_python(
+                        vg=vg, cgd=model.cgd,
+                        cdd_inv=model.cdd_inv,
+                        threshold=1.,
+                        polish=model.polish
+                    )
 
-            if model.threshold < 1.:
-                print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
+                case 'thresholded':
 
-            result = ground_state_open_brute_force_python(
-                vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv,
-                max_number_of_charge_carriers=model.max_charge_carriers,
-                T=kB_T
-            )
+                    result = ground_state_open_default_or_thresholded_python(
+                        vg=vg, cgd=model.cgd,
+                        cdd_inv=model.cdd_inv,
+                        threshold=model.threshold,
+                        polish=model.polish
+                    )
 
-        case 'python' | 'Python' | 'PYTHON' | 'p':
-            result = ground_state_open_python(
-                vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv,
-                threshold=model.threshold,
-                polish=model.polish
-            )
+                case 'brute_force':
+
+                    if model.max_charge_carriers is None:
+                        message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
+                                   '\nmodel.max_charge_carriers = #')
+                        raise ValueError(message)
+
+                    result = ground_state_open_brute_force_python(
+                        vg=vg, cgd=model.cgd,
+                        cdd_inv=model.cdd_inv,
+                        max_number_of_charge_carriers=model.max_charge_carriers,
+                        T=kB_T
+                    )
+                case _:
+                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
+
         case _:
-            raise ValueError(f'Incorrect core {model.core}, it must be either rust, jax or python')
+            ValueError(f'Incorrect value passed for algorithm {model.implementation}')
+
     assert np.all(result.astype(int) >= 0), 'The number of charges is negative something went wrong'
     return result.reshape(nd_shape)
 
@@ -128,54 +156,85 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
 
     kB_T = 8.617333262145e-5 * model.T
 
-    # calling the appropriate core function to compute the ground state
-    match model.core:
+    match model.implementation:
         case 'rust' | 'Rust' | 'RUST' | 'r':
-            result = ground_state_closed_rust(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv,
-                threshold=model.threshold, polish=model.polish, T=kB_T
+
+            # matching to the algorithm
+            match model.algorithm.lower():
+                case 'thresholded':
+                    threshold = model.threshold
+                case 'default':
+                    threshold = 1
+                case _:
+                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
+
+            result = ground_state_closed_default_or_thresholded_rust(
+                vg=vg, cgd=model.cgd, cdd=model.cdd,
+                cdd_inv=model.cdd_inv,
+                threshold=threshold,
+                polish=model.polish, T=kB_T, n_charge=n_charge
             )
 
         case 'jax' | 'Jax' | 'JAX' | 'j':
-            if model.threshold < 1.:
-                print('Warning: JAX core does not support threshold < 1.0, using of 1.0')
-            result = ground_state_closed_jax(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size
-            )
 
-        case 'brute_force_jax' | 'jax_brute_force' | 'Jax_brute_force' | 'JAX_BRUTE_FORCE' | 'b':
-            if model.threshold < 1.:
-                print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
+            match model.algoritm.lower():
+                case 'default':
+                    result = ground_state_closed_default_jax(
+                        vg=vg, cgd=model.cgd, cdd=model.cdd,
+                        cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size, n_charge=n_charge
+                    )
+                case 'brute_force':
 
-            result = ground_state_closed_brute_force_jax(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size
-            )
+                    if model.max_charge_carriers is None:
+                        message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
+                                   '\nmodel.max_charge_carriers = #')
+                        raise ValueError(message)
 
-        case 'python_brute_force' | 'Python_brute_force' | 'PYTHON_BRUTE_FORCE' | 'bp' | 'brute_force_python' | 'Brute_force_python' | 'BRUTE_FORCE_PYTHON' | 'bpy':
-            if model.max_charge_carriers is None:
-                message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
-                           '\nmodel.max_charge_carriers = #')
-                raise ValueError(message)
+                    result = ground_state_closed_brute_force_jax(
+                        vg=vg, cgd=model.cgd, cdd=model.cdd,
+                        cdd_inv=model.cdd_inv,
+                        max_number_of_charge_carriers=model.max_charge_carriers,
+                        T=kB_T,
+                        batch_size=model.batch_size, n_charge=n_charge
+                    )
+                case _:
+                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
 
-            if model.threshold < 1.:
-                print('Warning: JAX core does not support threshold < 1.0, using threshold of 1.0')
+        case 'python' | 'Python' | 'python':
+            match model.algoritm.lower():
+                case 'default':
 
-            result = ground_state_closed_brute_force_python(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv, T=kB_T
-            )
+                    result = ground_state_closed_default_or_thresholded_python(
+                        vg=vg, cgd=model.cgd, cdd=model.cdd,
+                        cdd_inv=model.cdd_inv,
+                        threshold=1.,
+                        polish=model.polish, n_charge=n_charge
+                    )
 
-        case 'python' | 'Python' | 'PYTHON' | 'p':
-            result = ground_state_closed_python(
-                vg=vg, n_charge=n_charge, cgd=model.cgd,
-                cdd=model.cdd, cdd_inv=model.cdd_inv,
-                threshold=model.threshold, polish=model.polish
-            )
-        case _:
-            raise ValueError(f'Incorrect core {model.core}, it must be either rust, jax or python')
+                case 'thresholded':
+
+                    result = ground_state_closed_default_or_thresholded_python(
+                        vg=vg, cgd=model.cgd, cdd=model.cdd,
+                        cdd_inv=model.cdd_inv,
+                        threshold=model.threshold,
+                        polish=model.polish, n_charge=n_charge
+                    )
+
+                case 'brute_force':
+
+                    if model.max_charge_carriers is None:
+                        message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
+                                   '\nmodel.max_charge_carriers = #')
+                        raise ValueError(message)
+
+                    result = ground_state_closed_brute_force_python(
+                        vg=vg, cgd=model.cgd, cdd=model.cdd,
+                        cdd_inv=model.cdd_inv,
+                        max_number_of_charge_carriers=model.max_charge_carriers,
+                        T=kB_T
+                    )
+                case _:
+                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
 
     assert np.all(
         np.isclose(result.sum(axis=-1), n_charge)), 'The number of charges is not correct something went wrong'

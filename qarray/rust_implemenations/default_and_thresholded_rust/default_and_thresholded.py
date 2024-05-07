@@ -6,7 +6,7 @@ from pydantic import NonNegativeInt
 from qarray_rust_core import (ground_state_open, ground_state_closed,
                               closed_charge_configurations, open_charge_configurations)
 
-from ..qarray_types import (
+from qarray.qarray_types import (
     CddInv, Cgd_holes, VectorList, Vector, Cdd
 )
 
@@ -35,8 +35,9 @@ def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativ
     return VectorList(closed_charge_configurations(n_continuous, n_charge, threshold))
 
 
-def ground_state_open_rust(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, threshold: float, T: float = 0.0,
-                           polish: bool = True) -> VectorList:
+def ground_state_open_default_or_thresholded_rust(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, threshold: float,
+                                                  T: float = 0.0,
+                                                  polish: bool = True) -> VectorList:
     """
     A wrapper for the rust ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the list of dot voltage coordinate vectors to evaluate the ground state at
@@ -55,8 +56,9 @@ def ground_state_open_rust(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, thre
     return VectorList(ground_state_open(vg, cgd, cdd_inv, threshold, polish, T))
 
 
-def ground_state_closed_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes, cdd: Cdd,
-                             cdd_inv: CddInv, threshold: float, T: float = 0, polish: bool = True) -> VectorList:
+def ground_state_closed_default_or_thresholded_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes, cdd: Cdd,
+                                                    cdd_inv: CddInv, threshold: float, T: float = 0,
+                                                    polish: bool = True) -> VectorList:
     """
     A wrapper for the rust ground state isolated function that takes in numpy arrays and returns numpy arrays.
     :param vg: the list of dot voltage coordinate vectors to evaluate the ground state at

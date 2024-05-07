@@ -76,6 +76,8 @@ def run_all_examples_for_error(self):
                 exec(f.read())
             except Exception as e:
                 raise RuntimeError(f"Error in {python_file.name}") from e
+
+
 def to_set(a):
     """
     Convert a numpy array to a set of tuples

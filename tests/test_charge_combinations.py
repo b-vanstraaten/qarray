@@ -3,9 +3,11 @@ from functools import partial
 
 import numpy as np
 
-from qarray.jax_core.charge_configuration_generators import open_charge_configurations_jax
-from qarray.python_core.charge_configuration_generators import closed_charge_configurations, open_charge_configurations
-from qarray.rust_core.core_rust import closed_charge_configurations_rust, open_charge_configurations_rust
+from qarray.jax_implementations.default_jax import open_charge_configurations_jax
+from qarray.python_implementations.default_and_thresholded_python.charge_configuration_generators import \
+    closed_charge_configurations, open_charge_configurations
+from qarray.rust_implemenations.default_and_thresholded_rust.default_and_thresholded import \
+    closed_charge_configurations_rust, open_charge_configurations_rust
 from .GLOBAL_OPTIONS import N_ITERATIONS, N_DOT_MAX, N_CHARGE_MAX
 from .helper_functions import compare_sets_for_equality, to_set
 

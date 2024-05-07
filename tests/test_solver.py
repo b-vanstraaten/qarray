@@ -7,7 +7,8 @@ import unittest
 
 import numpy as np
 
-from qarray.python_core.core_python import init_osqp_problem, compute_analytical_solution_open, \
+from qarray.python_implementations.default_and_thresholded_python.default_or_thresholded_python import \
+    init_osqp_problem, compute_analytical_solution_open, \
     compute_analytical_solution_closed
 from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES, ATOL
 from .helper_functions import randomly_generate_model

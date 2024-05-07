@@ -33,7 +33,8 @@ cgd_non_maxwell = np.array([
 model = DotArray(
     Cdd=cdd_non_maxwell,
     Cgd=cgd_non_maxwell,
-    core='rust',
+    algorithm='default',
+    implementation='rust',
     T=300,
     threshold=1.
 )

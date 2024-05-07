@@ -20,7 +20,8 @@ model = DotArray(
         [1., 0.],
         [0.2, 1]
     ]),
-    core='r', charge_carrier='h', T=0.,
+    algorithm='default',
+    implementation='rust', charge_carrier='h', T=0.,
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array

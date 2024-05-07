@@ -5,9 +5,10 @@ from pydantic import NonNegativeInt
 
 from .BaseDataClass import BaseDataClass
 from ._helper_functions import (_ground_state_open, _ground_state_closed)
-from ..functions import convert_to_maxwell, compute_threshold, optimal_Vg
+from ..functions import convert_to_maxwell, optimal_Vg
 from ..qarray_types import Cdd as TypeCdd  # to avoid name clash with dataclass cdd
-from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix
+from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix, \
+    NegativeValuedMatrix
 
 if TYPE_CHECKING:
     from dataclasses import dataclass
@@ -31,6 +32,17 @@ def all_positive_or_negative(a):
     return all_positive(a) or all_negative(a)
 
 
+def check_algorithm_and_implementation(algorithm: str, implementation: str):
+    algorithm_implementation_combinations = {
+        'default': ['rust', 'python', 'jax'],
+        'thresholded': ['rust', 'python'],
+        'brute-force': ['rust', 'python'],
+    }
+    assert algorithm.lower() in algorithm_implementation_combinations.keys(), f'Algorithm {algorithm} not supported'
+    implementations = algorithm_implementation_combinations[algorithm.lower()]
+    assert implementation.lower() in implementations, f'Implementation {implementation} not supported for algorithm {algorithm}'
+
+
 @dataclass(config=dict(arbitrary_types_allowed=True, auto_attribs_default=True))
 class DotArray(BaseDataClass):
     """
@@ -39,7 +51,8 @@ class DotArray(BaseDataClass):
     :param Cgd: the dot to gate capacitance matrix in its non Maxwell form
     :param cdd: the dot to dot capacitance matrix in its Maxwell form
     :param cgd: the dot to gate capacitance matrix in its Maxwell form
-    :param core: a string of ['rust', 'jax', 'python', 'brute_force_jax'] to specify which core backend to use.
+    
+    
     :param charge_carrier: a string of ['electron', 'hole'] to specify the charge carrier
     :param threshold: a float specifying the threshold, default 1. If 'auto' is passed, the threshold is computed
     automatically
@@ -51,13 +64,18 @@ class DotArray(BaseDataClass):
     Cdd: CddNonMaxwell | None = None  # an (n_dot, n_dot)the capacitive coupling between dots
     Cgd: CgdNonMaxwell | None = None  # an (n_dot, n_gate) the capacitive coupling between gates and dots
     cdd: TypeCdd | None = None
-    cgd: PositiveValuedMatrix | None = None
-    core: str = 'rust'  # a string of either 'python' or 'rust' to specify which backend to use
+    cgd: PositiveValuedMatrix | NegativeValuedMatrix | None = None
+
+    algorithm: str | None = 'default'  # which algorithm to use
+    implementation: str | None = 'rust'  # which implementation of the algorithm to use
+
+    threshold: float | str = 1.  # if the threshold algorithm is used the user needs to pass the threshold
+    max_charge_carriers: int | None = None  # if the brute force algorithm is used the user needs to pass the maximum number of charge carriers
+
     charge_carrier: str = 'hole'  # a string of either 'electron' or 'hole' to specify the charge carrier
-    threshold: float | str = 1.  # a float specifying the threshold for the charge sensing
+
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
     T: float | int = 0.  # the temperature of the system, only used for jax and jax_brute_force cores
-    max_charge_carriers: int | None = None  # the maximum number of change carriers, only used for jax_brute_force
     batch_size: int = 10000
 
     def __post_init__(self):
@@ -106,14 +124,13 @@ class DotArray(BaseDataClass):
         # type casting the temperature to a float
         self.T = float(self.T)
 
-        # checking that the threshold is valid
-        match self.threshold:
-            case 'auto' | 'Auto' | 'AUTO':
-                self.threshold = compute_threshold(self.cdd)
-            case _:
-                assert isinstance(self.threshold, float), 'The threshold must be a float or "auto"'
-                assert self.threshold >= 0, 'The threshold must be positive'
-                assert self.threshold <= 1, 'The threshold must be smaller than or equal to 1'
+        # checking the passed algorithm and implementation
+        check_algorithm_and_implementation(self.algorithm, self.implementation)
+        if self.algorithm == 'threshold':
+            assert self.threshold is not None, 'The threshold must be specified when using the thresholded algorithm'
+
+        if self.algorithm == 'brute_force':
+            assert self.max_charge_carriers is not None, 'The maximum number of charge carriers must be specified'
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """

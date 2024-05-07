@@ -13,7 +13,9 @@ model = DotArray(
         [1., 0.2],
         [0.2, 1]
     ],
-    core='r', charge_carrier='h', polish=True, T=0.0,
+    algorithm='default',
+    implementation='rust',
+    charge_carrier='h', polish=True, T=0.0,
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)

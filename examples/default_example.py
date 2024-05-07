@@ -14,7 +14,9 @@ model = DotArray(
         [1., 0.1],
         [0.1, 1]
     ]),
-    core='r', charge_carrier='h', T=0.,
+    algorithm='default',
+    implementation='rust',
+    charge_carrier='h', T=0.,
 )
 
 # a helper class designed to make it easy to create gate voltage arrays for nd sweeps

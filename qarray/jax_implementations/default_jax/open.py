@@ -10,10 +10,10 @@ import numpy as np
 from jaxopt import BoxOSQP
 from pydantic.types import PositiveFloat
 
-from .charge_configuration_generators import open_charge_configurations_jax
-from .helper_functions import softargmin, hardargmin
-from ..functions import batched_vmap
-from ..qarray_types import VectorList, CddInv, Cgd_holes, Vector
+from qarray.functions import batched_vmap
+from qarray.jax_implementations.default_jax.charge_configuration_generators import open_charge_configurations_jax
+from qarray.jax_implementations.helper_functions import softargmin, hardargmin
+from qarray.qarray_types import VectorList, CddInv, Cgd_holes, Vector
 
 qp = BoxOSQP(check_primal_dual_infeasability=False, verbose=False)
 
@@ -63,8 +63,8 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd_holes, vg):
     )
 
 
-def ground_state_open_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, T: PositiveFloat = 0.,
-                          batch_size: int = 10000) -> VectorList:
+def ground_state_open_default_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, T: PositiveFloat = 0.,
+                                  batch_size: int = 10000) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at

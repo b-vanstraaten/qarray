@@ -23,7 +23,8 @@ model = DotArray(
         [0.2, 1., 0.2],
         [0.05, 0.2, 1]
     ],
-    core='r',
+    algorithm='default',
+    implementation='rust',
     T=1.
 )
 print(model.threshold)
