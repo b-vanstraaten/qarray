@@ -26,7 +26,7 @@ class ChargeSensedDotArray(BaseDataClass):
     max_charge_carriers: int | None = None  # if the brute force algorithm is used the user needs to pass the maximum number of charge carriers
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 
-    T: float = 0.  # the temperature of the system
+    T: float | int = 0.  # the temperature of the system
 
 
     def __post_init__(self):
