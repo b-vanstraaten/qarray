@@ -3,8 +3,8 @@ from pydantic import NonNegativeInt
 from pydantic.dataclasses import dataclass
 
 from .BaseDataClass import BaseDataClass
-from ._helper_functions import _ground_state_open, _ground_state_closed
-from ..functions import compute_threshold, optimal_Vg, convert_to_maxwell_with_sensor, lorentzian
+from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation
+from ..functions import optimal_Vg, convert_to_maxwell_with_sensor, lorentzian
 from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell
 
 
@@ -19,11 +19,15 @@ class ChargeSensedDotArray(BaseDataClass):
     noise: float
     gamma: float
 
-    core: str = 'rust'  # a string of either 'python' or 'rust' to specify which backend to use
-    threshold: float | str | None = 1.  # a float specifying the threshold for the charge sensing
+    algorithm: str | None = 'default'  # which algorithm to use
+    implementation: str | None = 'rust'  # which implementation of the algorithm to use
+
+    threshold: float | str = 1.  # if the threshold algorithm is used the user needs to pass the threshold
+    max_charge_carriers: int | None = None  # if the brute force algorithm is used the user needs to pass the maximum number of charge carriers
+    polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
+
     T: float = 0.  # the temperature of the system
 
-    polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 
     def __post_init__(self):
         self.n_dot = self.Cdd.shape[0]
@@ -48,13 +52,21 @@ class ChargeSensedDotArray(BaseDataClass):
                                                                                          self.Cgd,
                                                                                          self.Cds,
                                                                                          self.Cgs)
-
         self.cdd = self.cdd_full[:self.n_dot, :self.n_dot]
         self.cdd_inv = self.cdd_inv_full[:self.n_dot, :self.n_dot]
         self.cgd = self.cgd_full[:self.n_dot, :]
 
-        if self.threshold == 'auto' or self.threshold is None:
-            self.threshold = compute_threshold(self.cdd)
+        # type casting the temperature to a float
+        self.T = float(self.T)
+
+        # checking the passed algorithm and implementation
+        check_algorithm_and_implementation(self.algorithm, self.implementation)
+        if self.algorithm == 'threshold':
+            assert self.threshold is not None, 'The threshold must be specified when using the thresholded algorithm'
+
+        if self.algorithm == 'brute_force':
+            assert self.max_charge_carriers is not None, 'The maximum number of charge carriers must be specified'
+
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """

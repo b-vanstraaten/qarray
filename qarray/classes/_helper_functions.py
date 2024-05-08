@@ -12,6 +12,18 @@ from ..qarray_types import VectorList
 from ..rust_implemenations import ground_state_open_default_or_thresholded_rust, \
     ground_state_closed_default_or_thresholded_rust
 
+
+def check_algorithm_and_implementation(algorithm: str, implementation: str):
+    algorithm_implementation_combinations = {
+        'default': ['rust', 'python', 'jax'],
+        'thresholded': ['rust', 'python'],
+        'brute-force': ['rust', 'python'],
+    }
+    assert algorithm.lower() in algorithm_implementation_combinations.keys(), f'Algorithm {algorithm} not supported'
+    implementations = algorithm_implementation_combinations[algorithm.lower()]
+    assert implementation.lower() in implementations, f'Implementation {implementation} not supported for algorithm {algorithm}'
+
+
 # Boltzmann constant in eV/K
 k_B = 8.617333262145e-5  # eV/K
 

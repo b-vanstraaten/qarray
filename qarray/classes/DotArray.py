@@ -4,7 +4,7 @@ import numpy as np
 from pydantic import NonNegativeInt
 
 from .BaseDataClass import BaseDataClass
-from ._helper_functions import (_ground_state_open, _ground_state_closed)
+from ._helper_functions import (_ground_state_open, _ground_state_closed, check_algorithm_and_implementation)
 from ..functions import convert_to_maxwell, optimal_Vg
 from ..qarray_types import Cdd as TypeCdd  # to avoid name clash with dataclass cdd
 from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix, \
@@ -31,16 +31,6 @@ def all_negative(a):
 def all_positive_or_negative(a):
     return all_positive(a) or all_negative(a)
 
-
-def check_algorithm_and_implementation(algorithm: str, implementation: str):
-    algorithm_implementation_combinations = {
-        'default': ['rust', 'python', 'jax'],
-        'thresholded': ['rust', 'python'],
-        'brute-force': ['rust', 'python'],
-    }
-    assert algorithm.lower() in algorithm_implementation_combinations.keys(), f'Algorithm {algorithm} not supported'
-    implementations = algorithm_implementation_combinations[algorithm.lower()]
-    assert implementation.lower() in implementations, f'Implementation {implementation} not supported for algorithm {algorithm}'
 
 
 @dataclass(config=dict(arbitrary_types_allowed=True, auto_attribs_default=True))
@@ -71,12 +61,12 @@ class DotArray(BaseDataClass):
 
     threshold: float | str = 1.  # if the threshold algorithm is used the user needs to pass the threshold
     max_charge_carriers: int | None = None  # if the brute force algorithm is used the user needs to pass the maximum number of charge carriers
+    batch_size: int = 10000
+    polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 
     charge_carrier: str = 'hole'  # a string of either 'electron' or 'hole' to specify the charge carrier
 
-    polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
     T: float | int = 0.  # the temperature of the system, only used for jax and jax_brute_force cores
-    batch_size: int = 10000
 
     def __post_init__(self):
         """

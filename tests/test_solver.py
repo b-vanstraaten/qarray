@@ -39,8 +39,8 @@ class TestOsqpSolver(unittest.TestCase):
                 res = prob.solve()
 
                 if np.all(analytical_solution >= 0.):
-                    self.assertTrue(np.allclose(res.x, analytical_solution, atol=ATOL),
-                                    msg=f'vg: {vg}, {analytical_solution}, {res.x}'
+                    self.assertTrue(np.allclose(res.dot_spacing, analytical_solution, atol=ATOL),
+                                    msg=f'vg: {vg}, {analytical_solution}, {res.dot_spacing}'
                                     )
 
     def test_double_dot_closed(self):
@@ -67,8 +67,8 @@ class TestOsqpSolver(unittest.TestCase):
                     res = prob.solve()
 
                     if np.all(analytical_solution >= 0.):
-                        self.assertTrue(np.allclose(res.x, analytical_solution, atol=ATOL),
-                                        msg=f'vg: {vg}, {analytical_solution}, {res.x}'
+                        self.assertTrue(np.allclose(res.dot_spacing, analytical_solution, atol=ATOL),
+                                        msg=f'vg: {vg}, {analytical_solution}, {res.dot_spacing}'
                                         )
 
     def test_triple_dot_open(self):
@@ -94,8 +94,8 @@ class TestOsqpSolver(unittest.TestCase):
                 res = prob.solve()
 
                 if np.all(analytical_solution >= 0.):
-                    self.assertTrue(np.allclose(res.x, analytical_solution, atol=ATOL),
-                                    msg=f'vg: {vg}, {analytical_solution}, {res.x}'
+                    self.assertTrue(np.allclose(res.dot_spacing, analytical_solution, atol=ATOL),
+                                    msg=f'vg: {vg}, {analytical_solution}, {res.dot_spacing}'
                                     )
 
     def test_quadruple_dot_open(self):
@@ -122,5 +122,5 @@ class TestOsqpSolver(unittest.TestCase):
                 res = prob.solve()
 
                 if np.all(analytical_solution >= 0.):
-                    self.assertTrue(np.allclose(res.x, analytical_solution, atol=ATOL),
-                                    msg=f'vg: {vg}, {analytical_solution}, {res.x}')
+                    self.assertTrue(np.allclose(res.dot_spacing, analytical_solution, atol=ATOL),
+                                    msg=f'vg: {vg}, {analytical_solution}, {res.dot_spacing}')
