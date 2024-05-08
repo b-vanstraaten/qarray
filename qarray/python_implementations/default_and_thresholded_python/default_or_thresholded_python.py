@@ -75,7 +75,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
         logger.trace('using the solution from the constrained solver')
         prob.update(q=-cdd_inv @ cgd @ vg)
         res = prob.solve()
-        n_continuous = np.clip(res.dot_spacing, 0., None)
+        n_continuous = np.clip(res.x, 0., None)
 
     # eliminating the possibly of negative numbers of change carriers
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, cgd=cgd, vg=vg)
@@ -101,7 +101,7 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd_holes, cdd: 
         logger.trace('using the solution from the constrained solver')
         prob.update(q=-cdd_inv @ cgd @ vg)
         res = prob.solve()
-        n_continuous = np.clip(res.dot_spacing, 0, n_charge)
+        n_continuous = np.clip(res.x, 0, n_charge)
 
     return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, vg=vg, n_charge=n_charge,
                                  threshold=threshold)
