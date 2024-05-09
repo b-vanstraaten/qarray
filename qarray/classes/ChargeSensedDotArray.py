@@ -99,7 +99,7 @@ class ChargeSensedDotArray(BaseDataClass):
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
             signal = signal + lorentzian(V_sensor, 0, self.coulomb_peak_width)
         noise = np.random.normal(0, self.noise, size=signal.shape)
-        return signal + noise
+        return signal + noise, n_open
 
     def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
         """
@@ -111,15 +111,15 @@ class ChargeSensedDotArray(BaseDataClass):
         return _ground_state_closed(self, vg, n_charge)
 
     def charge_sensor_closed(self, vg: VectorList | np.ndarray, n_charge) -> np.ndarray:
-        n_open = self.ground_state_closed(vg, n_charge)
+        n_closed = self.ground_state_closed(vg, n_charge)
 
         V_dot = np.einsum('ij, ...j', self.cgd_full, vg)
         V_sensor = V_dot[..., self.n_dot:]
         N_sensor = np.round(V_sensor)
         signal = np.zeros_like(V_sensor)
         for n in [-1, 0, 1]:
-            N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
+            N_full = np.concatenate([n_closed, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
             signal = signal + lorentzian(V_sensor, 0, self.coulomb_peak_width)
         noise = np.random.normal(0, self.noise, size=signal.shape)
-        return signal + noise
+        return signal + noise, n_closed
