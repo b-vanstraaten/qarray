@@ -5,7 +5,7 @@ from pydantic.dataclasses import dataclass
 from .BaseDataClass import BaseDataClass
 from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation
 from ..functions import optimal_Vg, convert_to_maxwell_with_sensor, lorentzian
-from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell
+from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector
 
 
 @dataclass(config=dict(arbitrary_types_allowed=True))
@@ -70,11 +70,14 @@ class ChargeSensedDotArray(BaseDataClass):
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """
-        Computes the optimal dot voltages for a given charge configuration, of shape (n_charge,).
+        Computes the optimal dot voltages for a given charge configuration, of shape (n_dot + n_sensor,).
         :param n_charges: the charge configuration
         :param rcond: the rcond parameter for the least squares solver
         :return: the optimal dot voltages of shape (n_gate,)
         """
+        n_charges = Vector(n_charges)
+        assert n_charges.shape == (
+        self.n_dot + self.n_sensor,), 'The n_charge vector must be of shape (n_dot + n_sensor)'
         return optimal_Vg(cdd_inv=self.cdd_inv_full, cgd=self.cgd_full, n_charges=n_charges, rcond=rcond)
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
