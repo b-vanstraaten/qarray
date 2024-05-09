@@ -3,7 +3,6 @@ Charge sensing example
 """
 from functools import partial
 
-import numpy as np
 from matplotlib import pyplot as plt
 
 from qarray import ChargeSensedDotArray, GateVoltageComposer
@@ -17,7 +16,7 @@ Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive couplin
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.05, noise=0.0, threshold=1., T=0.1, algorithm='default',
+    coulomb_peak_width=0.05, noise=0.0, threshold=1., T=0.0, algorithm='default',
     implementation='rust',
 )
 
@@ -37,18 +36,17 @@ vx_min, vx_max = -5, 5
 vy_min, vy_max = -5, 5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
-vg += model.optimal_Vg(np.zeros(model.n_dot))
+
+# centering the voltage sweep on the
+vg += model.optimal_Vg([0.5, 0.5, 0.5])
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
 fig.set_size_inches(3, 3)
 # looping over the functions and axes, computing the ground state and plot the results
 for (func, ax) in zip(ground_state_funcs, axes.flatten()):
-    s = func(vg)  # computing the ground state by calling the function
-    z = s[..., 0]
-    z = np.sqrt(np.gradient(z, axis=1, edge_order=2) ** 2 + np.gradient(z, axis=0, edge_order=2) ** 2)
-
-    ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
+    s, n = func(vg)  # computing the ground state by calling the function
+    ax.imshow(s, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
               interpolation='none')
     ax.set_aspect('equal')
 fig.tight_layout()
