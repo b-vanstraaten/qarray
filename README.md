@@ -172,7 +172,6 @@ pip install qarray
 
 This installation script has been demonstrated to work on macOS Ventura 13.4 and Sonoma 14.4.
 To install directly from the repository, use the command:
-
 ```zsh
 pip install git+https://github.com/b-vanstraaten/qarray.git@main
 ```
