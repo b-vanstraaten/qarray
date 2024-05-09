@@ -4,7 +4,11 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "qarray"
-authors = [{ name = "Barnaby van Straaten", email = "barnaby.vanstraaten@kellogg.ox.ac.uk" }]
+authors = [
+    { name = "Barnaby van Straaten", email = "barnaby.vanstraaten@kellogg.ox.ac.uk" },
+    { name = "Jonas Schuff", email = "jonas.schuffn@materials.ox.ac.uk" },
+    { name = "Cornelius Carlsson", email = "cornelius.carlsson@eng.ox.ac.uk" }
+]
 readme = "pypi_README.md"
 license = { file = "LICENSE" }
 classifiers = [
