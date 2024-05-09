@@ -25,6 +25,8 @@ class ChargeSensedDotArray(BaseDataClass):
     threshold: float | str = 1.  # if the threshold algorithm is used the user needs to pass the threshold
     max_charge_carriers: int | None = None  # if the brute force algorithm is used the user needs to pass the maximum number of charge carriers
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
+    max_charge_carriers: int | None = None  # need if using a brute_force algorithm
+    batch_size: int | None = None  # needed if using jax implementation
 
     T: float | int = 0.  # the temperature of the system
 
@@ -97,7 +99,7 @@ class ChargeSensedDotArray(BaseDataClass):
         for n in [-1, 0, 1]:
             N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
-            signal = signal + lorentzian(V_sensor, 0, self.coulomb_peak_width)
+            signal = signal + lorentzian(V_sensor, 0.5, self.coulomb_peak_width)
         noise = np.random.normal(0, self.noise, size=signal.shape)
         return signal + noise, n_open
 

@@ -17,7 +17,7 @@ def check_algorithm_and_implementation(algorithm: str, implementation: str):
     algorithm_implementation_combinations = {
         'default': ['rust', 'python', 'jax'],
         'thresholded': ['rust', 'python'],
-        'brute-force': ['rust', 'python'],
+        'brute_force': ['jax', 'python'],
     }
     assert algorithm.lower() in algorithm_implementation_combinations.keys(), f'Algorithm {algorithm} not supported'
     implementations = algorithm_implementation_combinations[algorithm.lower()]
@@ -80,7 +80,10 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
 
         case 'jax' | 'Jax' | 'JAX' | 'j':
 
-            match model.algoritm.lower():
+            if model.batch_size is None:
+                model.batch_size = vg.shape[0]
+
+            match model.algorithm.lower():
                 case 'default':
                     result = ground_state_open_default_jax(
                         vg=vg, cgd=model.cgd,
@@ -104,7 +107,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                     raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
 
         case 'python' | 'Python' | 'python':
-            match model.algoritm.lower():
+            match model.algorithm.lower():
                 case 'default':
 
                     result = ground_state_open_default_or_thresholded_python(
@@ -188,6 +191,9 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
             )
 
         case 'jax' | 'Jax' | 'JAX' | 'j':
+
+            if model.batch_size is None:
+                model.batch_size = vg.shape[0]
 
             match model.algoritm.lower():
                 case 'default':
