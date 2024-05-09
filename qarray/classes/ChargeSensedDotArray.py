@@ -17,7 +17,7 @@ class ChargeSensedDotArray(BaseDataClass):
     Cgs: CgsNonMaxwell  # an (n_sensor, n_gate) array of the capacitive coupling between gates and dots
 
     noise: float
-    gamma: float
+    coulomb_peak_width: float
 
     algorithm: str | None = 'default'  # which algorithm to use
     implementation: str | None = 'rust'  # which implementation of the algorithm to use
@@ -75,7 +75,7 @@ class ChargeSensedDotArray(BaseDataClass):
         :param rcond: the rcond parameter for the least squares solver
         :return: the optimal dot voltages of shape (n_gate,)
         """
-        return optimal_Vg(cdd_inv=self.cdd_inv, cgd=self.cgd, n_charges=n_charges, rcond=rcond)
+        return optimal_Vg(cdd_inv=self.cdd_inv_full, cgd=self.cgd_full, n_charges=n_charges, rcond=rcond)
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
         """
@@ -94,7 +94,7 @@ class ChargeSensedDotArray(BaseDataClass):
         for n in [-1, 0, 1]:
             N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
-            signal = signal + lorentzian(V_sensor, 0, self.gamma)
+            signal = signal + lorentzian(V_sensor, 0, self.coulomb_peak_width)
         noise = np.random.normal(0, self.noise, size=signal.shape)
         return signal + noise
 
@@ -117,6 +117,6 @@ class ChargeSensedDotArray(BaseDataClass):
         for n in [-1, 0, 1]:
             N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
-            signal = signal + lorentzian(V_sensor, 0, self.gamma)
+            signal = signal + lorentzian(V_sensor, 0, self.coulomb_peak_width)
         noise = np.random.normal(0, self.noise, size=signal.shape)
         return signal + noise
