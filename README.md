@@ -79,7 +79,8 @@ model = DotArray(
         [1., 0.1],
         [0.1, 1]
     ]),
-    core='r', charge_carrier='h', T=0.,
+    algorithm='default', implementation='rust',
+    charge_carrier='h', T=0.,
 )
 
 # a helper class designed to make it easy to create gate voltage arrays for nd sweeps
@@ -169,6 +170,10 @@ conda install pip
 pip install qarray
 ```
 
-This installation script has been demonstrated to work on macOS Ventura 13.4 and Sonoma 14.4. 
+This installation script has been demonstrated to work on macOS Ventura 13.4 and Sonoma 14.4.
+To install directly from the repository, use the command:
 
+```zsh
+pip install git+https://github.com/b-vanstraaten/qarray.git@main
+```
 
