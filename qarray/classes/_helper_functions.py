@@ -195,7 +195,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
             if model.batch_size is None:
                 model.batch_size = vg.shape[0]
 
-            match model.algoritm.lower():
+            match model.algorithm.lower():
                 case 'default':
                     result = ground_state_closed_default_jax(
                         vg=vg, cgd=model.cgd, cdd=model.cdd,
@@ -211,7 +211,6 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                     result = ground_state_closed_brute_force_jax(
                         vg=vg, cgd=model.cgd, cdd=model.cdd,
                         cdd_inv=model.cdd_inv,
-                        max_number_of_charge_carriers=model.max_charge_carriers,
                         T=kB_T,
                         batch_size=model.batch_size, n_charge=n_charge
                     )
@@ -219,7 +218,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                     raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
 
         case 'python' | 'Python' | 'python':
-            match model.algoritm.lower():
+            match model.algorithm.lower():
                 case 'default':
 
                     result = ground_state_closed_default_or_thresholded_python(
@@ -247,8 +246,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
 
                     result = ground_state_closed_brute_force_python(
                         vg=vg, cgd=model.cgd, cdd=model.cdd,
-                        cdd_inv=model.cdd_inv,
-                        max_number_of_charge_carriers=model.max_charge_carriers,
+                        cdd_inv=model.cdd_inv, n_charge=n_charge,
                         T=kB_T
                     )
                 case _:
