@@ -93,10 +93,11 @@ class ChargeSensedDotArray(BaseDataClass):
     def charge_sensor_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
         n_open = self.ground_state_open(vg)
         V_dot = np.einsum('ij, ...j', self.cgd_full, vg)
+
         V_sensor = V_dot[..., self.n_dot:]
         N_sensor = np.round(V_sensor)
         signal = np.zeros_like(V_sensor)
-        for n in [-2, -1, 0, 1, 2]:
+        for n in range(-5, 5):
             N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
             signal = signal + lorentzian(V_sensor, 0.5, self.coulomb_peak_width)
@@ -119,7 +120,7 @@ class ChargeSensedDotArray(BaseDataClass):
         V_sensor = V_dot[..., self.n_dot:]
         N_sensor = np.round(V_sensor)
         signal = np.zeros_like(V_sensor)
-        for n in [-2, -1, 0, 1, 2]:
+        for n in range(-5, 5):
             N_full = np.concatenate([n_closed, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
             signal = signal + lorentzian(V_sensor, 0.5, self.coulomb_peak_width)
