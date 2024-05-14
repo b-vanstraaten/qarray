@@ -5,18 +5,18 @@ Charge sensing example
 import numpy as np
 from matplotlib import pyplot as plt
 
-from qarray import ChargeSensedDotArray, GateVoltageComposer, dot_occupation_changes
+from qarray import ChargeSensedDotArray, GateVoltageComposer, add_latching_open
 
 # defining the capacitance matrices
 Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
 Cgd = [[1., 0.2, 0.05], [0.2, 1., 0.05], ]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
 Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
-Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
+Cgs = [[0.06, 0.02, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
 
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.05, noise=0.0, T=10,
+    coulomb_peak_width=0.05, noise=0.00, T=0.,
     algorithm='default',
     implementation='rust'
 )
@@ -25,29 +25,16 @@ model = ChargeSensedDotArray(
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -5, 5
-vy_min, vy_max = -5, 5
+vx_min, vx_max = -4, 4
+vy_min, vy_max = -4, 4
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 1, vy_min, vy_max, 400)
-vg += model.optimal_Vg([0.5, 0.5, 0.5])
+vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg += model.optimal_Vg([0.5, 0.5, 1.3])
 
 # creating the figure and axes
-z, n = model.charge_sensor_open(vg)
+z, n = model.charge_sensor_closed(vg, 2)
 
-# def power_law_noise(shape, f_cut_off, integration_time = 0.01, power = -1):
-#     size = np.prod(shape)
-#     n = np.random.randn(size)
-#     fft = np.fft.fft(n)
-#     freqs = np.fft.fftfreq(z.size,  integration_time)
-#     freqs[freqs < f_cut_off] = np.inf
-#     modified_noise = np.fft.ifft(fft * (freqs ** power)).real
-#     modified_noise = modified_noise.reshape(shape)
-#     return modified_noise / modified_noise.std()
-#
-#
-# n_white = np.random.randn(*z.shape)
-# n_power_law = power_law_noise(z.shape, 1, 0.01, -1)
-# z = z + 0.01 * n_white + 0.02 * n_power_law
+n_latched = add_latching_open(n, 0.3, 0.5)
 
 fig, ax = plt.subplots(1, 3)
 
@@ -58,6 +45,9 @@ ax[0].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect=
 
 ax[1].imshow(z_grad, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
              interpolation='none')
-ax[2].imshow(dot_occupation_changes(n), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto',
+
+z_latched = (n_latched * np.array([0.9, 1.1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
+
+ax[2].imshow(z_latched, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto',
              cmap='Greys',
              interpolation='none')

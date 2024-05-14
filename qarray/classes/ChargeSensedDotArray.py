@@ -29,6 +29,7 @@ class ChargeSensedDotArray(BaseDataClass):
     batch_size: int | None = None  # needed if using jax implementation
 
     T: float | int = 0.  # the temperature of the system
+    n_peak: int = 5
 
 
     def __post_init__(self):
@@ -91,15 +92,21 @@ class ChargeSensedDotArray(BaseDataClass):
         return _ground_state_open(self, vg)
 
     def charge_sensor_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
-        n_open = self.ground_state_open(vg)
-        V_dot = np.einsum('ij, ...j', self.cgd_full, vg)
 
-        V_sensor = V_dot[..., self.n_dot:]
-        N_sensor = np.round(V_sensor)
-        signal = np.zeros_like(V_sensor)
-        for n in range(-5, 5):
+        # computing the charge state of the dots to be sensed
+        n_open = self.ground_state_open(vg)
+
+        # computing the continuous minimum charge state (open)
+        N_cont = np.einsum('ij, ...j', self.cgd_full, vg)
+
+        # computing the discrete state on the charge sensor
+        N_sensor = np.round(N_cont[..., self.n_dot:])
+
+        # iterating over the nearest transitions and adding a lorentizan at each
+        signal = np.zeros_like(N_sensor)
+        for n in range(-self.n_peak, self.n_peak + 1):
             N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
-            V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
+            V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, N_cont - N_full)[..., self.n_dot:]
             signal = signal + lorentzian(V_sensor, 0.5, self.coulomb_peak_width)
         noise = np.random.normal(0, self.noise, size=signal.shape)
         return signal + noise, n_open
@@ -116,13 +123,16 @@ class ChargeSensedDotArray(BaseDataClass):
     def charge_sensor_closed(self, vg: VectorList | np.ndarray, n_charge) -> np.ndarray:
         n_closed = self.ground_state_closed(vg, n_charge)
 
-        V_dot = np.einsum('ij, ...j', self.cgd_full, vg)
-        V_sensor = V_dot[..., self.n_dot:]
-        N_sensor = np.round(V_sensor)
-        signal = np.zeros_like(V_sensor)
-        for n in range(-5, 5):
+        # computing the continuous minimum charge state (open)
+        N_cont = np.einsum('ij, ...j', self.cgd_full, vg)
+
+        # computing the discrete state on the charge sensor
+        N_sensor = np.round(N_cont[..., self.n_dot:])
+
+        signal = np.zeros_like(N_sensor)
+        for n in range(-self.n_peak, self.n_peak + 1):
             N_full = np.concatenate([n_closed, N_sensor + n], axis=-1)
-            V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, V_dot - N_full)[..., self.n_dot:]
+            V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, N_cont - N_full)[..., self.n_dot:]
             signal = signal + lorentzian(V_sensor, 0.5, self.coulomb_peak_width)
         noise = np.random.normal(0, self.noise, size=signal.shape)
         return signal + noise, n_closed

@@ -32,7 +32,6 @@ def all_positive_or_negative(a):
     return all_positive(a) or all_negative(a)
 
 
-
 @dataclass(config=dict(arbitrary_types_allowed=True, auto_attribs_default=True))
 class DotArray(BaseDataClass):
     """
