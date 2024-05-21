@@ -51,7 +51,7 @@ z, n = model.charge_sensor_open(vg)
 fig, ax = plt.subplots(1, 3)
 fig.set_size_inches(15, 5)
 
-z_grad = np.abs(np.gradient(z, axis=0)) + np.abs(np.gradient(z, axis=1) ** 2)
+z_grad = np.abs(np.gradient(z, axis=1))
 
 ax[0].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
              interpolation='none')

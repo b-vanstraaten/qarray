@@ -12,7 +12,6 @@ from .BaseNoiseModel import BaseNoiseModel
 class WhiteNoise(BaseNoiseModel):
     """
     A white noise model that can be added to a charge sensing model to simulate the effect of white noise.
-
     - amplitude: The amplitude of the noise. As the noise perturbs the charge sensor output, this is in volts.
     """
     amplitude: float
