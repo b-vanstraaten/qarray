@@ -5,7 +5,8 @@ Charge sensing example
 import numpy as np
 from matplotlib import pyplot as plt
 
-from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, TelegraphNoise
+from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, TelegraphNoise, LatchingModel, \
+    PSBLatchingModel
 
 # defining the capacitance matrices
 Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
@@ -19,11 +20,22 @@ white_noise = WhiteNoise(
 
 telegraph_noise = TelegraphNoise(
     amplitude=1e-2,
-    p01=1e-4,
+    p01=1e-3,
     p10=1e-2,
 )
 
 noise = white_noise + telegraph_noise
+
+latching_model = LatchingModel(
+    n_dots=2,
+    p_leads=[1., 1.],
+    p_inter=0.1
+)
+
+psb_latching_model = PSBLatchingModel(
+    n_dots=2,
+    p_psb=0.1
+)
 
 # creating the model
 model = ChargeSensedDotArray(
@@ -31,18 +43,19 @@ model = ChargeSensedDotArray(
     coulomb_peak_width=0.05, T=0.,
     algorithm='default',
     implementation='rust',
-    noise_model=noise
+    noise_model=noise,
+    latching_model=psb_latching_model
 )
 
 # creating the voltage composer
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -1, 1
-vy_min, vy_max = -1, 1
+vx_min, vx_max = -0.5, 0.5
+vy_min, vy_max = -0.5, 0.5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
-vg += model.optimal_Vg([0.5, 0.5, 0.5])
+vg += model.optimal_Vg([0.5, 1.5, 0.7])
 
 # creating the figure and axes
 z, n = model.charge_sensor_open(vg)

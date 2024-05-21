@@ -10,6 +10,7 @@ from pydantic.dataclasses import dataclass
 from .BaseDataClass import BaseDataClass
 from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation
 from ..functions import optimal_Vg, convert_to_maxwell_with_sensor, lorentzian
+from ..latching_models import LatchingBaseModel
 from ..noise_models import BaseNoiseModel
 from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector
 
@@ -60,6 +61,7 @@ class ChargeSensedDotArray(BaseDataClass):
 
     coulomb_peak_width: float = 0.1  # the width of the lorentzian peaks
     noise_model: BaseNoiseModel | None = None
+    latching_model: LatchingBaseModel | None = None
 
     def __post_init__(self):
         self.n_dot = self.Cdd.shape[0]
@@ -90,6 +92,9 @@ class ChargeSensedDotArray(BaseDataClass):
         if self.noise_model is None:
             # this is the default noise model adds no noise
             self.noise_model = BaseNoiseModel()
+
+        if self.latching_model is None:
+            self.latching_model = LatchingBaseModel()
 
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:

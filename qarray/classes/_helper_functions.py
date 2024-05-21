@@ -146,6 +146,8 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
             ValueError(f'Incorrect value passed for algorithm {model.implementation}')
 
     assert np.all(result.astype(int) >= 0), 'The number of charges is negative something went wrong'
+
+    result = model.latching_model.add_latching(result, measurement_shape=nd_shape)
     return result.reshape(nd_shape)
 
 
@@ -254,5 +256,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
 
     assert np.all(
         np.isclose(result.sum(axis=-1), n_charge)), 'The number of charges is not correct something went wrong'
+
+    result = model.latching_model.add_latching(result, measurement_shape=nd_shape)
 
     return result.reshape(nd_shape)

@@ -6,7 +6,7 @@ from pydantic import NonNegativeInt
 from .BaseDataClass import BaseDataClass
 from ._helper_functions import (_ground_state_open, _ground_state_closed, check_algorithm_and_implementation)
 from ..functions import convert_to_maxwell, optimal_Vg
-from ..qarray_types import Cdd as TypeCdd  # to avoid name clash with dataclass cdd
+from ..qarray_types import Cdd as CddType  # to avoid name clash with dataclass cdd
 from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix, \
     NegativeValuedMatrix
 
@@ -15,6 +15,7 @@ if TYPE_CHECKING:
 else:
     from pydantic.dataclasses import dataclass
 
+from ..latching_models import LatchingBaseModel
 
 def both_none(a, b):
     return a is None and b is None
@@ -34,38 +35,43 @@ def all_positive_or_negative(a):
 
 @dataclass(config=dict(arbitrary_types_allowed=True, auto_attribs_default=True))
 class DotArray(BaseDataClass):
+
     """
-    This class holds the capacitance matrices for the dot array and provides methods to compute the ground state
-    :param Cdd: the dot to dot capacitance matrix in its non Maxwell form
-    :param Cgd: the dot to gate capacitance matrix in its non Maxwell form
-    :param cdd: the dot to dot capacitance matrix in its Maxwell form
-    :param cgd: the dot to gate capacitance matrix in its Maxwell form
-    
-    
-    :param charge_carrier: a string of ['electron', 'hole'] to specify the charge carrier
-    :param threshold: a float specifying the threshold, default 1. If 'auto' is passed, the threshold is computed
-    automatically
-    :param polish: a bool specifying whether to polish the result of the ground state computation numberical solution
-    :param T: the temperature of the system, default 0.
-    :param max_charge_carriers: the maximum number of charge carriers, only used for jax_brute_force
-    :param batch_size: the batch size for the jax and brute_force_jax core
+    A class to represent a quantum dot array. The class is initialized with the following parameters:
+
+    Cdd: CddNonMaxwell | None = None  # an (n_dot, n_dot) the capacitive coupling between dots
+    Cgd: CgdNonMaxwell | None = None  # an (n_dot, n_gate) the capacitive coupling between gates and dots
+
+    cdd: Cdd | None = None  # an (n_dot, n_dot) the capacitive coupling between dots
+    cgd: PositiveValuedMatrix | NegativeValuedMatrix | None = None # an (n_dot, n_gate) the capacitive coupling between gates and dots
+
+    algorithm: str | None = 'default'  # which algorithm to use
+    implementation: str | None = 'rust'
+
+    threshold: float | str = 1.  # if the threshold algorithm is used the user needs to pass the threshold
+    max_charge_carriers: int | None = None  # if the brute force algorithm is used the user needs to pass the maximum number of charge carriers
+
+    charge_carrier: str = 'hole'  # a string of either 'electron' or 'hole' to specify the charge carrie
+    T: float | int = 0.  # the temperature of the system for if there is thermal broadening
+
     """
+
     Cdd: CddNonMaxwell | None = None  # an (n_dot, n_dot)the capacitive coupling between dots
     Cgd: CgdNonMaxwell | None = None  # an (n_dot, n_gate) the capacitive coupling between gates and dots
-    cdd: TypeCdd | None = None
+    cdd: CddType | None = None
     cgd: PositiveValuedMatrix | NegativeValuedMatrix | None = None
 
     algorithm: str | None = 'default'  # which algorithm to use
     implementation: str | None = 'rust'  # which implementation of the algorithm to use
-
     threshold: float | str = 1.  # if the threshold algorithm is used the user needs to pass the threshold
     max_charge_carriers: int | None = None  # if the brute force algorithm is used the user needs to pass the maximum number of charge carriers
+
+    charge_carrier: str = 'hole'  # a string of either 'electron' or 'hole' to specify the charge carrie
+    T: float | int = 0.  # the temperature of the system, only used for jax and jax_brute_force cores
     batch_size: int = 10000
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
 
-    charge_carrier: str = 'hole'  # a string of either 'electron' or 'hole' to specify the charge carrier
-
-    T: float | int = 0.  # the temperature of the system, only used for jax and jax_brute_force cores
+    latching_model: LatchingBaseModel | None = None  # a latching model to add latching to the dot occupation vector
 
     def __post_init__(self):
         """
@@ -120,6 +126,9 @@ class DotArray(BaseDataClass):
 
         if self.algorithm == 'brute_force':
             assert self.max_charge_carriers is not None, 'The maximum number of charge carriers must be specified'
+
+        if self.latching_model is None:
+            self.latching_model = LatchingBaseModel()
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """
