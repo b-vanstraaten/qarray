@@ -5,6 +5,7 @@ from pydantic.dataclasses import dataclass
 from .BaseDataClass import BaseDataClass
 from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation
 from ..functions import optimal_Vg, convert_to_maxwell_with_sensor, lorentzian
+from ..noise_models import BaseNoiseModel
 from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector
 
 
@@ -16,7 +17,6 @@ class ChargeSensedDotArray(BaseDataClass):
     Cds: CdsNonMaxwell  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
     Cgs: CgsNonMaxwell  # an (n_sensor, n_gate) array of the capacitive coupling between gates and dots
 
-    noise: float
     coulomb_peak_width: float
 
     algorithm: str | None = 'default'  # which algorithm to use
@@ -31,6 +31,7 @@ class ChargeSensedDotArray(BaseDataClass):
     T: float | int = 0.  # the temperature of the system
     n_peak: int = 5
 
+    noise_model: BaseNoiseModel | None = None
 
     def __post_init__(self):
         self.n_dot = self.Cdd.shape[0]
@@ -108,7 +109,8 @@ class ChargeSensedDotArray(BaseDataClass):
             N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, N_cont - N_full)[..., self.n_dot:]
             signal = signal + lorentzian(V_sensor, 0.5, self.coulomb_peak_width)
-        noise = np.random.normal(0, self.noise, size=signal.shape)
+
+        noise = self.noise_model.sample(shape=N_sensor.shape)
         return signal + noise, n_open
 
     def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
@@ -134,5 +136,5 @@ class ChargeSensedDotArray(BaseDataClass):
             N_full = np.concatenate([n_closed, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, N_cont - N_full)[..., self.n_dot:]
             signal = signal + lorentzian(V_sensor, 0.5, self.coulomb_peak_width)
-        noise = np.random.normal(0, self.noise, size=signal.shape)
+        noise = np.random.normal(0, self.white_noise_amp, size=signal.shape)
         return signal + noise, n_closed

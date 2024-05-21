@@ -89,10 +89,10 @@ V_sensor = (n * coupling[np.newaxis, np.newaxis, :]).sum(axis=-1)
 # response that is linear with the charge in the dots (this is a simplification)
 I_sensor = (V_sensor - V_sensor.min()) / (V_sensor.max() - V_sensor.min())
 
-# adding noise to the sensor response, Gaussian filtering is used to smooth the noise
+# adding white_noise_amp to the sensor response, Gaussian filtering is used to smooth the white_noise_amp
 n = scipy.ndimage.gaussian_filter(np.random.randn(I_sensor.size), 5).reshape(I_sensor.shape).T
 
-# adding the noise to the sensor response
+# adding the white_noise_amp to the sensor response
 I_sensor = I_sensor + 0.05 * n
 
 # taking the gradient
