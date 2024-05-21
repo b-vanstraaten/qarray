@@ -49,6 +49,7 @@ z, n = model.charge_sensor_open(vg)
 # n_latched = add_latching_open(n, 0.05, 0.01)
 
 fig, ax = plt.subplots(1, 3)
+fig.set_size_inches(15, 5)
 
 z_grad = np.abs(np.gradient(z, axis=0)) + np.abs(np.gradient(z, axis=1) ** 2)
 
