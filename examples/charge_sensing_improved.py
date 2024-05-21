@@ -14,12 +14,12 @@ Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling be
 Cgs = [[0.06, 0.02, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
 
 white_noise = WhiteNoise(
-    amplitude=1e-4
+    amplitude=1e-3
 )
 
 telegraph_noise = TelegraphNoise(
     amplitude=1e-2,
-    p01=1e-3,
+    p01=1e-4,
     p10=1e-2,
 )
 
@@ -38,11 +38,11 @@ model = ChargeSensedDotArray(
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -0.1, 0.2
-vy_min, vy_max = -0.1, 0.2
+vx_min, vx_max = -1, 1
+vy_min, vy_max = -1, 1
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
-vg += model.optimal_Vg([0.5, 0.5, 1.4])
+vg += model.optimal_Vg([0.5, 0.5, 0.5])
 
 # creating the figure and axes
 z, n = model.charge_sensor_open(vg)

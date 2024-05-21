@@ -8,5 +8,5 @@ from .BaseNoiseModel import BaseNoiseModel
 class WhiteNoise(BaseNoiseModel):
     amplitude: float
 
-    def sample(self, shape):
+    def sample_output_noise(self, shape):
         return self.amplitude * np.random.randn(*shape)

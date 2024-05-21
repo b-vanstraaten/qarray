@@ -103,15 +103,17 @@ class ChargeSensedDotArray(BaseDataClass):
         # computing the discrete state on the charge sensor
         N_sensor = np.round(N_cont[..., self.n_dot:])
 
+        input_noise = self.noise_model.sample_input_noise(N_sensor.shape)
         # iterating over the nearest transitions and adding a lorentizan at each
         signal = np.zeros_like(N_sensor)
         for n in range(-self.n_peak, self.n_peak + 1):
             N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
             V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, N_cont - N_full)[..., self.n_dot:]
-            signal = signal + lorentzian(V_sensor, 0.5, self.coulomb_peak_width)
+            signal = signal + lorentzian(V_sensor + input_noise, 0.5, self.coulomb_peak_width)
 
-        noise = self.noise_model.sample(shape=N_sensor.shape)
-        return signal + noise, n_open
+        output_noise = self.noise_model.sample_output_noise(N_sensor.shape)
+
+        return signal + output_noise, n_open
 
     def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
         """
