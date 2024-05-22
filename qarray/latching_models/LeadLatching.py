@@ -36,9 +36,12 @@ class LatchingModel(LatchingBaseModel):
         assert n.shape[
                    -1] == self.n_dots, 'The last dimension of the dot occupation vector must be equal to the number of dots'
 
-        n = n.astype(int)
+        n_rounded = np.round(n).astype(int)
 
-        n_latched = n.copy()
+        assert np.all(np.isclose(n, n_rounded, atol=1e-6)), ('The dot occupation vector must be integer valued.'
+                                                             'They do not appear to be here. Are you using T>0?. '
+                                                             'If so latching is not compatible thermal broadening.')
+        n_latched = n_rounded.copy()
 
         for i in range(1, n_latched.shape[0]):
             n_old, n_new = n_latched[i - 1, :], n_latched[i, :]

@@ -16,7 +16,7 @@ Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive couplin
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.05, noise=0.0, threshold=1., T=0.0, algorithm='default',
+    coulomb_peak_width=0.05, threshold=1., T=0.0, algorithm='default',
     implementation='rust',
 )
 

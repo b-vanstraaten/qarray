@@ -28,8 +28,8 @@ class PSBLatchingModel(LatchingBaseModel):
         assert n.shape[
                    -1] == self.n_dots, 'The last dimension of the dot occupation vector must be equal to the number of dots'
 
-        n = n.astype(int)
-        n_latched = n.copy()
+        n_rounded = np.round(n).astype(int)
+        n_latched = n_rounded.copy()
 
         for i in range(1, n_latched.shape[0]):
             n_old, n_new = n_latched[i - 1, :], n_latched[i, :]
