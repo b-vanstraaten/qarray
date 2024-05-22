@@ -33,7 +33,7 @@ model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
     coulomb_peak_width=0.05, T=50,
     algorithm='default',
-    implementation='rust',
+    implementation='python',
     noise_model=noise,
 )
 

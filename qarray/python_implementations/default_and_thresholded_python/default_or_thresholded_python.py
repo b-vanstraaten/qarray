@@ -58,7 +58,8 @@ def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd_holes, n_charge: NonNegativeInt 
     return prob
 
 
-def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, threshold: float, prob) -> np.ndarray:
+def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, threshold: float, prob,
+                          T: float = 0.) -> np.ndarray:
     """
     :param vg:
     :param cgd:
@@ -75,14 +76,14 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
         logger.trace('using the solution from the constrained solver')
         prob.update(q=-cdd_inv @ cgd @ vg)
         res = prob.solve()
-        n_continuous = np.clip(res.x, 0., None)
+        n_continuous = np.clip(res.x, 0, None)
 
     # eliminating the possibly of negative numbers of change carriers
-    return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, cgd=cgd, vg=vg)
+    return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, threshold=threshold, cgd=cgd, vg=vg, T=T)
 
 
 def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv, prob,
-                            threshold) -> np.ndarray:
+                            threshold, T: float = 0) -> np.ndarray:
     """
     :param vg:
     :param n_charge:
@@ -104,11 +105,11 @@ def _ground_state_closed_0d(vg: np.ndarray, n_charge: int, cgd: Cgd_holes, cdd: 
         n_continuous = np.clip(res.x, 0, n_charge)
 
     return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, vg=vg, n_charge=n_charge,
-                                 threshold=threshold)
+                                 threshold=threshold, T=T)
 
 
 def ground_state_open_default_or_thresholded_python(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, threshold: float,
-                                                    polish: bool = True) -> VectorList:
+                                                    polish: bool = True, T: float = 0) -> VectorList:
     """
         A python implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
         :param vg: the list of dot voltage coordinate vectors to evaluate the ground state at
@@ -118,7 +119,7 @@ def ground_state_open_default_or_thresholded_python(vg: VectorList, cgd: Cgd_hol
         :return: the lowest energy charge configuration for each dot voltage coordinate vector
         """
     prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, polish=polish)
-    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold, prob=prob)
+    f = partial(_ground_state_open_0d, cgd=cgd, cdd_inv=cdd_inv, threshold=threshold, prob=prob, T=T)
     N = map(f, vg)
     return VectorList(list(N))
 
@@ -126,7 +127,7 @@ def ground_state_open_default_or_thresholded_python(vg: VectorList, cgd: Cgd_hol
 def ground_state_closed_default_or_thresholded_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes,
                                                       cdd: Cdd,
                                                       cdd_inv: CddInv, threshold: float,
-                                                      polish: bool = True) -> VectorList:
+                                                      polish: bool = True, T: float = 0) -> VectorList:
     """
      A python implementation ground state isolated function that takes in numpy arrays and returns numpy arrays.
      :param polish:
@@ -140,7 +141,7 @@ def ground_state_closed_default_or_thresholded_python(vg: VectorList, n_charge: 
      """
     prob = init_osqp_problem(cdd_inv=cdd_inv, cgd=cgd, n_charge=n_charge, polish=polish)
     f = partial(_ground_state_closed_0d, n_charge=n_charge, cgd=cgd, cdd=cdd, cdd_inv=cdd_inv, prob=prob,
-                threshold=threshold)
+                threshold=threshold, T=T)
     N = map(f, vg)
     return VectorList(list(N))
 
@@ -149,7 +150,9 @@ def compute_argmin_open(n_continuous, threshold, cdd_inv, cgd, vg, T=0.):
     # computing the remainder
     n_list = open_charge_configurations(n_continuous, threshold)
     # computing the free energy of the change configurations
-    F = np.einsum('...i, ij, ...j', n_list - cgd @ vg, cdd_inv, n_list - cgd @ vg)
+
+    v_dash = cgd @ vg
+    F = np.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
     # returning the lowest energy change configuration
 
     if T > 0.:

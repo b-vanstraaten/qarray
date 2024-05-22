@@ -16,6 +16,7 @@ from qarray.jax_implementations.default_jax import ground_state_open_default_jax
 from .GLOBAL_OPTIONS import disable_tqdm, N_ITERATIONS, N_VOLTAGES
 from .helper_functions import randomly_generate_matrices, too_different
 
+atol = 1e-3
 
 class DoubleDotTests(unittest.TestCase):
     def test_python_vs_rust_open(self):
@@ -24,25 +25,37 @@ class DoubleDotTests(unittest.TestCase):
 
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
+        for T in [0, 10, 100, 200]:
 
-        for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
-            cdd, cdd_inv, cgd = randomly_generate_matrices(2)
-            vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_open_default_or_thresholded_rust(vg, cgd, cdd_inv, 1)
-            n_python = ground_state_open_default_or_thresholded_python(vg, cgd, cdd_inv, 1)
-            n_jax = ground_state_open_default_jax(vg, cgd, cdd_inv)
+            kB_T = 8.617333262145e-5 * T
 
-            debug = False
-            if debug:
-                if not np.allclose(n_rust, n_python, n_jax):
-                    fig, ax = plt.subplots(1, 3)
-                    ax[0].imshow(n_rust, aspect='auto')
-                    ax[1].imshow(n_python, aspect='auto')
-                    ax[2].imshow(n_rust - n_python, aspect='auto')
-                    plt.show()
+            for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
+                cdd, cdd_inv, cgd = randomly_generate_matrices(2)
+                vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
+                n_rust = ground_state_open_default_or_thresholded_rust(vg, cgd, cdd_inv, 1, T=kB_T)
+                n_python = ground_state_open_default_or_thresholded_python(vg, cgd, cdd_inv, 1, T=kB_T)
+                n_jax = ground_state_open_default_jax(vg, cgd, cdd_inv, T=kB_T)
 
-            self.assertFalse(too_different(n_rust, n_python))
-            self.assertFalse(too_different(n_rust, n_jax))
+                debug = True
+                if debug:
+                    if not np.allclose(n_rust, n_python, atol=atol) or not np.allclose(n_rust, n_jax, atol=atol):
+                        fig, ax = plt.subplots(1, 5)
+                        ax[0].imshow(n_rust, aspect='auto')
+                        ax[0].set_title('rust')
+                        ax[1].imshow(n_python, aspect='auto')
+                        ax[1].set_title('python')
+                        ax[2].imshow(n_jax, aspect='auto')
+                        ax[2].set_title('jax')
+                        ax[3].imshow(np.abs(n_rust - n_python), aspect='auto')
+                        ax[3].set_title('rust - python')
+                        ax[4].imshow(np.abs(n_rust - n_jax), aspect='auto')
+                        ax[4].set_title('rust - jax')
+                        plt.show()
+
+            self.assertTrue(np.allclose(n_rust, n_python, atol=atol))
+            self.assertTrue(np.allclose(n_rust, n_jax, atol=atol))
+            self.assertTrue(np.allclose(n_python, n_jax, atol=atol))
+
 
 
     def test_threshold(self):
@@ -51,6 +64,7 @@ class DoubleDotTests(unittest.TestCase):
 
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
+
 
         for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
             cdd, cdd_inv, cgd = randomly_generate_matrices(2)
@@ -72,17 +86,38 @@ class DoubleDotTests(unittest.TestCase):
         The threshold is set to 1, so every nearest neighbour change state is considered
         """
 
-        for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
-            cdd, cdd_inv, cgd = randomly_generate_matrices(2)
-            vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
-            n_rust = ground_state_closed_default_or_thresholded_rust(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
-                                                                     threshold=1)
-            n_python = ground_state_closed_default_or_thresholded_python(vg, 1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
-                                                                         threshold=1)
-            n_jax = ground_state_closed_default_jax(vg, n_charge=1, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd)
+        for T in [0, 10, 100, 200]:
 
-            self.assertFalse(too_different(n_rust, n_python))
-            self.assertFalse(too_different(n_rust, n_jax))
+            kB_T = 8.617333262145e-5 * T
+
+            for _ in tqdm(range(N_ITERATIONS), disable=disable_tqdm):
+                cdd, cdd_inv, cgd = randomly_generate_matrices(2)
+                vg = np.random.uniform(-5, 5, size=(N_VOLTAGES, 2))
+                n_rust = ground_state_closed_default_or_thresholded_rust(vg, 1, cgd=cgd, cdd_inv=cdd_inv, cdd=cdd,
+                                                                         threshold=1, T=kB_T)
+                n_python = ground_state_closed_default_or_thresholded_python(vg, 1, cgd=cgd, cdd_inv=cdd_inv, cdd=cdd,
+                                                                             threshold=1, T=kB_T)
+                n_jax = ground_state_closed_default_jax(vg, 1, cgd=cgd, cdd_inv=cdd_inv, cdd=cdd, T=kB_T)
+
+                debug = True
+                if debug:
+                    if not np.allclose(n_rust, n_python, atol=atol) or not np.allclose(n_rust, n_jax, atol=atol):
+                        fig, ax = plt.subplots(1, 5)
+                        ax[0].imshow(n_rust, aspect='auto')
+                        ax[0].set_title('rust')
+                        ax[1].imshow(n_python, aspect='auto')
+                        ax[1].set_title('python')
+                        ax[2].imshow(n_jax, aspect='auto')
+                        ax[2].set_title('jax')
+                        ax[3].imshow(np.abs(n_rust - n_python), aspect='auto')
+                        ax[3].set_title('rust - python')
+                        ax[4].imshow(np.abs(n_rust - n_jax), aspect='auto')
+                        ax[4].set_title('rust - jax')
+                        plt.show()
+
+            self.assertTrue(np.allclose(n_rust, n_python, atol=atol))
+            self.assertTrue(np.allclose(n_rust, n_jax, atol=atol))
+            self.assertTrue(np.allclose(n_python, n_jax, atol=atol))
 
     def test_python_vs_rust_two_charge(self):
         """

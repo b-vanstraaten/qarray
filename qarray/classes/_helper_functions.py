@@ -114,7 +114,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                         vg=vg, cgd=model.cgd,
                         cdd_inv=model.cdd_inv,
                         threshold=1.,
-                        polish=model.polish
+                        polish=model.polish, T=kB_T
                     )
 
                 case 'thresholded':
@@ -123,7 +123,7 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                         vg=vg, cgd=model.cgd,
                         cdd_inv=model.cdd_inv,
                         threshold=model.threshold,
-                        polish=model.polish
+                        polish=model.polish, T=kB_T
                     )
 
                 case 'brute_force':
@@ -222,12 +222,11 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
         case 'python' | 'Python' | 'python':
             match model.algorithm.lower():
                 case 'default':
-
                     result = ground_state_closed_default_or_thresholded_python(
                         vg=vg, cgd=model.cgd, cdd=model.cdd,
                         cdd_inv=model.cdd_inv,
                         threshold=1.,
-                        polish=model.polish, n_charge=n_charge
+                        polish=model.polish, n_charge=n_charge, T=kB_T
                     )
 
                 case 'thresholded':
@@ -236,7 +235,7 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegati
                         vg=vg, cgd=model.cgd, cdd=model.cdd,
                         cdd_inv=model.cdd_inv,
                         threshold=model.threshold,
-                        polish=model.polish, n_charge=n_charge
+                        polish=model.polish, n_charge=n_charge, T=kB_T
                     )
 
                 case 'brute_force':

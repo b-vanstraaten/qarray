@@ -71,8 +71,8 @@ def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd_holes
     )
 
 
-def ground_state_closed_default_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
-                                    n_charge: NonNegativeInt, T: PositiveFloat = 0.,
+def ground_state_closed_default_jax(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
+                                    T: PositiveFloat = 0.,
                                     batch_size: int = 10000) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
