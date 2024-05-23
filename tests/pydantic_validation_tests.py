@@ -1,7 +1,7 @@
 import unittest
 
 from qarray import DotArray
-from qarray.classes.BaseDataClass import ValidationException
+from qarray.DotArrays.BaseDataClass import ValidationException
 
 
 class PydanticTests(unittest.TestCase):
