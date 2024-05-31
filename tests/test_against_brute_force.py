@@ -4,10 +4,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-from qarray import (ground_state_open_default_or_thresholded_rust, ground_state_closed_default_or_thresholded_rust,
-                    dot_occupation_changes)
 from qarray.jax_implementations.brute_force_jax import ground_state_open_brute_force_jax, \
     ground_state_closed_brute_force_jax
+from qarray.rust_implemenations import ground_state_open_default_or_thresholded_rust, \
+    ground_state_closed_default_or_thresholded_rust
 from .GLOBAL_OPTIONS import disable_tqdm, N_ITERATIONS, N_VOLTAGES
 from .helper_functions import randomly_generate_matrices, too_different
 

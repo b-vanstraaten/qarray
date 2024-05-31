@@ -7,10 +7,12 @@ import unittest
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (ground_state_open_default_or_thresholded_rust, ground_state_closed_default_or_thresholded_rust,
-                    ground_state_open_default_or_thresholded_python,
-                    ground_state_closed_default_or_thresholded_python, optimal_Vg, compute_threshold)
-from qarray.jax_implementations.default_jax import ground_state_closed_default_jax, ground_state_open_default_jax
+from qarray.functions import compute_threshold, optimal_Vg
+from qarray.jax_implementations.default_jax import ground_state_open_default_jax, ground_state_closed_default_jax
+from qarray.python_implementations import ground_state_open_default_or_thresholded_python, \
+    ground_state_closed_default_or_thresholded_python
+from qarray.rust_implemenations import ground_state_open_default_or_thresholded_rust, \
+    ground_state_closed_default_or_thresholded_rust
 from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES
 from .helper_functions import randomly_generate_matrices, too_different
 

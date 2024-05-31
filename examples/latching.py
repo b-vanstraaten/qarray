@@ -48,7 +48,7 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 vx_min, vx_max = -0.1, 0.1
 vy_min, vy_max = -0.1, 0.1
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 1, vy_min, vy_max, 200)
 vg += model.optimal_Vg([0.5, 1.5, 0.7])
 
 # creating the figure and axes
