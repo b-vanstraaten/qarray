@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
+from qarray.functions import dot_occupation_changes
 from qarray.jax_implementations.brute_force_jax import ground_state_open_brute_force_jax, \
     ground_state_closed_brute_force_jax
 from qarray.rust_implemenations import ground_state_open_default_or_thresholded_rust, \
