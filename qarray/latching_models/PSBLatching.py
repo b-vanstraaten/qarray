@@ -46,7 +46,7 @@ class PSBLatchingModel(LatchingBaseModel):
                             n_new[args[1]] == 2
                         ]
                         if np.all(conds):
-                            p = self.p_inter[*args].squeeze()
+                            p = self.p_inter[args[0], args[1]].squeeze()
                             r = np.random.choice([0, 1], p=[p, 1 - p])
                             n_latched[i, :] = r * n_old + (1 - r) * n_new
                         else:
