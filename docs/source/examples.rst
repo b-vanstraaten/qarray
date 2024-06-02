@@ -47,6 +47,7 @@ method will return the gate voltages in the middle of the [0, 1] - [1,0] interdo
 coulomb peaks.
 
 .. code:: python
+
     voltage_composer = GateVoltageComposer(model.n_gate)
 
     # defining the min and max values for the dot voltage sweep
