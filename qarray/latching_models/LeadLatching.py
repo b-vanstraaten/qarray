@@ -57,7 +57,7 @@ class LatchingModel(LatchingBaseModel):
                         n_latched[i, :] = r * n_old + (1 - r) * n_new
                     case 2:
                         args = np.argwhere(elements_differ)
-                        p = self.p_inter[*args].squeeze()
+                        p = self.p_inter[args[0], args[1]].squeeze()
                         r = np.random.choice([0, 1], p=[p, 1 - p])
                         n_latched[i, :] = r * n_old + (1 - r) * n_new
                     case _:
