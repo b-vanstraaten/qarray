@@ -9,7 +9,7 @@ author = 'Barnaby van Straaten'
 release = '1.1.1'
 
 # Add any Sphinx extension module names here, as strings.
-extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'autoapi.extension']
+extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon']
 
 # Paths that contain templates.
 templates_path = ['_templates']

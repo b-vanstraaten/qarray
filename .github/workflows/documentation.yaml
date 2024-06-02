@@ -14,7 +14,7 @@ jobs:
             -   uses: actions/setup-python@v3
             -   name: Install dependencies
                 run: |
-                    pip install sphinx sphinx_rtd_theme myst_parser sphinx-autoapi
+                    pip install qarray sphinx sphinx_rtd_theme myst_parser sphinx-autoapi
             -   name: Sphinx build
                 run: |
                     sphinx-build docs/source _build
