@@ -1,10 +1,3 @@
-"""
-Charge sensing example
-"""
-from functools import partial
-
-from matplotlib import pyplot as plt
-
 from qarray import ChargeSensedDotArray, GateVoltageComposer
 
 # defining the capacitance matrices
@@ -16,51 +9,75 @@ Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive couplin
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.05, threshold=1., T=0.0, algorithm='default',
-    implementation='rust',
+    coulomb_peak_width=0.05, T=100
 )
 
-# creating the voltage composer
-voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
-
-# defining the functions to compute the ground state for the different model configurations
-ground_state_funcs = [
-    model.charge_sensor_open,
-    partial(model.charge_sensor_closed, n_charge=1),
-    partial(model.charge_sensor_closed, n_charge=2),
-    partial(model.charge_sensor_closed, n_charge=3)
-]
+voltage_composer = GateVoltageComposer(model.n_gate)
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -5, 5
-vy_min, vy_max = -5, 5
+vx_min, vx_max = -2, 2
+vy_min, vy_max = -2, 2
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
 
-# centering the voltage sweep on the
-vg += model.optimal_Vg([0.5, 0.5, 0.5])
+# centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
+vg += model.optimal_Vg([0.5, 0.5, 0.6])
 
-# creating the figure and axes
-fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
-fig.set_size_inches(3, 3)
-# looping over the functions and axes, computing the ground state and plot the results
-for (func, ax) in zip(ground_state_funcs, axes.flatten()):
-    s, n = func(vg)  # computing the ground state by calling the function
-    ax.imshow(s, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot',
-              interpolation='none')
-    ax.set_aspect('equal')
-fig.tight_layout()
+import matplotlib.pyplot as plt
+import numpy as np
 
-# setting the labels and titles
-axes[0, 0].set_ylabel(r'$V_y$')
-axes[1, 0].set_ylabel(r'$V_y$')
-axes[1, 0].set_xlabel(r'$V_x$')
-axes[1, 1].set_xlabel(r'$V_x$')
+# calculating the output of the charge sensor and the charge state for each gate voltage
+z, n = model.charge_sensor_open(vg)
+dz_dV1 = np.gradient(z, axis=0) + np.gradient(z, axis=1)
 
-axes[0, 0].set_title(r'Open')
-axes[0, 1].set_title(r'$n_{charge} = 1$')
-axes[1, 0].set_title(r'$n_{charge} = 2$')
-axes[1, 1].set_title(r'$n_{charge} = 3$')
+fig, axes = plt.subplots(1, 2, sharex=True, sharey=True)
+fig.set_size_inches(10, 5)
 
-if __name__ == '__main__':
-    plt.show()
+# plotting the charge stability diagram
+axes[0].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
+axes[0].set_xlabel('$Vx$')
+axes[0].set_ylabel('$Vy$')
+axes[0].set_title('$z$')
+
+# plotting the charge sensor output
+axes[1].imshow(dz_dV1, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
+axes[1].set_xlabel('$Vx$')
+axes[1].set_ylabel('$Vy$')
+axes[1].set_title('$\\frac{dz}{dVx} + \\frac{dz}{dVy}$')
+
+plt.savefig('../docs/source/figures/charge_sensing.pdf')
+plt.show()
+
+from qarray.noise_models import WhiteNoise, TelegraphNoise
+
+white_noise = WhiteNoise(amplitude=1e-2)
+
+random_telegraph_noise = TelegraphNoise(p01=1e-3, p10=1e-2, amplitude=1e-2)
+
+combined_noise = white_noise + random_telegraph_noise
+
+noise_models = [
+    white_noise,
+    random_telegraph_noise,
+    combined_noise,
+]
+
+fig, axes = plt.subplots(1, 3, sharex=True, sharey=True)
+fig.set_size_inches(15, 5)
+
+for i, noise_model in enumerate(noise_models):
+    model.noise_model = noise_model
+
+    # fixing the seed so subsequent runs are yield identical noise
+    np.random.seed(0)
+    z, n = model.charge_sensor_open(vg)
+
+    axes[i].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
+    axes[i].set_xlabel('$Vx$')
+    axes[i].set_ylabel('$Vy$')
+
+axes[0].set_title('White Noise')
+axes[1].set_title('Random Telegraph Noise')
+axes[2].set_title('White + Random Telegraph Noise')
+
+plt.savefig('../docs/source/figures/charge_sensing_noise.pdf')

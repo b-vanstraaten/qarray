@@ -1,0 +1,1510 @@
+<!DOCTYPE html>
+<html class="writer-html5" data-content_root="./" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>qarray.DotArrays package &mdash; Qarray 1.1.1 documentation</title>
+    <link href="_static/pygments.css?v=92fd9be5" rel="stylesheet" type="text/css"/>
+    <link href="_static/css/theme.css?v=19f00094" rel="stylesheet" type="text/css"/>
+
+
+    <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <script src="_static/jquery.js?v=5d32c60e"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="_static/documentation_options.js?v=58fbf978"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link href="genindex.html" rel="index" title="Index"/>
+    <link href="search.html" rel="search" title="Search"/>
+</head>
+
+<body class="wy-body-for-nav">
+<div class="wy-grid-for-nav">
+    <nav class="wy-nav-side" data-toggle="wy-nav-shift">
+        <div class="wy-side-scroll">
+            <div class="wy-side-nav-search">
+
+
+                <a class="icon icon-home" href="index.html">
+                    Qarray
+                </a>
+                <div role="search">
+                    <form action="search.html" class="wy-form" id="rtd-search-form" method="get">
+                        <input aria-label="Search docs" name="q" placeholder="Search docs" type="text"/>
+                        <input name="check_keywords" type="hidden" value="yes"/>
+                        <input name="area" type="hidden" value="default"/>
+                    </form>
+                </div>
+            </div>
+            <div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+                <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+                    <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+                    <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+                    <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+        <nav aria-label="Mobile navigation menu" class="wy-nav-top">
+            <i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+            <a href="index.html">Qarray</a>
+        </nav>
+
+        <div class="wy-nav-content">
+            <div class="rst-content">
+                <div aria-label="Page navigation" role="navigation">
+                    <ul class="wy-breadcrumbs">
+                        <li><a aria-label="Home" class="icon icon-home" href="index.html"></a></li>
+                        <li class="breadcrumb-item active">qarray.DotArrays package</li>
+                        <li class="wy-breadcrumbs-aside">
+                            <a href="_sources/qarray.DotArrays.rst.txt" rel="nofollow"> View page source</a>
+                        </li>
+                    </ul>
+                    <hr/>
+                </div>
+                <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+                    <div itemprop="articleBody">
+
+                        <section id="qarray-dotarrays-package">
+                            <h1>qarray.DotArrays package<a class="headerlink" href="#qarray-dotarrays-package"
+                                                           title="Link to this heading"></a></h1>
+                            <section id="submodules">
+                                <h2>Submodules<a class="headerlink" href="#submodules"
+                                                 title="Link to this heading"></a></h2>
+                            </section>
+                            <section id="module-qarray.DotArrays.BaseDataClass">
+                                <span id="qarray-dotarrays-basedataclass-module"></span>
+                                <h2>qarray.DotArrays.BaseDataClass module<a class="headerlink"
+                                                                            href="#module-qarray.DotArrays.BaseDataClass"
+                                                                            title="Link to this heading"></a></h2>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py" id="qarray.DotArrays.BaseDataClass.BaseDataClass">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.DotArrays.BaseDataClass.</span></span><span
+                                            class="sig-name descname"><span class="pre">BaseDataClass</span></span><a
+                                            class="headerlink" href="#qarray.DotArrays.BaseDataClass.BaseDataClass"
+                                            title="Link to this definition"></a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span
+                                            class="pre">object</span></code></p>
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.BaseDataClass.BaseDataClass.attempt_type_coercion">
+                                                <em class="property"><span class="pre">classmethod</span><span
+                                                        class="w"> </span></em><span class="sig-name descname"><span
+                                                    class="pre">attempt_type_coercion</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">data</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">Any</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span
+                                                    class="pre">Any</span></span></span><a class="headerlink"
+                                                                                           href="#qarray.DotArrays.BaseDataClass.BaseDataClass.attempt_type_coercion"
+                                                                                           title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                                <dl class="py exception">
+                                    <dt class="sig sig-object py"
+                                        id="qarray.DotArrays.BaseDataClass.ValidationException">
+                                        <em class="property"><span class="pre">exception</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.DotArrays.BaseDataClass.</span></span><span
+                                            class="sig-name descname"><span
+                                            class="pre">ValidationException</span></span><span
+                                            class="sig-paren">(</span><em class="sig-param"><span class="n"><span
+                                            class="pre">message</span></span></em><span class="sig-paren">)</span><a
+                                            class="headerlink"
+                                            href="#qarray.DotArrays.BaseDataClass.ValidationException"
+                                            title="Link to this definition"></a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span
+                                            class="pre">Exception</span></code></p>
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.BaseDataClass.ValidationException.print_trace">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">print_trace</span></span><span
+                                                    class="sig-paren">(</span><span class="sig-paren">)</span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.BaseDataClass.ValidationException.print_trace"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                            </section>
+                            <section id="module-qarray.DotArrays.ChargeSensedDotArray">
+                                <span id="qarray-dotarrays-chargesenseddotarray-module"></span>
+                                <h2>qarray.DotArrays.ChargeSensedDotArray module<a class="headerlink"
+                                                                                   href="#module-qarray.DotArrays.ChargeSensedDotArray"
+                                                                                   title="Link to this heading"></a>
+                                </h2>
+                                <p>A class that represents a charge sensed dot array. The class has methods to compute
+                                    the ground state of the dot array
+                                    and the charge sensor output for both open and closed dot arrays.</p>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py"
+                                        id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.DotArrays.ChargeSensedDotArray.</span></span><span
+                                            class="sig-name descname"><span
+                                            class="pre">ChargeSensedDotArray</span></span><a class="headerlink"
+                                                                                             href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray"
+                                                                                             title="Link to this definition"></a>
+                                    </dt>
+                                    <dd><p>Bases: <a class="reference internal"
+                                                     href="#qarray.DotArrays.BaseDataClass.BaseDataClass"
+                                                     title="qarray.DotArrays.BaseDataClass.BaseDataClass"><code
+                                            class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataClass</span></code></a>
+                                    </p>
+                                        <p>A class that represents a charge sensed dot array. The class has methods to
+                                            compute the ground state of the dot array
+                                            and the charge sensor output for both open and closed dot arrays.</p>
+                                        <p>The class has the following attributes:</p>
+                                        <ul class="simple">
+                                            <li><p>Cdd: an (n_dot, n_dot) array of the capacitive coupling between
+                                                dots</p></li>
+                                            <li><p>Cgd: an (n_dot, n_gate) array of the capacitive coupling between
+                                                gates and dots</p></li>
+                                            <li><p>Cds: an (n_sensor, n_dot) array of the capacitive coupling between
+                                                dots and sensors</p></li>
+                                            <li><p>Cgs: an (n_sensor, n_gate) array of the capacitive coupling between
+                                                gates and dots</p></li>
+                                            <li><p>algorithm: the algorithm to use to compute the ground state</p></li>
+                                            <li><p>implementation: the implementation to use to compute the ground
+                                                state</p></li>
+                                            <li><p>threshold: the threshold to use if the threshold algorithm is
+                                                used</p></li>
+                                            <li><p>max_charge_carriers: the maximum number of charge carriers to use if
+                                                the brute force algorithm is used</p></li>
+                                            <li><p>polish: a bool specifying whether to polish the result of the ground
+                                                state computation by the default or thresholded algorithm</p></li>
+                                            <li><p>coulomb_peak_width: the width of the lorentzian peaks</p></li>
+                                            <li><p>noise_model: the noise model to use to add noise to the charge sensor
+                                                output</p></li>
+                                        </ul>
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.Cdd">
+                                                <span class="sig-name descname"><span class="pre">Cdd</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">CddNonMaxwell</span></em><a class="headerlink"
+                                                                                            href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.Cdd"
+                                                                                            title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.Cds">
+                                                <span class="sig-name descname"><span class="pre">Cds</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">CdsNonMaxwell</span></em><a class="headerlink"
+                                                                                            href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.Cds"
+                                                                                            title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.Cgd">
+                                                <span class="sig-name descname"><span class="pre">Cgd</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">CgdNonMaxwell</span></em><a class="headerlink"
+                                                                                            href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.Cgd"
+                                                                                            title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.Cgs">
+                                                <span class="sig-name descname"><span class="pre">Cgs</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">CgsNonMaxwell</span></em><a class="headerlink"
+                                                                                            href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.Cgs"
+                                                                                            title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.T">
+                                                <span class="sig-name descname"><span class="pre">T</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">float</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">0.0</span></em><a class="headerlink"
+                                                                                  href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.T"
+                                                                                  title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.algorithm">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">algorithm</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">str</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">'default'</span></em><a class="headerlink"
+                                                                                        href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.algorithm"
+                                                                                        title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.batch_size">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">batch_size</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">int</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.batch_size"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.charge_sensor_closed">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">charge_sensor_closed</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">vg</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">VectorList</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">ndarray</span></span></em>, <em class="sig-param"><span
+                                                    class="n"><span class="pre">n_charge</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.charge_sensor_closed"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>Computes the charge sensor output for a closed dot array.</p>
+                                                <dl class="field-list simple">
+                                                    <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                                    <dd class="field-odd">
+                                                        <ul class="simple">
+                                                            <li><p><strong>vg</strong> – (…, n_gate) array of dot
+                                                                voltages to compute the charge sensor output for</p>
+                                                            </li>
+                                                            <li><p><strong>n_charge</strong> – the number of charges to
+                                                                be confined in the dot array</p></li>
+                                                        </ul>
+                                                    </dd>
+                                                    <dt class="field-even">Returns<span class="colon">:</span></dt>
+                                                    <dd class="field-even"><p>(…, n_sensor) array of the charge sensor
+                                                        output</p>
+                                                    </dd>
+                                                </dl>
+                                                <p>Noise is added according to the noise model passed to the
+                                                    ChargeSensedDotArray class.</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.charge_sensor_open">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">charge_sensor_open</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">vg</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">VectorList</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">ndarray</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.charge_sensor_open"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>Computes the charge sensor output for an open dot array.</p>
+                                                <dl class="field-list simple">
+                                                    <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                                    <dd class="field-odd"><p><strong>vg</strong> – (…, n_gate) array of
+                                                        dot voltages to compute the charge sensor output for</p>
+                                                    </dd>
+                                                    <dt class="field-even">Returns<span class="colon">:</span></dt>
+                                                    <dd class="field-even"><p>(…, n_sensor) array of the charge sensor
+                                                        output</p>
+                                                    </dd>
+                                                </dl>
+                                                <p>Noise is added according to the noise model passed to the
+                                                    ChargeSensedDotArray class.</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.coulomb_peak_width">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">coulomb_peak_width</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">float</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">0.1</span></em><a class="headerlink"
+                                                                                  href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.coulomb_peak_width"
+                                                                                  title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.ground_state_closed">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">ground_state_closed</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">vg</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">VectorList</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">ndarray</span></span></em>, <em class="sig-param"><span
+                                                    class="n"><span class="pre">n_charge</span></span><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="n"><span
+                                                    class="pre">int</span></span></em><span class="sig-paren">)</span>
+                                                <span class="sig-return"><span
+                                                        class="sig-return-icon">&#x2192;</span> <span
+                                                        class="sig-return-typehint"><span
+                                                        class="pre">ndarray</span></span></span><a class="headerlink"
+                                                                                                   href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.ground_state_closed"
+                                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Computes the ground state for a closed dot array.
+                                                :param vg: (…, n_gate) array of dot voltages to compute the ground state
+                                                for
+                                                :param n_charge: the number of charges to be confined in the dot array
+                                                :return: (…, n_dot) array of the number of charges to compute the ground
+                                                state for</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.ground_state_open">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">ground_state_open</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">vg</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">VectorList</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">ndarray</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.ground_state_open"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>Computes the ground state for an open dot array.
+                                                :param vg: (…, n_gate) array of dot voltages to compute the ground state
+                                                for
+                                                :return: (…, n_dot) array of ground state charges</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.implementation">
+                                                <span class="sig-name descname"><span class="pre">implementation</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">str</span><span class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">'rust'</span></em><a class="headerlink"
+                                                                                     href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.implementation"
+                                                                                     title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.latching_model">
+                                                <span class="sig-name descname"><span class="pre">latching_model</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><a
+                                                    class="reference internal"
+                                                    href="qarray.latching_models.html#qarray.latching_models.LatchingBaseModel.LatchingBaseModel"
+                                                    title="qarray.latching_models.LatchingBaseModel.LatchingBaseModel"><span
+                                                    class="pre">LatchingBaseModel</span></a><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.latching_model"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.max_charge_carriers">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">max_charge_carriers</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">int</span><span class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.max_charge_carriers"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.n_peak">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">n_peak</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">5</span></em><a class="headerlink"
+                                                                                href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.n_peak"
+                                                                                title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.noise_model">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">noise_model</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><a class="reference internal"
+                                                                         href="qarray.noise_models.html#qarray.noise_models.BaseNoiseModel.BaseNoiseModel"
+                                                                         title="qarray.noise_models.BaseNoiseModel.BaseNoiseModel"><span
+                                                    class="pre">BaseNoiseModel</span></a><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">None</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.noise_model"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.optimal_Vg">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">optimal_Vg</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">n_charges</span></span><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="n"><span
+                                                    class="pre">VectorList</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">rcond</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span><span
+                                                    class="w"> </span><span class="o"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="default_value"><span
+                                                    class="pre">0.001</span></span></em><span class="sig-paren">)</span>
+                                                <span class="sig-return"><span
+                                                        class="sig-return-icon">&#x2192;</span> <span
+                                                        class="sig-return-typehint"><span
+                                                        class="pre">ndarray</span></span></span><a class="headerlink"
+                                                                                                   href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.optimal_Vg"
+                                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Computes the optimal dot voltages for a given charge configuration,
+                                                of shape (n_dot + n_sensor,).
+                                                :param n_charges: the charge configuration
+                                                :param rcond: the rcond parameter for the least squares solver
+                                                :return: the optimal dot voltages of shape (n_gate,)</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.polish">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">polish</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">bool</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">True</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.polish"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.threshold">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">threshold</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">float</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">str</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">1.0</span></em><a class="headerlink"
+                                                                                  href="#qarray.DotArrays.ChargeSensedDotArray.ChargeSensedDotArray.threshold"
+                                                                                  title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                            </section>
+                            <section id="module-qarray.DotArrays.DotArray">
+                                <span id="qarray-dotarrays-dotarray-module"></span>
+                                <h2>qarray.DotArrays.DotArray module<a class="headerlink"
+                                                                       href="#module-qarray.DotArrays.DotArray"
+                                                                       title="Link to this heading"></a></h2>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.DotArray">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.DotArrays.DotArray.</span></span><span
+                                            class="sig-name descname"><span class="pre">DotArray</span></span><a
+                                            class="headerlink" href="#qarray.DotArrays.DotArray.DotArray"
+                                            title="Link to this definition"></a></dt>
+                                    <dd><p>Bases: <a class="reference internal"
+                                                     href="#qarray.DotArrays.BaseDataClass.BaseDataClass"
+                                                     title="qarray.DotArrays.BaseDataClass.BaseDataClass"><code
+                                            class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataClass</span></code></a>
+                                    </p>
+                                        <p>A class to represent a quantum dot array. The class is initialized with the
+                                            following parameters:</p>
+                                        <p>Cdd: CddNonMaxwell | None = None # an (n_dot, n_dot) the capacitive coupling
+                                            between dots
+                                            Cgd: CgdNonMaxwell | None = None # an (n_dot, n_gate) the capacitive
+                                            coupling between gates and dots</p>
+                                        <p>cdd: Cdd | None = None # an (n_dot, n_dot) the capacitive coupling between
+                                            dots
+                                            cgd: PositiveValuedMatrix | NegativeValuedMatrix | None = None # an (n_dot,
+                                            n_gate) the capacitive coupling between gates and dots</p>
+                                        <p>algorithm: str | None = ‘default’ # which algorithm to use
+                                            implementation: str | None = ‘rust’</p>
+                                        <p>threshold: float | str = 1. # if the threshold algorithm is used the user
+                                            needs to pass the threshold
+                                            max_charge_carriers: int | None = None # if the brute force algorithm is
+                                            used the user needs to pass the maximum number of charge carriers</p>
+                                        <p>charge_carrier: str = ‘hole’ # a string of either ‘electron’ or ‘hole’ to
+                                            specify the charge carrie
+                                            T: float | int = 0. # the temperature of the system for if there is thermal
+                                            broadening</p>
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.DotArray.Cdd">
+                                                <span class="sig-name descname"><span class="pre">Cdd</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">CddNonMaxwell</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">None</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.DotArray.DotArray.Cdd"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.DotArray.Cgd">
+                                                <span class="sig-name descname"><span class="pre">Cgd</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">CgdNonMaxwell</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">None</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.DotArray.DotArray.Cgd"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.DotArray.T">
+                                                <span class="sig-name descname"><span class="pre">T</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">float</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">0.0</span></em><a class="headerlink"
+                                                                                  href="#qarray.DotArrays.DotArray.DotArray.T"
+                                                                                  title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.algorithm">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">algorithm</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">str</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">'default'</span></em><a class="headerlink"
+                                                                                        href="#qarray.DotArrays.DotArray.DotArray.algorithm"
+                                                                                        title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.batch_size">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">batch_size</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">10000</span></em><a class="headerlink"
+                                                                                    href="#qarray.DotArrays.DotArray.DotArray.batch_size"
+                                                                                    title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.DotArray.cdd">
+                                                <span class="sig-name descname"><span class="pre">cdd</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">Cdd</span><span class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.DotArray.DotArray.cdd"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.DotArray.cgd">
+                                                <span class="sig-name descname"><span class="pre">cgd</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">PositiveValuedMatrix</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">NegativeValuedMatrix</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.DotArray.DotArray.cgd"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.charge_carrier">
+                                                <span class="sig-name descname"><span class="pre">charge_carrier</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">str</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">'hole'</span></em><a class="headerlink"
+                                                                                     href="#qarray.DotArrays.DotArray.DotArray.charge_carrier"
+                                                                                     title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.ground_state_closed">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">ground_state_closed</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">vg</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">VectorList</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">ndarray</span></span></em>, <em class="sig-param"><span
+                                                    class="n"><span class="pre">n_charges</span></span><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="n"><span
+                                                    class="pre">int</span></span></em><span class="sig-paren">)</span>
+                                                <span class="sig-return"><span
+                                                        class="sig-return-icon">&#x2192;</span> <span
+                                                        class="sig-return-typehint"><span
+                                                        class="pre">ndarray</span></span></span><a class="headerlink"
+                                                                                                   href="#qarray.DotArrays.DotArray.DotArray.ground_state_closed"
+                                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Computes the ground state for a closed dot array.
+                                                :param vg: (…, n_gate) array of dot voltages to compute the ground state
+                                                for
+                                                :param n_charges: the number of charges to be confined in the dot array
+                                                :return: (…, n_dot) array of the number of charges to compute the ground
+                                                state for</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.ground_state_open">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">ground_state_open</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">vg</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">VectorList</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">ndarray</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.DotArray.DotArray.ground_state_open"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>Computes the ground state for an open dot array.
+                                                :param vg: (…, n_gate) array of dot voltages to compute the ground state
+                                                for
+                                                :return: (…, n_dot) array of ground state charges</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.implementation">
+                                                <span class="sig-name descname"><span class="pre">implementation</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">str</span><span class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">'rust'</span></em><a class="headerlink"
+                                                                                     href="#qarray.DotArrays.DotArray.DotArray.implementation"
+                                                                                     title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.latching_model">
+                                                <span class="sig-name descname"><span class="pre">latching_model</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><a
+                                                    class="reference internal"
+                                                    href="qarray.latching_models.html#qarray.latching_models.LatchingBaseModel.LatchingBaseModel"
+                                                    title="qarray.latching_models.LatchingBaseModel.LatchingBaseModel"><span
+                                                    class="pre">LatchingBaseModel</span></a><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.DotArray.DotArray.latching_model"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.max_charge_carriers">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">max_charge_carriers</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">int</span><span class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.DotArray.DotArray.max_charge_carriers"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.optimal_Vg">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">optimal_Vg</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">n_charges</span></span><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="n"><span
+                                                    class="pre">VectorList</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">rcond</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span><span
+                                                    class="w"> </span><span class="o"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="default_value"><span
+                                                    class="pre">0.001</span></span></em><span class="sig-paren">)</span>
+                                                <span class="sig-return"><span
+                                                        class="sig-return-icon">&#x2192;</span> <span
+                                                        class="sig-return-typehint"><span
+                                                        class="pre">ndarray</span></span></span><a class="headerlink"
+                                                                                                   href="#qarray.DotArrays.DotArray.DotArray.optimal_Vg"
+                                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Computes the optimal dot voltages for a given charge configuration,
+                                                of shape (n_charge,).
+                                                :param n_charges: the charge configuration
+                                                :param rcond: the rcond parameter for the least squares solver
+                                                :return: the optimal dot voltages of shape (n_gate,)</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.polish">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">polish</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">bool</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">True</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.DotArray.DotArray.polish"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.DotArray.DotArray.threshold">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">threshold</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">float</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">str</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">1.0</span></em><a class="headerlink"
+                                                                                  href="#qarray.DotArrays.DotArray.DotArray.threshold"
+                                                                                  title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.all_negative">
+                                        <span class="sig-prename descclassname"><span class="pre">qarray.DotArrays.DotArray.</span></span><span
+                                            class="sig-name descname"><span class="pre">all_negative</span></span><span
+                                            class="sig-paren">(</span><em class="sig-param"><span class="n"><span
+                                            class="pre">a</span></span></em><span class="sig-paren">)</span><a
+                                            class="headerlink" href="#qarray.DotArrays.DotArray.all_negative"
+                                            title="Link to this definition"></a></dt>
+                                    <dd></dd>
+                                </dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.all_positive">
+                                        <span class="sig-prename descclassname"><span class="pre">qarray.DotArrays.DotArray.</span></span><span
+                                            class="sig-name descname"><span class="pre">all_positive</span></span><span
+                                            class="sig-paren">(</span><em class="sig-param"><span class="n"><span
+                                            class="pre">a</span></span></em><span class="sig-paren">)</span><a
+                                            class="headerlink" href="#qarray.DotArrays.DotArray.all_positive"
+                                            title="Link to this definition"></a></dt>
+                                    <dd></dd>
+                                </dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py"
+                                        id="qarray.DotArrays.DotArray.all_positive_or_negative">
+                                        <span class="sig-prename descclassname"><span class="pre">qarray.DotArrays.DotArray.</span></span><span
+                                            class="sig-name descname"><span class="pre">all_positive_or_negative</span></span><span
+                                            class="sig-paren">(</span><em class="sig-param"><span class="n"><span
+                                            class="pre">a</span></span></em><span class="sig-paren">)</span><a
+                                            class="headerlink"
+                                            href="#qarray.DotArrays.DotArray.all_positive_or_negative"
+                                            title="Link to this definition"></a></dt>
+                                    <dd></dd>
+                                </dl>
+
+                                <dl class="py function">
+                                    <dt class="sig sig-object py" id="qarray.DotArrays.DotArray.both_none">
+                                        <span class="sig-prename descclassname"><span class="pre">qarray.DotArrays.DotArray.</span></span><span
+                                            class="sig-name descname"><span class="pre">both_none</span></span><span
+                                            class="sig-paren">(</span><em class="sig-param"><span class="n"><span
+                                            class="pre">a</span></span></em>, <em class="sig-param"><span
+                                            class="n"><span class="pre">b</span></span></em><span
+                                            class="sig-paren">)</span><a class="headerlink"
+                                                                         href="#qarray.DotArrays.DotArray.both_none"
+                                                                         title="Link to this definition"></a></dt>
+                                    <dd></dd>
+                                </dl>
+
+                            </section>
+                            <section id="module-qarray.DotArrays.GateVoltageComposer">
+                                <span id="qarray-dotarrays-gatevoltagecomposer-module"></span>
+                                <h2>qarray.DotArrays.GateVoltageComposer module<a class="headerlink"
+                                                                                  href="#module-qarray.DotArrays.GateVoltageComposer"
+                                                                                  title="Link to this heading"></a>
+                                </h2>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py"
+                                        id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.DotArrays.GateVoltageComposer.</span></span><span
+                                            class="sig-name descname"><span
+                                            class="pre">GateVoltageComposer</span></span><a class="headerlink"
+                                                                                            href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer"
+                                                                                            title="Link to this definition"></a>
+                                    </dt>
+                                    <dd><p>Bases: <a class="reference internal"
+                                                     href="#qarray.DotArrays.BaseDataClass.BaseDataClass"
+                                                     title="qarray.DotArrays.BaseDataClass.BaseDataClass"><code
+                                            class="xref py py-class docutils literal notranslate"><span class="pre">BaseDataClass</span></code></a>
+                                    </p>
+                                        <p>This class is used to compose dot voltages for the dot array.</p>
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.do1d">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">do1d</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">x_gate</span></span><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="n"><span class="pre">str</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">int</span></span></em>, <em class="sig-param"><span
+                                                    class="n"><span class="pre">x_min</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_max</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_res</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">int</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.do1d"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>This function is used to compose a 1d dot voltage array.
+                                                :param x_gate:
+                                                :param x_min:
+                                                :param x_max:
+                                                :param x_res:
+                                                :return:</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.do1d_virtual">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">do1d_virtual</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">x_dot</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">str</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_min</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_max</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_res</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">int</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.do1d_virtual"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.do2d">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">do2d</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">x_gate</span></span><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="n"><span class="pre">str</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">int</span></span></em>, <em class="sig-param"><span
+                                                    class="n"><span class="pre">x_min</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_max</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_res</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">int</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">y_gate</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">str</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">y_min</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">y_max</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">y_res</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">int</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.do2d"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>This function is used to compose a 2d dot voltage array.
+                                                :param x_gate:
+                                                :param x_min:
+                                                :param x_max:
+                                                :param x_res:
+                                                :param y_gate:
+                                                :param y_min:
+                                                :param y_max:
+                                                :param y_res:
+                                                :return:</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.do2d_virtual">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">do2d_virtual</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">x_dot</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">str</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_min</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_max</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">x_res</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">int</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">y_dot</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">str</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">y_min</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">y_max</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">float</span></span></em>, <em
+                                                    class="sig-param"><span class="n"><span
+                                                    class="pre">y_res</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">int</span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.do2d_virtual"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>This function is used to compose a 2d dot voltage array.
+                                                :param x_dot:
+                                                :param x_min:
+                                                :param x_max:
+                                                :param x_res:
+                                                :param y_dot:
+                                                :param y_min:
+                                                :param y_max:
+                                                :param y_res:
+                                                :return:</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.gate_names">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">gate_names</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">dict</span><span class="p"><span
+                                                    class="pre">[</span></span><span class="pre">str</span><span
+                                                    class="p"><span class="pre">,</span></span><span
+                                                    class="w"> </span><span class="pre">int</span><span class="p"><span
+                                                    class="pre">]</span></span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">None</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.gate_names"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.gate_voltages">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">gate_voltages</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">Vector</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">None</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.gate_voltages"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.meshgrid">
+                                                <span class="sig-name descname"><span class="pre">meshgrid</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">gates</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">List</span><span class="p"><span
+                                                    class="pre">[</span></span><span class="pre">int</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">str</span><span class="p"><span
+                                                    class="pre">]</span></span></span></em>, <em class="sig-param"><span
+                                                    class="n"><span class="pre">arrays</span></span><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="n"><span class="pre">List</span><span
+                                                    class="p"><span class="pre">[</span></span><span
+                                                    class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.meshgrid"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>This function is used to compose a dot voltage array, given a list of
+                                                gates and a list of arrays it will
+                                                compose a dot voltage array, based on the meshgrid of the arrays.
+                                                :param gates: a list of gates to be varied
+                                                :param arrays: a list of arrays to be meshgridded
+                                                :return: a dot voltage array</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.meshgrid_virtual">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">meshgrid_virtual</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">dots</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">List</span><span class="p"><span
+                                                    class="pre">[</span></span><span class="pre">int</span><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">str</span><span class="p"><span
+                                                    class="pre">]</span></span></span></em>, <em class="sig-param"><span
+                                                    class="n"><span class="pre">arrays</span></span><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="n"><span class="pre">List</span><span
+                                                    class="p"><span class="pre">[</span></span><span
+                                                    class="pre">ndarray</span><span class="p"><span class="pre">]</span></span></span></em><span
+                                                    class="sig-paren">)</span> <span class="sig-return"><span
+                                                    class="sig-return-icon">&#x2192;</span> <span
+                                                    class="sig-return-typehint"><span class="pre">ndarray</span></span></span><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.meshgrid_virtual"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd><p>This function is used to compose a virtual gate voltage array, given
+                                                a list of gates and a list of arrays it will
+                                                compose a dot voltage array, based on the meshgrid of the arrays.</p>
+                                                <dl class="field-list simple">
+                                                    <dt class="field-odd">Parameters<span class="colon">:</span></dt>
+                                                    <dd class="field-odd">
+                                                        <ul class="simple">
+                                                            <li><p><strong>dots</strong> – a list of dots to be varied
+                                                            </p></li>
+                                                            <li><p><strong>arrays</strong> – a list of arrays to be
+                                                                meshgridded</p></li>
+                                                        </ul>
+                                                    </dd>
+                                                    <dt class="field-even">Returns<span class="colon">:</span></dt>
+                                                    <dd class="field-even"><p>a dot voltage array</p>
+                                                    </dd>
+                                                </dl>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.n_dot">
+                                                <span class="sig-name descname"><span class="pre">n_dot</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">int</span><span class="w"> </span><span class="p"><span
+                                                    class="pre">|</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><em class="property"><span
+                                                    class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.n_dot"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.n_gate">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">n_gate</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">int</span></em><a
+                                                    class="headerlink"
+                                                    href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.n_gate"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.name_gate">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">name_gate</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">name</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">str</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">Iterable</span><span
+                                                    class="p"><span class="pre">[</span></span><span
+                                                    class="pre">str</span><span class="p"><span
+                                                    class="pre">]</span></span></span></em>, <em class="sig-param"><span
+                                                    class="n"><span class="pre">gate</span></span><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="n"><span class="pre">int</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">Iterable</span><span
+                                                    class="p"><span class="pre">[</span></span><span
+                                                    class="pre">int</span><span class="p"><span
+                                                    class="pre">]</span></span></span></em><span
+                                                    class="sig-paren">)</span><a class="headerlink"
+                                                                                 href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.name_gate"
+                                                                                 title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.virtual_gate_matrix">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">virtual_gate_matrix</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">ndarray</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">None</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.virtual_gate_matrix"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.virtual_gate_origin">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">virtual_gate_origin</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">ndarray</span><span class="w"> </span><span
+                                                    class="p"><span class="pre">|</span></span><span
+                                                    class="w"> </span><span class="pre">None</span></em><em
+                                                    class="property"><span class="w"> </span><span class="p"><span
+                                                    class="pre">=</span></span><span class="w"> </span><span
+                                                    class="pre">None</span></em><a class="headerlink"
+                                                                                   href="#qarray.DotArrays.GateVoltageComposer.GateVoltageComposer.virtual_gate_origin"
+                                                                                   title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                            </section>
+                            <section id="module-qarray.DotArrays">
+                                <span id="module-contents"></span>
+                                <h2>Module contents<a class="headerlink" href="#module-qarray.DotArrays"
+                                                      title="Link to this heading"></a></h2>
+                            </section>
+                        </section>
+
+
+                    </div>
+                </div>
+                <footer>
+
+                    <hr/>
+
+                    <div role="contentinfo">
+                        <p>&#169; Copyright .</p>
+                    </div>
+
+                    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+                    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+                    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+                </footer>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+    });
+</script>
+
+</body>
+</html>

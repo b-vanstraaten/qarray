@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html class="writer-html5" data-content_root="./" lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+
+    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+    <title>qarray.noise_models package &mdash; Qarray 1.1.1 documentation</title>
+    <link href="_static/pygments.css?v=92fd9be5" rel="stylesheet" type="text/css"/>
+    <link href="_static/css/theme.css?v=19f00094" rel="stylesheet" type="text/css"/>
+
+
+    <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+    <![endif]-->
+
+    <script src="_static/jquery.js?v=5d32c60e"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+    <script src="_static/documentation_options.js?v=58fbf978"></script>
+    <script src="_static/doctools.js?v=888ff710"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link href="genindex.html" rel="index" title="Index"/>
+    <link href="search.html" rel="search" title="Search"/>
+</head>
+
+<body class="wy-body-for-nav">
+<div class="wy-grid-for-nav">
+    <nav class="wy-nav-side" data-toggle="wy-nav-shift">
+        <div class="wy-side-scroll">
+            <div class="wy-side-nav-search">
+
+
+                <a class="icon icon-home" href="index.html">
+                    Qarray
+                </a>
+                <div role="search">
+                    <form action="search.html" class="wy-form" id="rtd-search-form" method="get">
+                        <input aria-label="Search docs" name="q" placeholder="Search docs" type="text"/>
+                        <input name="check_keywords" type="hidden" value="yes"/>
+                        <input name="area" type="hidden" value="default"/>
+                    </form>
+                </div>
+            </div>
+            <div aria-label="Navigation menu" class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation">
+                <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+                <ul>
+                    <li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+                    <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+                    <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting Started</a>
+                    </li>
+                    <li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+                    <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+
+    <section class="wy-nav-content-wrap" data-toggle="wy-nav-shift">
+        <nav aria-label="Mobile navigation menu" class="wy-nav-top">
+            <i class="fa fa-bars" data-toggle="wy-nav-top"></i>
+            <a href="index.html">Qarray</a>
+        </nav>
+
+        <div class="wy-nav-content">
+            <div class="rst-content">
+                <div aria-label="Page navigation" role="navigation">
+                    <ul class="wy-breadcrumbs">
+                        <li><a aria-label="Home" class="icon icon-home" href="index.html"></a></li>
+                        <li class="breadcrumb-item active">qarray.noise_models package</li>
+                        <li class="wy-breadcrumbs-aside">
+                            <a href="_sources/qarray.noise_models.rst.txt" rel="nofollow"> View page source</a>
+                        </li>
+                    </ul>
+                    <hr/>
+                </div>
+                <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
+                    <div itemprop="articleBody">
+
+                        <section id="qarray-noise-models-package">
+                            <h1>qarray.noise_models package<a class="headerlink" href="#qarray-noise-models-package"
+                                                              title="Link to this heading"></a></h1>
+                            <section id="submodules">
+                                <h2>Submodules<a class="headerlink" href="#submodules"
+                                                 title="Link to this heading"></a></h2>
+                            </section>
+                            <section id="module-qarray.noise_models.BaseNoiseModel">
+                                <span id="qarray-noise-models-basenoisemodel-module"></span>
+                                <h2>qarray.noise_models.BaseNoiseModel module<a class="headerlink"
+                                                                                href="#module-qarray.noise_models.BaseNoiseModel"
+                                                                                title="Link to this heading"></a></h2>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py"
+                                        id="qarray.noise_models.BaseNoiseModel.BaseNoiseModel">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.noise_models.BaseNoiseModel.</span></span><span
+                                            class="sig-name descname"><span class="pre">BaseNoiseModel</span></span><a
+                                            class="headerlink" href="#qarray.noise_models.BaseNoiseModel.BaseNoiseModel"
+                                            title="Link to this definition"></a></dt>
+                                    <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span
+                                            class="pre">object</span></code></p>
+                                        <p>The base noise model class that all noise models should inherit from. This
+                                            class defines the interface that all
+                                            noise models should implement.</p>
+                                        <p>The interface consists of two methods:</p>
+                                        <ul class="simple">
+                                            <li><p>sample_input_noise: This method should return the input noise for the
+                                                charge sensor model. This noise perturbs the</p></li>
+                                        </ul>
+                                        <p>potential of the dots in the charge sensor, before those potentials are used
+                                            in the Lorenzian function to calculate
+                                            the charge sensor output.</p>
+                                        <ul class="simple">
+                                            <li><p>sample_output_noise: This method should return the output noise for
+                                                the charge sensor model. This noise perturbs the</p></li>
+                                        </ul>
+                                        <p>output of the charge sensor model, after the Lorenzian function has been
+                                            applied to the potentials of the dots in
+                                            the charge sensor.</p>
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.BaseNoiseModel.BaseNoiseModel.sample_input_noise">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">sample_input_noise</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">shape</span></span></em><span
+                                                    class="sig-paren">)</span><a class="headerlink"
+                                                                                 href="#qarray.noise_models.BaseNoiseModel.BaseNoiseModel.sample_input_noise"
+                                                                                 title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Sample input noise from the noise model. This noise perturbs the
+                                                potential of the dots in the charge sensor,
+                                                before those potentials are used in the Lorenzian function to calculate
+                                                the charge sensor output.</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.BaseNoiseModel.BaseNoiseModel.sample_output_noise">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">sample_output_noise</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">shape</span></span></em><span
+                                                    class="sig-paren">)</span><a class="headerlink"
+                                                                                 href="#qarray.noise_models.BaseNoiseModel.BaseNoiseModel.sample_output_noise"
+                                                                                 title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Sample output noise from the noise model. This noise perturbs the
+                                                output of the charge sensor model, after the
+                                                Lorenzian function has been applied to the potentials of the dots in the
+                                                charge sensor.</p>
+                                            </dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                                <dl class="py class">
+                                    <dt class="sig sig-object py"
+                                        id="qarray.noise_models.BaseNoiseModel.CompositeNoise">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.noise_models.BaseNoiseModel.</span></span><span
+                                            class="sig-name descname"><span
+                                            class="pre">CompositeNoise</span></span><span class="sig-paren">(</span><em
+                                            class="sig-param"><span class="n"><span
+                                            class="pre">noise_models</span></span><span class="p"><span
+                                            class="pre">:</span></span><span class="w"> </span><span class="n"><span
+                                            class="pre">List</span><span class="p"><span class="pre">[</span></span><a
+                                            class="reference internal"
+                                            href="#qarray.noise_models.BaseNoiseModel.BaseNoiseModel"
+                                            title="qarray.noise_models.BaseNoiseModel.BaseNoiseModel"><span class="pre">BaseNoiseModel</span></a><span
+                                            class="p"><span class="pre">]</span></span></span></em><span
+                                            class="sig-paren">)</span><a class="headerlink"
+                                                                         href="#qarray.noise_models.BaseNoiseModel.CompositeNoise"
+                                                                         title="Link to this definition"></a></dt>
+                                    <dd><p>Bases: <a class="reference internal"
+                                                     href="#qarray.noise_models.BaseNoiseModel.BaseNoiseModel"
+                                                     title="qarray.noise_models.BaseNoiseModel.BaseNoiseModel"><code
+                                            class="xref py py-class docutils literal notranslate"><span class="pre">BaseNoiseModel</span></code></a>
+                                    </p>
+                                        <p>A composite noise model that can be added to a charge sensing model to
+                                            combine multiple noise models.</p>
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.BaseNoiseModel.CompositeNoise.noise_models">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">noise_models</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">List</span><span class="p"><span
+                                                    class="pre">[</span></span><a class="reference internal"
+                                                                                  href="#qarray.noise_models.BaseNoiseModel.BaseNoiseModel"
+                                                                                  title="qarray.noise_models.BaseNoiseModel.BaseNoiseModel"><span
+                                                    class="pre">BaseNoiseModel</span></a><span class="p"><span
+                                                    class="pre">]</span></span></em><a class="headerlink"
+                                                                                       href="#qarray.noise_models.BaseNoiseModel.CompositeNoise.noise_models"
+                                                                                       title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.BaseNoiseModel.CompositeNoise.sample_input_noise">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">sample_input_noise</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">shape</span></span></em><span
+                                                    class="sig-paren">)</span><a class="headerlink"
+                                                                                 href="#qarray.noise_models.BaseNoiseModel.CompositeNoise.sample_input_noise"
+                                                                                 title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Sample input noise from the composite noise model. This noise
+                                                perturbs the potential of the dots in the charge
+                                                sensor, before those potentials are used in the Lorenzian function to
+                                                calculate the charge sensor output.</p>
+                                                <p>The input noise is the sum of the input noise from all the noise
+                                                    models in the composite noise model.</p>
+                                            </dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.BaseNoiseModel.CompositeNoise.sample_output_noise">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">sample_output_noise</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">shape</span></span></em><span
+                                                    class="sig-paren">)</span><a class="headerlink"
+                                                                                 href="#qarray.noise_models.BaseNoiseModel.CompositeNoise.sample_output_noise"
+                                                                                 title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Sample output noise from the composite noise model. This noise
+                                                perturbs the output of the charge sensor model,
+                                                after the Lorenzian function has been applied to the potentials of the
+                                                dots in the charge sensor.</p>
+                                                <p>The output noise is the sum of the output noise from all the noise
+                                                    models in the composite noise model.</p>
+                                            </dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                            </section>
+                            <section id="module-qarray.noise_models.CompositeNoiseModel">
+                                <span id="qarray-noise-models-compositenoisemodel-module"></span>
+                                <h2>qarray.noise_models.CompositeNoiseModel module<a class="headerlink"
+                                                                                     href="#module-qarray.noise_models.CompositeNoiseModel"
+                                                                                     title="Link to this heading"></a>
+                                </h2>
+                            </section>
+                            <section id="module-qarray.noise_models.TelegraphNoise">
+                                <span id="qarray-noise-models-telegraphnoise-module"></span>
+                                <h2>qarray.noise_models.TelegraphNoise module<a class="headerlink"
+                                                                                href="#module-qarray.noise_models.TelegraphNoise"
+                                                                                title="Link to this heading"></a></h2>
+                                <p>A telegraph noise model that can be added to a charge sensing model to simulate the
+                                    effect of telegraph noise.</p>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py"
+                                        id="qarray.noise_models.TelegraphNoise.TelegraphNoise">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.noise_models.TelegraphNoise.</span></span><span
+                                            class="sig-name descname"><span
+                                            class="pre">TelegraphNoise</span></span><span class="sig-paren">(</span><em
+                                            class="sig-param"><span class="n"><span
+                                            class="pre">amplitude</span></span><span class="p"><span
+                                            class="pre">:</span></span><span class="w"> </span><span class="n"><span
+                                            class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span
+                                            class="pre">p01</span></span><span class="p"><span
+                                            class="pre">:</span></span><span class="w"> </span><span class="n"><span
+                                            class="pre">float</span></span></em>, <em class="sig-param"><span class="n"><span
+                                            class="pre">p10</span></span><span class="p"><span
+                                            class="pre">:</span></span><span class="w"> </span><span class="n"><span
+                                            class="pre">float</span></span></em><span class="sig-paren">)</span><a
+                                            class="headerlink" href="#qarray.noise_models.TelegraphNoise.TelegraphNoise"
+                                            title="Link to this definition"></a></dt>
+                                    <dd><p>Bases: <a class="reference internal"
+                                                     href="#qarray.noise_models.BaseNoiseModel.BaseNoiseModel"
+                                                     title="qarray.noise_models.BaseNoiseModel.BaseNoiseModel"><code
+                                            class="xref py py-class docutils literal notranslate"><span class="pre">BaseNoiseModel</span></code></a>
+                                    </p>
+                                        <p>A telegraph noise model that can be added to a charge sensing model to
+                                            simulate the effect of telegraph noise.</p>
+                                        <p>The noise model is a simple model that can be used to simulate the effect of
+                                            telegraph noise on a charge sensing
+                                            model. The model is based on a simple telegraph noise model where the noise
+                                            can switch between two states with
+                                            different probabilities. The model has three parameters:</p>
+                                        <ul class="simple">
+                                            <li><p>amplitude: The amplitude of the noise. As the noise perturbs the
+                                                potential of the dots in the charge sensor, this is in volts.</p></li>
+                                            <li><p>p01: The probability that the noise switches from 0 to 1 per
+                                                pixel</p></li>
+                                            <li><p>p10: The probability that the noise switches from 1 to 0 per
+                                                pixel</p></li>
+                                        </ul>
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.TelegraphNoise.TelegraphNoise.amplitude">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">amplitude</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">float</span></em><a
+                                                    class="headerlink"
+                                                    href="#qarray.noise_models.TelegraphNoise.TelegraphNoise.amplitude"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.TelegraphNoise.TelegraphNoise.p01">
+                                                <span class="sig-name descname"><span class="pre">p01</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">float</span></em><a class="headerlink"
+                                                                                    href="#qarray.noise_models.TelegraphNoise.TelegraphNoise.p01"
+                                                                                    title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.TelegraphNoise.TelegraphNoise.p10">
+                                                <span class="sig-name descname"><span class="pre">p10</span></span><em
+                                                    class="property"><span class="p"><span
+                                                    class="pre">:</span></span><span class="w"> </span><span
+                                                    class="pre">float</span></em><a class="headerlink"
+                                                                                    href="#qarray.noise_models.TelegraphNoise.TelegraphNoise.p10"
+                                                                                    title="Link to this definition"></a>
+                                            </dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.TelegraphNoise.TelegraphNoise.sample_input_noise">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">sample_input_noise</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">shape</span></span></em><span
+                                                    class="sig-paren">)</span><a class="headerlink"
+                                                                                 href="#qarray.noise_models.TelegraphNoise.TelegraphNoise.sample_input_noise"
+                                                                                 title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Sample input noise from the telegraph noise model. This noise
+                                                perturbs the potential of the dots in the charge sensor,
+                                                before those potentials are used in the Lorentzian function to calculate
+                                                the charge sensor output.</p>
+                                            </dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                            </section>
+                            <section id="module-qarray.noise_models.WhiteNoise">
+                                <span id="qarray-noise-models-whitenoise-module"></span>
+                                <h2>qarray.noise_models.WhiteNoise module<a class="headerlink"
+                                                                            href="#module-qarray.noise_models.WhiteNoise"
+                                                                            title="Link to this heading"></a></h2>
+                                <p>A telegraph noise model that can be added to a charge sensing model to simulate the
+                                    effect of telegraph noise.</p>
+                                <dl class="py class">
+                                    <dt class="sig sig-object py" id="qarray.noise_models.WhiteNoise.WhiteNoise">
+                                        <em class="property"><span class="pre">class</span><span class="w"> </span></em><span
+                                            class="sig-prename descclassname"><span class="pre">qarray.noise_models.WhiteNoise.</span></span><span
+                                            class="sig-name descname"><span class="pre">WhiteNoise</span></span><span
+                                            class="sig-paren">(</span><em class="sig-param"><span class="n"><span
+                                            class="pre">amplitude</span></span><span class="p"><span
+                                            class="pre">:</span></span><span class="w"> </span><span class="n"><span
+                                            class="pre">float</span></span></em><span class="sig-paren">)</span><a
+                                            class="headerlink" href="#qarray.noise_models.WhiteNoise.WhiteNoise"
+                                            title="Link to this definition"></a></dt>
+                                    <dd><p>Bases: <a class="reference internal"
+                                                     href="#qarray.noise_models.BaseNoiseModel.BaseNoiseModel"
+                                                     title="qarray.noise_models.BaseNoiseModel.BaseNoiseModel"><code
+                                            class="xref py py-class docutils literal notranslate"><span class="pre">BaseNoiseModel</span></code></a>
+                                    </p>
+                                        <p>A white noise model that can be added to a charge sensing model to simulate
+                                            the effect of white noise.
+                                            - amplitude: The amplitude of the noise. As the noise perturbs the charge
+                                            sensor output, this is in volts.</p>
+                                        <dl class="py attribute">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.WhiteNoise.WhiteNoise.amplitude">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">amplitude</span></span><em class="property"><span
+                                                    class="p"><span class="pre">:</span></span><span
+                                                    class="w"> </span><span class="pre">float</span></em><a
+                                                    class="headerlink"
+                                                    href="#qarray.noise_models.WhiteNoise.WhiteNoise.amplitude"
+                                                    title="Link to this definition"></a></dt>
+                                            <dd></dd>
+                                        </dl>
+
+                                        <dl class="py method">
+                                            <dt class="sig sig-object py"
+                                                id="qarray.noise_models.WhiteNoise.WhiteNoise.sample_output_noise">
+                                                <span class="sig-name descname"><span
+                                                        class="pre">sample_output_noise</span></span><span
+                                                    class="sig-paren">(</span><em class="sig-param"><span
+                                                    class="n"><span class="pre">shape</span></span></em><span
+                                                    class="sig-paren">)</span><a class="headerlink"
+                                                                                 href="#qarray.noise_models.WhiteNoise.WhiteNoise.sample_output_noise"
+                                                                                 title="Link to this definition"></a>
+                                            </dt>
+                                            <dd><p>Sample output noise from the white noise model. This noise perturbs
+                                                the charge sensor output.</p>
+                                            </dd>
+                                        </dl>
+
+                                    </dd>
+                                </dl>
+
+                            </section>
+                            <section id="module-qarray.noise_models">
+                                <span id="module-contents"></span>
+                                <h2>Module contents<a class="headerlink" href="#module-qarray.noise_models"
+                                                      title="Link to this heading"></a></h2>
+                            </section>
+                        </section>
+
+
+                    </div>
+                </div>
+                <footer>
+
+                    <hr/>
+
+                    <div role="contentinfo">
+                        <p>&#169; Copyright .</p>
+                    </div>
+
+                    Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+                    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+                    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+
+
+                </footer>
+            </div>
+        </div>
+    </section>
+</div>
+<script>
+    jQuery(function () {
+        SphinxRtdTheme.Navigation.enable(true);
+    });
+</script>
+
+</body>
+</html>
