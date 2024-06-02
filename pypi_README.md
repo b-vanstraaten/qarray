@@ -2,10 +2,10 @@
 # QArray
 
 ![PyPI](https://img.shields.io/pypi/v/qarray)
+[![arXiv](https://img.shields.io/badge/arXiv-2404.04994-Green.svg)](https://arxiv.org/abs/2404.04994)
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/windows_tests.yaml//badge.svg)
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/macos_tests.yaml//badge.svg)
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/linux_tests.yaml//badge.svg)
-[![arXiv](https://img.shields.io/badge/arXiv-2404.04994-Green.svg)](https://arxiv.org/abs/2404.04994)
 
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA
 to deliver constant capacitance model charge stability diagrams in seconds or milliseconds. It couples
