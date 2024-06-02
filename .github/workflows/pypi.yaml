@@ -29,3 +29,11 @@ jobs:
                 uses: AsifArmanRahman/to-pypi-using-flit@v1
                 with:
                     password: ${{ secrets.PYPI_API_TOKEN }}
+
+
+    no-op:
+        if: "!contains(github.event.head_commit.message, 'pypi')"
+        runs-on: ubuntu-latest
+        steps:
+            -   name: No operation
+                run: echo "Do not need to publish to PyPI"

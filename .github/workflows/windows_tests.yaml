@@ -27,3 +27,10 @@ jobs:
 
             -   name: Run unit tests
                 run: python -m unittest discover -s ./tests -t .
+
+    no-op:
+        if: "!contains(github.event.head_commit.message, 'test')"
+        runs-on: ubuntu-latest
+        steps:
+            -   name: No operation
+                run: echo "No tests to run"
