@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Getting Started &mdash; Qarray 1.1.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script src="_static/documentation_options.js?v=58fbf978"></script>
+        <script src="_static/doctools.js?v=9a2dae69"></script>
+        <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Installation" href="installation.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            Qarray
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#simulating-charge-stability-diagrams">Simulating charge stability diagrams</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#simulating-charge-sensing-measurements">Simulating charge sensing measurements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Qarray</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Getting Started</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/getting_started.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Link to this heading"></a></h1>
+<p><img alt="structure" src="_images/structure.png" /></p>
+<section id="simulating-charge-stability-diagrams">
+<h2>Simulating charge stability diagrams<a class="headerlink" href="#simulating-charge-stability-diagrams" title="Link to this heading"></a></h2>
+<p>To get started with QArray all you need is two classes: The <cite>DotArray</cite> and the <cite>GateVoltageComposer</cite> class.</p>
+<ul class="simple">
+<li><p>The <cite>DotArray</cite> class. This class stores the capacitance matrices, and provides the functionality to calculate the lowest energy charge configuration of the quantum dot system given a set of gate voltages.</p></li>
+<li><p>The <cite>GateVoltageComposer</cite> class generates the arrays of gate voltages necessary to perform 1D, 2D or higher scans of the quantum dot system. It also can be passed a virtual gate matrix, so that it can perform 1D, 2D or higher virtual gate scans of the quantum dot system.</p></li>
+</ul>
+<p>Here we will outlining how to use QArray to produce the stability diagram of a double quantum dot.</p>
+<p>Firstly, we import the DotArray and GateComposer classes as follows,</p>
+<p>Certainly! It looks like you’re trying to format a code block with reStructuredText (reST) syntax. Here’s the corrected version:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">qarray</span> <span class="kn">import</span> <span class="n">DotArray</span><span class="p">,</span> <span class="n">GateVoltageComposer</span>
+</pre></div>
+</div>
+<p>Upon initialising the DotArray class, we specify the system’s capacitance matrices.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">DotArray</span><span class="p">(</span>
+    <span class="n">Cdd</span> <span class="o">=</span><span class="p">[</span>
+        <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">]</span> <span class="p">],</span>
+    <span class="n">Cgd</span> <span class="o">=</span><span class="p">[</span>
+        <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">],</span>
+        <span class="p">[</span><span class="mf">0.2</span><span class="p">,</span> <span class="mi">1</span><span class="p">]],</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Where Cdd encodes the capacitive couplings between dots.
+While Cgd encodes the capacitive couplings between the dots and the gates.
+These capacitance matrices can also be passed in their Maxwell format, using the keywords argument <cite>cdd</cite> and <cite>cgd</cite>.</p>
+<p>Next we initialise the GateVoltageComposer class, which will generate the gate voltage arrays necessary
+to perform a scan of the quantum dot system.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># initialising the gate voltage composer class which is designed to make it easy to create gate voltage arrays for nd sweeps</span>
+<span class="n">voltage_composer</span> <span class="o">=</span> <span class="n">GateVoltageComposer</span><span class="p">(</span><span class="n">n_gates</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">n_gates</span><span class="p">))</span>
+
+<span class="c1"># using the dot voltage composer to create the dot voltage array for the 2d sweep</span>
+<span class="n">vg</span> <span class="o">=</span> <span class="n">voltage_composer</span><span class="o">.</span><span class="n">do2d</span><span class="p">(</span>
+    <span class="n">x_gate</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">x_max</span> <span class="o">=</span> <span class="mi">5</span> <span class="p">,</span> <span class="n">x_res</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
+    <span class="n">y_gate</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">y_min</span> <span class="o">=</span> <span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">y_max</span> <span class="o">=</span> <span class="mi">5</span> <span class="p">,</span> <span class="n">y_res</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Now that we have the gate voltage arrays, we can calculate the charge configuration of the quantum dot system for each gate voltages. We can do this
+for an open dot array (where the array is able freely exchange charge carriers with the reservoir) or a closed dot array (where the number of charge carriers is fixed).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># run the simulation with the quantum dot array open such that the number of charge carriers is not fixed</span>
+<span class="n">n_open</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">ground_state_open</span><span class="p">(</span><span class="n">vg</span><span class="p">)</span>  <span class="c1"># n_open is a (100, 100, 2) array encoding the</span>
+<span class="c1"># number of charge carriers in each dot for each gate voltage</span>
+<span class="c1"># run the simulation with the quantum dot array closed such that the number of charge carriers is fixed to 2</span>
+<span class="n">n_closed</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">ground_state_closed</span><span class="p">(</span><span class="n">vg</span><span class="p">,</span> <span class="n">n_charges</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>  <span class="c1"># n_closed is a (100, 100, 2) array encoding the</span>
+<span class="c1"># number of charge carriers in each dot for each gate voltage</span>
+
+
+<span class="n">charge_state_contrast_array</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]</span>
+
+<span class="c1"># creating arrays that encode when the dot occupation changes</span>
+<span class="n">z_open</span> <span class="o">=</span> <span class="n">charge_state_contrast</span><span class="p">(</span><span class="n">n_open</span><span class="p">,</span> <span class="n">charge_state_contrast_array</span><span class="p">)</span>
+<span class="n">z_closed</span> <span class="o">=</span> <span class="n">charge_state_contrast</span><span class="p">(</span><span class="n">n_closed</span><span class="p">,</span> <span class="n">charge_state_contrast_array</span><span class="p">)</span>
+
+<span class="c1"># plot the results</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">z_open</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="n">vx_min</span><span class="p">,</span> <span class="n">vx_max</span><span class="p">,</span> <span class="n">vy_min</span><span class="p">,</span> <span class="n">vy_max</span><span class="p">),</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Open Dot Array&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Vx&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Vy&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">z_closed</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">extent</span><span class="o">=</span><span class="p">(</span><span class="n">vx_min</span><span class="p">,</span> <span class="n">vx_max</span><span class="p">,</span> <span class="n">vy_min</span><span class="p">,</span> <span class="n">vy_max</span><span class="p">),</span> <span class="n">origin</span><span class="o">=</span><span class="s1">&#39;lower&#39;</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;binary&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Closed Dot Array&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Vx&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Vy&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The output of the above code is shown below:
+<img alt="getting_started_example" src="figures/getting_started_example.pdf" /></p>
+<p>The <cite>DotArray</cite> has additional arguments, that we left at their default values.</p>
+<ul class="simple">
+<li><p><cite>algorithm</cite> : str : The algorithm used to calculate the ground state of the quantum dot system. The Default is ‘default’, with the alternatives being ‘brute_force’ and ‘thresholded’.</p></li>
+<li><p><cite>implementation</cite> : str : The implementation used to calculate the ground state of the quantum dot system. The default is ‘rust’, with the alternatives being ‘python’ and ‘jax’ for GPU acceleration.</p></li>
+<li><p><cite>T</cite> : float : The temperature of the system in Kelvin to simulate thermal broadening. The default is 0.</p></li>
+<li><p><cite>charge_carrier</cite>: str : The charge carrier used in the simulation. The default is ‘hole’, with the alternative being ‘electron’.</p></li>
+<li><p><cite>threshold</cite> : float : The threshold used in the thresholded algorithm</p></li>
+<li><p><cite>max_charge_carriers</cite>: int : The maximum number of charge carriers that can be on a dot, when using the brute_force algorithm.</p></li>
+</ul>
+</section>
+<section id="simulating-charge-sensing-measurements">
+<h2>Simulating charge sensing measurements<a class="headerlink" href="#simulating-charge-sensing-measurements" title="Link to this heading"></a></h2>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="examples.html" class="btn btn-neutral float-right" title="Examples" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
