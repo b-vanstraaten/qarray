@@ -9,7 +9,6 @@ Qarray documentation
    installation
    getting_started
 
-   modules
    api
 
 Indices and tables

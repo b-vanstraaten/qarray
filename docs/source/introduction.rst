@@ -3,7 +3,10 @@ Introduction
 ##############
 
 
-|PyPI| |GitHub Workflow Status| |image1| |image2|
+|PyPI| |arXiv| |GitHub Workflow Status| |image1| |image2|
+
+`QArray: a GPU-accelerated constant capacitance model simulator for large quantum dot arrays; Barnaby van Straaten, Joseph Hickie, Lucas Schorling, Jonas Schuff, Federico Fedele, Natalia Ares; <https://arxiv.org/abs/2404.04994>`__
+
 
 .. raw:: html
 
@@ -14,6 +17,7 @@ Introduction
    </p>
 
 |capacitance_model|
+
 
 **QArray** harnesses the speed of the systems programming language Rust
 or the compute power of GPUs using JAX XLA to deliver constant
@@ -45,6 +49,7 @@ and (d) is simulated using QArray.
 
 |recreations|
 
+.. |arXiv| image:: https://img.shields.io/badge/arXiv-2404.04994-Green.svg
 .. |PyPI| image:: https://img.shields.io/pypi/v/qarray
 .. |GitHub Workflow Status| image:: https://github.com/b-vanstraaten/qarray/actions/workflows/windows_tests.yaml//badge.svg
 .. |image1| image:: https://github.com/b-vanstraaten/qarray/actions/workflows/macos_tests.yaml//badge.svg

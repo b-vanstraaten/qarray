@@ -1,16 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import DotArray, GateVoltageComposer, charge_state_contrast
+from qarray import DotArray, GateVoltageComposer
 
 # Create a quantum dot with 2 gates, specifying the capacitance matrices in their maxwell form.
 
 model = DotArray(
-    cdd=np.array([
-        [1.2, -0.1],
-        [-0.1, 1.2]
+    Cdd=np.array([
+        [0, 0.1],
+        [0.1, 0]
     ]),
-    cgd=np.array([
+    Cgd=np.array([
         [1., 0.1],
         [0.1, 1]
     ]),
@@ -36,6 +36,8 @@ n_open = model.ground_state_open(vg)  # n_open is a (100, 100, 2) array encoding
 n_closed = model.ground_state_closed(vg, n_charges=2)  # n_closed is a (100, 100, 2) array encoding the
 # number of charge carriers in each dot for each gate voltage
 
+# importing a function which dots the charge occupation with the charge state contrast to yield a z value for plotting by imshow.
+from qarray import charge_state_contrast
 
 charge_state_contrast_array = [0.8, 1.2]
 
@@ -54,3 +56,4 @@ ax[1].set_title('Closed Dot Array')
 ax[1].set_xlabel('Vx')
 ax[1].set_ylabel('Vy')
 plt.tight_layout()
+plt.savefig('../docs/source/getting_started_example.pdf')
