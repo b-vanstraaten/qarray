@@ -1,5 +1,6 @@
 Qarray documentation
 ==================================
+
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
@@ -9,7 +10,7 @@ Qarray documentation
    getting_started
 
    modules
-
+   api
 
 Indices and tables
 ==================
