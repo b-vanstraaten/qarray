@@ -155,3 +155,13 @@ class DotArray(BaseDataClass):
         :return: (..., n_dot) array of the number of charges to compute the ground state for
         """
         return _ground_state_closed(self, vg, n_charges)
+
+    def free_energy(self, n, vg):
+        """
+        Computes the free energy of the change configurations
+        """
+        n_cont_min = np.einsum('ij, ...i', self.cgd, vg)
+        delta = n[np.newaxis, np.newaxis, :] - n_cont_min[..., np.newaxis, :]
+        # computing the free energy of the change configurations
+        F = np.einsum('...i, ij, ...j', delta, self.cdd_inv, delta)
+        return F

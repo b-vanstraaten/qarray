@@ -105,6 +105,6 @@ The `DotArray` has additional arguments, that we left at their default values.
 Simulating charge sensing measurements
 +++++++++
 
-.. |getting_started_example| image:: ./figures/getting_started_example.pdf
+.. |getting_started_example| image:: ./figures/getting_started_example.jpg
 
 .. |structure| image:: ./figures/structure.png

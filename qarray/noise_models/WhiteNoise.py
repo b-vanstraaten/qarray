@@ -1,5 +1,5 @@
 """
-A telegraph noise model that can be added to a charge sensing model to simulate the effect of telegraph noise.
+A noise model that can be added to a charge sensing model to simulate the effect of white noise.
 """
 
 import numpy as np

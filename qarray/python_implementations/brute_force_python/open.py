@@ -4,7 +4,7 @@ This module contains the functions for computing the ground state of an open arr
 
 from functools import partial
 
-import numpy as jnp
+import numpy as np
 from pydantic.types import PositiveInt
 
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
@@ -29,8 +29,8 @@ def ground_state_open_brute_force_python(vg: VectorList, cgd: Cgd_holes, cdd_inv
     return VectorList(list(map(f, vg)))
 
 
-def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray, n_list: VectorList,
-                          T: float) -> jnp.ndarray:
+def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, n_list: VectorList,
+                          T: float) -> np.ndarray:
     """
     Computes the ground state for an open array.
     :param vg: the dot voltage coordinate vector
@@ -40,7 +40,7 @@ def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarra
     """
     v_dash = cgd @ vg
     # computing the free energy of the change configurations
-    F = jnp.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
+    F = np.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
     # returning the lowest energy change configuration
     match T > 0.:
         case True:
