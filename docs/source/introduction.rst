@@ -55,6 +55,8 @@ and (d) is simulated using QArray.
 .. |image1| image:: https://github.com/b-vanstraaten/qarray/actions/workflows/macos_tests.yaml//badge.svg
 .. |image2| image:: https://github.com/b-vanstraaten/qarray/actions/workflows/linux_tests.yaml//badge.svg
 .. |recreations| image:: ./figures/recreations.png
+    :width: 500
+    :class: center
 .. |structure| image:: ./figures/structure.png
 .. |capacitance_model| image:: ./figures/capacitance_model.png
 

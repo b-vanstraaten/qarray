@@ -53,6 +53,7 @@ install.
 .. code:: zsh
 
    conda create -n qarray python=3.10
+   conda activate qarray
    conda install pip
 
 5. Install qarray using pip

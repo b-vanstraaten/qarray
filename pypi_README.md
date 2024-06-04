@@ -138,6 +138,7 @@ brew install cmake
 
 ```zsh
 conda create -n qarray python=3.11
+conda activate qarray
 conda install pip
 ```
 
