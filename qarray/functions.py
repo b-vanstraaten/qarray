@@ -37,6 +37,26 @@ def _batched_vmap(f: Callable, Vg: VectorList, n_dot: int, batch_size: int) -> V
             return VectorList(f(Vg))
 
 
+def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
+    """
+    Function which computes the dot product between the dot change state and the
+    values in "values", thereby assigning a scalar value to each charge state.
+
+    :param n: the dot occupation vector of shape (..., n_dot)
+    :param values: the values to assign to each charge state of shape (n_dot)
+
+    :return: the dot product between the dot change state and the values in "values" of shape (...)
+    """
+
+    if not isinstance(n, Tetrad):
+        n = Tetrad(n)
+
+    if not isinstance(values, Vector):
+        values = Vector(values)
+
+    values = values[np.newaxis, np.newaxis, :]
+    return (n * values).sum(axis=-1)
+
 def lorentzian(x, x0, gamma):
     """
     Function to compute the lorentzian function.
