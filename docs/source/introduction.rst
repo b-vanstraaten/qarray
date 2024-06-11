@@ -53,6 +53,12 @@ and (d) is simulated using QArray.
 .. |structure| image:: ./figures/structure.png
 .. |capacitance_model| image:: ./figures/capacitance_model.png
 
++++++++++
+Authors
++++++++++
+Barnaby van Straaten
+Joseph Hickie
+
 
 [1] `M. R. Delbecq, T. Nakajima, T. Otsuka, S. Amaha, J. D. Watson, M. J. Manfra, S. Tarucha; Full control of quadruple quantum dot circuit charge states in the single electron regime. Appl. Phys. Lett. 5 May 2014; 104 (18): 183111. https://doi.org/10.1063/1.4875909 <https://pubs.aip.org/aip/apl/article/104/18/183111/24127/Full-control-of-quadruple-quantum-dot-circuit>`__
 
