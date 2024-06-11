@@ -107,5 +107,4 @@ fig.set_size_inches(4, 4)
 plt.imshow(v_gradient, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='RdYlBu', alpha=0.8,
            interpolation='None')
 plt.colorbar()
-plt.savefig('5_dots.pdf', bbox_inches='tight')
 plt.show()

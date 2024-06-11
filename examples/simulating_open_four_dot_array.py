@@ -66,4 +66,4 @@ z = (z - z.min()) / (z.max() - z.min())
 fig, ax = plt.subplots()
 ax.imshow(z.T, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', interpolation='None',
           aspect='equal', cmap='YlGnBu')
-plt.savefig('quadruple_dot.pdf', bbox_inches='tight')
+plt.show()
