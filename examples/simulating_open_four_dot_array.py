@@ -22,11 +22,11 @@ cgd = np.array([
 model = DotArray(
     cdd=cdd,
     cgd=cgd,
-    algorithm='default',
+    algorithm='thresholded',
     implementation='rust',
     charge_carrier='electron',
     T=150,
-    threshold=1.
+    threshold=0.1
 )
 model.max_charge_carriers = 2
 

@@ -27,13 +27,14 @@ cgd_non_maxwell = [
 model = DotArray(
     Cdd=cdd_non_maxwell,
     Cgd=cgd_non_maxwell,
-    algorithm='default',
+    algorithm='thresholded',
     implementation='rust',
     charge_carrier='h',
+    threshold=1.,
     T=0.00,
 )
 
-print(np.linalg.cond(model.cdd_inv))
+print(np.linalg.cond(model.cdd))
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
@@ -52,7 +53,7 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 3, vy_min, vy_max, 1000)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 3, vy_min, vy_max, 200)
 
 
 # creating the figure and axes

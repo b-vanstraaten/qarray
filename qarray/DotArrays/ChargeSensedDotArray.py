@@ -3,20 +3,21 @@ A class that represents a charge sensed dot array. The class has methods to comp
 and the charge sensor output for both open and closed dot arrays.
 """
 
+from dataclasses import dataclass
+
 import numpy as np
 from pydantic import NonNegativeInt
-from pydantic.dataclasses import dataclass
 
-from .BaseDataClass import BaseDataClass
 from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation
 from ..functions import _optimal_Vg, _convert_to_maxwell_with_sensor, lorentzian
 from ..latching_models import LatchingBaseModel
 from ..noise_models import BaseNoiseModel
-from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector
+from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector, \
+    PositiveValuedMatrix
 
 
-@dataclass(config=dict(arbitrary_types_allowed=True))
-class ChargeSensedDotArray(BaseDataClass):
+@dataclass
+class ChargeSensedDotArray:
     """
     A class that represents a charge sensed dot array. The class has methods to compute the ground state of the dot array
     and the charge sensor output for both open and closed dot arrays.
@@ -64,6 +65,16 @@ class ChargeSensedDotArray(BaseDataClass):
     latching_model: LatchingBaseModel | None = None
 
     def __post_init__(self):
+
+        # converting to the non-maxwellian capacitance matrices to their respective type. This
+        # is done to ensure that the capacitance matrices are of the correct type and the values are correct. Aka
+        # the capacitance matrices are positive and the diagonal elements are zero.
+        self.Cdd = PositiveValuedMatrix(self.Cdd)
+        self.Cgd = PositiveValuedMatrix(self.Cgd)
+        self.Cds = PositiveValuedMatrix(self.Cds)
+        self.Cgs = PositiveValuedMatrix(self.Cgs)
+
+
         self.n_dot = self.Cdd.shape[0]
         self.n_sensor = self.Cds.shape[0]
         self.n_gate = self.Cgd.shape[1]

@@ -2,13 +2,14 @@
 A telegraph noise model that can be added to a charge sensing model to simulate the effect of telegraph noise.
 """
 
+from dataclasses import dataclass
+
 import numpy as np
-from pydantic.dataclasses import dataclass
 
 from .BaseNoiseModel import BaseNoiseModel
 
 
-@dataclass(config=dict(arbitrary_types_allowed=True, auto_attribs_default=True))
+@dataclass
 class TelegraphNoise(BaseNoiseModel):
     """
     A telegraph noise model that can be added to a charge sensing model to simulate the effect of telegraph noise.

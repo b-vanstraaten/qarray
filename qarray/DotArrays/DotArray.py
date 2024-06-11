@@ -1,21 +1,15 @@
-from typing import TYPE_CHECKING
+from dataclasses import dataclass
 
 import numpy as np
 from pydantic import NonNegativeInt
 
-from .BaseDataClass import BaseDataClass
 from ._helper_functions import (_ground_state_open, _ground_state_closed, check_algorithm_and_implementation)
-from ..functions import convert_to_maxwell, _optimal_Vg
+from ..functions import convert_to_maxwell, _optimal_Vg, compute_threshold
+from ..latching_models import LatchingBaseModel
 from ..qarray_types import Cdd as CddType  # to avoid name clash with dataclass cdd
 from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix, \
     NegativeValuedMatrix
 
-if TYPE_CHECKING:
-    from dataclasses import dataclass
-else:
-    from pydantic.dataclasses import dataclass
-
-from ..latching_models import LatchingBaseModel
 
 def both_none(a, b):
     return a is None and b is None
@@ -33,8 +27,8 @@ def all_positive_or_negative(a):
     return all_positive(a) or all_negative(a)
 
 
-@dataclass(config=dict(arbitrary_types_allowed=True, auto_attribs_default=True))
-class DotArray(BaseDataClass):
+@dataclass
+class DotArray:
 
     """
     A class to represent a quantum dot array. The class is initialized with the following parameters:
@@ -87,7 +81,12 @@ class DotArray(BaseDataClass):
 
         # if the non maxwell pair is passed, convert it to maxwell
         if non_maxwell_pair_passed:
+            self.Cdd = PositiveValuedMatrix(self.Cdd)
+            self.Cgd = PositiveValuedMatrix(self.Cgd)
             self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.Cdd, self.Cgd)
+        else:
+            self.cdd = np.array(self.cdd)
+            self.cgd = np.array(self.cgd)
 
         # setting the cdd_inv attribute as the inverse of cdd
         self.cdd_inv = np.linalg.inv(self.cdd)
@@ -165,3 +164,11 @@ class DotArray(BaseDataClass):
         # computing the free energy of the change configurations
         F = np.einsum('...i, ij, ...j', delta, self.cdd_inv, delta)
         return F
+
+    def check_threshold(self):
+        """
+        Computes the threshold for the thresholded algorithm
+        """
+        optimal_threshold = compute_threshold(self.cdd)
+        if self.threshold < optimal_threshold:
+            print(f'The threshold is below the optimal threshold of {optimal_threshold}.')

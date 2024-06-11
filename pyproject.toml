@@ -40,7 +40,6 @@ dependencies = [
     'qarray-rust-core==1.2.3',
     'osqp==0.6.3',
     'numpy>=1.26',
-    'pydantic>=2.3',
     'scipy>=1.11',
     'matplotlib>=3.8',
     'loguru>=0.5',

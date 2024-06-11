@@ -1,19 +1,15 @@
 import builtins
 from collections.abc import Iterable
-from typing import TYPE_CHECKING, List
+from dataclasses import dataclass
+from typing import List
 
 import numpy as np
 
-from .BaseDataClass import BaseDataClass
 from ..qarray_types import Vector
 
-if TYPE_CHECKING:
-    from dataclasses import dataclass
-else:
-    from pydantic.dataclasses import dataclass
 
-@dataclass(config=dict(arbitrary_types_allowed=True))
-class GateVoltageComposer(BaseDataClass):
+@dataclass
+class GateVoltageComposer:
     """
     This class is used to compose dot voltages for the dot array.
     """

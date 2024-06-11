@@ -2,13 +2,14 @@
 A noise model that can be added to a charge sensing model to simulate the effect of white noise.
 """
 
+from dataclasses import dataclass
+
 import numpy as np
-from pydantic.dataclasses import dataclass
 
 from .BaseNoiseModel import BaseNoiseModel
 
 
-@dataclass(config=dict(arbitrary_types_allowed=True, auto_attribs_default=True))
+@dataclass
 class WhiteNoise(BaseNoiseModel):
     """
     A white noise model that can be added to a charge sensing model to simulate the effect of white noise.

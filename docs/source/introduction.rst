@@ -10,9 +10,6 @@ Introduction
 |capacitance_model|
 
 
-
-
-
 **QArray** harnesses the speed of the systems programming language Rust
 or the compute power of GPUs using JAX XLA to deliver constant
 capacitance model charge stability diagrams in seconds or milliseconds.
