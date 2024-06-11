@@ -9,7 +9,7 @@ from pydantic.dataclasses import dataclass
 
 from .BaseDataClass import BaseDataClass
 from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation
-from ..functions import optimal_Vg, convert_to_maxwell_with_sensor, lorentzian
+from ..functions import _optimal_Vg, _convert_to_maxwell_with_sensor, lorentzian
 from ..latching_models import LatchingBaseModel
 from ..noise_models import BaseNoiseModel
 from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector
@@ -69,11 +69,10 @@ class ChargeSensedDotArray(BaseDataClass):
         self.n_gate = self.Cgd.shape[1]
         self._assert_shape()
 
-
-        self.cdd_full, self.cdd_inv_full, self.cgd_full = convert_to_maxwell_with_sensor(self.Cdd,
-                                                                                         self.Cgd,
-                                                                                         self.Cds,
-                                                                                         self.Cgs)
+        self.cdd_full, self.cdd_inv_full, self.cgd_full = _convert_to_maxwell_with_sensor(self.Cdd,
+                                                                                          self.Cgd,
+                                                                                          self.Cds,
+                                                                                          self.Cgs)
         self.cdd = self.cdd_full[:self.n_dot, :self.n_dot]
         self.cdd_inv = self.cdd_inv_full[:self.n_dot, :self.n_dot]
         self.cgd = self.cgd_full[:self.n_dot, :]
@@ -107,7 +106,7 @@ class ChargeSensedDotArray(BaseDataClass):
         n_charges = Vector(n_charges)
         assert n_charges.shape == (
         self.n_dot + self.n_sensor,), 'The n_charge vector must be of shape (n_dot + n_sensor)'
-        return optimal_Vg(cdd_inv=self.cdd_inv_full, cgd=self.cgd_full, n_charges=n_charges, rcond=rcond)
+        return _optimal_Vg(cdd_inv=self.cdd_inv_full, cgd=self.cgd_full, n_charges=n_charges, rcond=rcond)
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
         """

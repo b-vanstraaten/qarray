@@ -11,36 +11,7 @@ from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, CddNonMaxwell, Cg
                            NegativeValuedMatrix, Vector)
 
 
-def unique_last_axis(arr):
-    """
-    Find unique arrays in the last axis of a numpy ndarray.
-
-    Parameters:
-    arr (np.ndarray): Input array.
-
-    Returns:
-    np.ndarray: Array of unique arrays in the last axis.
-    indices (np.ndarray): Indices of the first occurrences of the unique arrays.
-    inverse_indices (np.ndarray): Indices to reconstruct the original array from the unique array.
-    """
-    # Ensure input is a numpy array
-    arr = np.asarray(arr)
-
-    # Get the shape of the input array
-    original_shape = arr.shape
-
-    # Reshape the array to 2D where each element along the last axis becomes a row
-    reshaped_arr = arr.reshape(-1, original_shape[-1])
-
-    # Use np.unique to find unique rows and their indices
-    unique_rows, indices, inverse_indices = np.unique(reshaped_arr, axis=0, return_index=True, return_inverse=True)
-
-    # Reshape unique rows back to the original last axis shape
-    unique_arrays = unique_rows.reshape(-1, *original_shape[-1:])
-
-    return unique_arrays
-
-def batched_vmap(f: Callable, Vg: VectorList, n_dot: int, batch_size: int) -> VectorList:
+def _batched_vmap(f: Callable, Vg: VectorList, n_dot: int, batch_size: int) -> VectorList:
     assert batch_size > 1, 'Batch size must be greater than one'
     vg_size = Vg.shape[0]
     n_gate = Vg.shape[1]
@@ -67,15 +38,27 @@ def batched_vmap(f: Callable, Vg: VectorList, n_dot: int, batch_size: int) -> Ve
 
 
 def lorentzian(x, x0, gamma):
+    """
+    Function to compute the lorentzian function.
+
+    :param x: the x values
+    :param x0: the peak position
+    :param gamma: the width of the peak
+
+    :return: the lorentzian function
+    """
     return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
 
 
 def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
     """
-    Function to compute the charge state contrast
-    :param n: the dot occupation vector
-    :param n_charges: the charge state vector
-    :return:
+    Function which computes the dot product between the dot change state and the
+    values in "values", thereby assigning a scalar value to each charge state.
+
+    :param n: the dot occupation vector of shape (..., n_dot)
+    :param values: the values to assign to each charge state of shape (n_dot)
+
+    :return: the dot product between the dot change state and the values in "values" of shape (...)
     """
     if not isinstance(n, Tetrad):
         n = Tetrad(n)
@@ -89,10 +72,13 @@ def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -
 def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     """
     This function is used to compute the number of dot occupation changes.
-    :param n: the dot occupation vector
-    :param threshold: the threshold to use for the ground state calculation
-    :return: the number of dot occupation changes
+
+    :param n: the dot occupation rank 3 tensor of shape (res_y, res_x, n_dot)
+
+    :return: the number of dot occupation changes (rank 2 tensor of shape (res_y - 1, res_x - 1))
     """
+
+    # ensure n is of rank three
     if not isinstance(n, Tetrad):
         n = Tetrad(n)
 
@@ -101,21 +87,14 @@ def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     return np.logical_or(change_in_x, change_in_y)
 
 
-def dot_gradient(n: Tetrad | np.ndarray) -> VectorList:
-    if not isinstance(n, Tetrad):
-        n = Tetrad(n)
-
-    grad_x = np.abs(n[1:, :-1, ] - n[:-1, :-1, :])
-    grad_y = np.abs(n[:-1, 1:, :] - n[:-1, :-1, :])
-    return (grad_x + grad_y).max(axis=(-1))
-
-def optimal_Vg(cdd_inv: CddInv, cgd: Cgd_holes, n_charges: VectorList, rcond: float = 1e-3):
+def _optimal_Vg(cdd_inv: CddInv, cgd: Cgd_holes, n_charges: VectorList, rcond: float = 1e-3):
     '''
-    calculate voltage that minimises charge state energy
-    check influence of rcond!
-    :param cdd_inv:
-    :param cgd:
-    :param n_charges:
+    calculate voltage that minimises charge state's energy
+
+
+    :param cdd_inv: the inverse of the dot to dot capacitance matrix
+    :param cgd: the dot to gate capacitance matrix
+    :param n_charges: the charge state of the dots of shape (n_dot)
     :return:
     '''
     R = np.linalg.cholesky(cdd_inv).T
@@ -123,8 +102,8 @@ def optimal_Vg(cdd_inv: CddInv, cgd: Cgd_holes, n_charges: VectorList, rcond: fl
     return np.einsum('ij, ...j', M, n_charges)
 
 
-def convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell,
-                                   cds_non_maxwell: CddNonMaxwell, cgs_non_maxwell: CgdNonMaxwell):
+def _convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell,
+                                    cds_non_maxwell: CddNonMaxwell, cgs_non_maxwell: CgdNonMaxwell):
     """
     Function to convert the non Maxwell capacitance matrices to their maxwell form, with the addition of a sensor
     :param cdd_non_maxwell: the non maxwell capturing the capacitive coupling between dots

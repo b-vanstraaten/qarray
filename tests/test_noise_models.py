@@ -52,6 +52,7 @@ class NoiseModelTests(unittest.TestCase):
         noise_models = [
             WhiteNoise(amplitude=1e-3),
             TelegraphNoise(amplitude=1e-2, p01=1e-3, p10=1e-2),
+            WhiteNoise(amplitude=1e-3) + TelegraphNoise(amplitude=1e-2, p01=1e-3, p10=1e-2),
         ]
 
         for noise_model1, noise_model2 in itertools.combinations(noise_models, 2):
@@ -70,3 +71,4 @@ class NoiseModelTests(unittest.TestCase):
 
             z, n = model.charge_sensor_open(vg)
             z, n = model.charge_sensor_closed(vg, 2)
+

@@ -38,9 +38,9 @@ class LatchingModel(LatchingBaseModel):
 
         n_rounded = np.round(n).astype(int)
 
-        assert np.all(np.isclose(n, n_rounded, atol=1e-6)), ('The dot occupation vector must be integer valued.'
-                                                             'They do not appear to be here. Are you using T>0?. '
-                                                             'If so latching is not compatible thermal broadening.')
+        # assert np.all(np.isclose(n, n_rounded, atol=1e-6)), ('The dot occupation vector must be integer valued.'
+        #                                                      'They do not appear to be here. Are you using T>0?. '
+        #                                                      'If so latching is not compatible thermal broadening.')
         n_latched = n_rounded.copy()
 
         for i in range(1, n_latched.shape[0]):
@@ -49,7 +49,6 @@ class LatchingModel(LatchingBaseModel):
             elements_differ = n_new != n_old
 
             if i % measurement_shape[0] != 0:
-
                 match elements_differ.sum():
                     case 1:
                         p = self.p_leads[np.argwhere(elements_differ)].squeeze()
@@ -62,5 +61,8 @@ class LatchingModel(LatchingBaseModel):
                         n_latched[i, :] = r * n_old + (1 - r) * n_new
                     case _:
                         n_latched[i, :] = n_old
+
+        mask = n_latched == n_rounded
+        n_latched = mask * n + (1 - mask) * n_latched
 
         return n_latched

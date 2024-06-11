@@ -38,7 +38,6 @@ class PSBLatchingModel(LatchingBaseModel):
                 match elements_differ.sum():
                     case 2:
                         args = np.argwhere(elements_differ)
-
                         conds = [
                             n_old[args[0]] == 1,
                             n_old[args[1]] == 1,
@@ -53,5 +52,8 @@ class PSBLatchingModel(LatchingBaseModel):
                             n_latched[i, :] = n_new
                     case _:
                         n_latched[i, :] = n_new
+
+        mask = n_latched == n_rounded
+        n_latched = mask * n + (1 - mask) * n_latched
 
         return n_latched

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-from qarray import (optimal_Vg,
+from qarray import (_optimal_Vg,
                     GateVoltageComposer, dot_occupation_changes)
 from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES
 from .helper_functions import randomly_generate_model
@@ -194,7 +194,7 @@ class threshold_tests:
 
         for model in models:
             vg = voltage_composer.do2d(0, -5, 5, N_VOLTAGES, -1, -5, 5, N_VOLTAGES)
-            vg = vg + optimal_Vg(model.cdd_inv, model.cgd, np.random.uniform(1, 5, size=n_gate))
+            vg = vg + _optimal_Vg(model.cdd_inv, model.cgd, np.random.uniform(1, 5, size=n_gate))
 
             n_threshold_not_of_1 = model.ground_state_open(vg)
 

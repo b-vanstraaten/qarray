@@ -11,29 +11,21 @@ import numpy as np
 from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model_threshold_1
-cdd_non_maxwell = [
-    [0., 0.3, 0.05, 0.01],
-    [0.3, 0., 0.3, 0.05],
-    [0.05, 0.3, 0., 0.3],
-    [0.01, 0.05, 0.3, 0]
-]
-cgd_non_maxwell = [
-    [1., 0.2, 0.05, 0.01],
-    [0.2, 1., 0.2, 0.05],
-    [0.05, 0.2, 1., 0.2],
-    [0.01, 0.05, 0.2, 1]
-]
-
 model = DotArray(
-    Cdd=cdd_non_maxwell,
-    Cgd=cgd_non_maxwell,
+    Cdd=[
+        [0., 0.1, 0.05],
+        [0.1, 0., 0.1],
+        [0.05, 0.1, 0]
+    ],
+    Cgd=[
+        [1., 0.2, 0.05],
+        [0.2, 1., 0.2],
+        [0.05, 0.2, 1]
+    ],
     algorithm='default',
     implementation='rust',
-    charge_carrier='hole',
-    threshold='auto',
-    T=0.001,
+    T=0.0
 )
-model.max_charge_carriers = 4
 
 print(np.linalg.cond(model.cdd_inv))
 

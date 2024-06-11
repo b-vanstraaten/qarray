@@ -8,7 +8,7 @@ import jax
 import jax.numpy as jnp
 from pydantic.types import PositiveInt
 
-from qarray.functions import batched_vmap
+from qarray.functions import _batched_vmap
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes
 from .charge_configuration_generators import open_change_configurations_brute_force_jax
@@ -36,7 +36,7 @@ def ground_state_open_brute_force_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: C
             f = jax.vmap(f)
 
     n_dot = cdd_inv.shape[0]
-    return batched_vmap(f=f, Vg=vg, n_dot=n_dot, batch_size=batch_size)
+    return _batched_vmap(f=f, Vg=vg, n_dot=n_dot, batch_size=batch_size)
 
 
 @jax.jit

@@ -52,7 +52,7 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 150, 3, vy_min, vy_max, 150)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 1000, 3, vy_min, vy_max, 1000)
 
 
 # creating the figure and axes

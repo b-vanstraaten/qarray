@@ -45,39 +45,48 @@ axes[1].set_xlabel('$Vx$')
 axes[1].set_ylabel('$Vy$')
 axes[1].set_title('$\\frac{dz}{dVx} + \\frac{dz}{dVy}$')
 
-plt.savefig('../docs/source/figures/charge_sensing.pdf')
+plt.savefig('../docs/source/figures/charge_sensing.jpg', dpi=300)
 plt.show()
 
-from qarray.noise_models import WhiteNoise, TelegraphNoise
+from qarray.noise_models import WhiteNoise, TelegraphNoise, NoNoise
 
+# defining a white noise model with an amplitude of 1e-2
 white_noise = WhiteNoise(amplitude=1e-2)
 
-random_telegraph_noise = TelegraphNoise(p01=1e-3, p10=1e-2, amplitude=1e-2)
+# defining a telegraph noise model with p01 = 5e-4, p10 = 5e-3 and an amplitude of 1e-2
+random_telegraph_noise = TelegraphNoise(p01=5e-4, p10=5e-3, amplitude=1e-2)
 
+# combining the white and telegraph noise models
 combined_noise = white_noise + random_telegraph_noise
 
+# defining the noise models
 noise_models = [
-    white_noise,
-    random_telegraph_noise,
-    combined_noise,
+    NoNoise(),  # no noise
+    white_noise,  # white noise
+    random_telegraph_noise,  # telegraph noise
+    combined_noise,  # white + telegraph noise
 ]
 
-fig, axes = plt.subplots(1, 3, sharex=True, sharey=True)
-fig.set_size_inches(15, 5)
+# plotting
+fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
+fig.set_size_inches(5, 5)
 
-for i, noise_model in enumerate(noise_models):
+for ax, noise_model in zip(axes.flatten(), noise_models):
     model.noise_model = noise_model
 
     # fixing the seed so subsequent runs are yield identical noise
     np.random.seed(0)
     z, n = model.charge_sensor_open(vg)
 
-    axes[i].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
-    axes[i].set_xlabel('$Vx$')
-    axes[i].set_ylabel('$Vy$')
+    ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
+    ax.set_xlabel('$Vx$')
+    ax.set_ylabel('$Vy$')
 
-axes[0].set_title('White Noise')
-axes[1].set_title('Random Telegraph Noise')
-axes[2].set_title('White + Random Telegraph Noise')
+axes[0, 0].set_title('No Noise')
+axes[0, 1].set_title('White Noise')
+axes[1, 0].set_title('Telegraph Noise')
+axes[1, 1].set_title('White + Telegraph Noise')
 
-plt.savefig('../docs/source/figures/charge_sensing_noise.pdf')
+plt.tight_layout()
+
+plt.savefig('../docs/source/figures/charge_sensing_noise.jpg', dpi=300)

@@ -5,7 +5,7 @@ from pydantic import NonNegativeInt
 
 from .BaseDataClass import BaseDataClass
 from ._helper_functions import (_ground_state_open, _ground_state_closed, check_algorithm_and_implementation)
-from ..functions import convert_to_maxwell, optimal_Vg
+from ..functions import convert_to_maxwell, _optimal_Vg
 from ..qarray_types import Cdd as CddType  # to avoid name clash with dataclass cdd
 from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix, \
     NegativeValuedMatrix
@@ -137,7 +137,7 @@ class DotArray(BaseDataClass):
         :param rcond: the rcond parameter for the least squares solver
         :return: the optimal dot voltages of shape (n_gate,)
         """
-        return optimal_Vg(cdd_inv=self.cdd_inv, cgd=self.cgd, n_charges=n_charges, rcond=rcond)
+        return _optimal_Vg(cdd_inv=self.cdd_inv, cgd=self.cgd, n_charges=n_charges, rcond=rcond)
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
         """

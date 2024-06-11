@@ -10,7 +10,7 @@ import numpy as np
 from jaxopt import BoxOSQP
 from pydantic.types import PositiveFloat
 
-from qarray.functions import batched_vmap
+from qarray.functions import _batched_vmap
 from qarray.jax_implementations.default_jax.charge_configuration_generators import open_charge_configurations_jax
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes, Vector
@@ -80,7 +80,7 @@ def ground_state_open_default_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddIn
             f = jax.vmap(f)
 
     n_dot = cdd_inv.shape[0]
-    return batched_vmap(f=f, Vg=vg, n_dot=n_dot, batch_size=batch_size)
+    return _batched_vmap(f=f, Vg=vg, n_dot=n_dot, batch_size=batch_size)
 
 
 

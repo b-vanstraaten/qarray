@@ -194,7 +194,7 @@ class GateVoltageComposer(BaseDataClass):
                 i = dots.index(dot)
                 Vd[..., dot] = V[i]
 
-        return np.einsum('ji,...j->...i', self.virtual_gate_matrix, Vd) + self.virtual_gate_origin
+        return np.einsum('ij,...j->...i', self.virtual_gate_matrix, Vd) + self.virtual_gate_origin
 
     def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_res: int) -> np.ndarray:
         """

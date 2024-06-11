@@ -43,7 +43,6 @@ class BaseNoiseModel:
         """
         return np.zeros(shape)
 
-
 @dataclass
 class CompositeNoise(BaseNoiseModel):
     """
