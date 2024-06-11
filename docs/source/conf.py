@@ -15,7 +15,7 @@ extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx_rtd_theme', '
 templates_path = ['_templates']
 
 # The theme to use for HTML and HTML Help pages.
-html_theme = 'sphinx_book_theme'
+html_theme = 'sphinx_rtd_theme'
 
 # Add any paths that contain custom static files.
 html_static_path = ['_static']
