@@ -129,6 +129,9 @@ class DotArray:
         if self.latching_model is None:
             self.latching_model = LatchingBaseModel()
 
+        if self.algorithm == 'thresholded':
+            self.check_threshold()
+
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """
         Computes the optimal dot voltages for a given charge configuration, of shape (n_charge,).
@@ -171,4 +174,4 @@ class DotArray:
         """
         optimal_threshold = compute_threshold(self.cdd)
         if self.threshold < optimal_threshold:
-            print(f'The threshold is below the optimal threshold of {optimal_threshold}.')
+            print(f'The threshold is below the suggested threshold of {optimal_threshold}.')

@@ -9,7 +9,7 @@ import numpy as np
 from pydantic import NonNegativeInt
 
 from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation
-from ..functions import _optimal_Vg, _convert_to_maxwell_with_sensor, lorentzian
+from ..functions import _optimal_Vg, _convert_to_maxwell_with_sensor, lorentzian, compute_threshold
 from ..latching_models import LatchingBaseModel
 from ..noise_models import BaseNoiseModel
 from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector, \
@@ -106,6 +106,9 @@ class ChargeSensedDotArray:
         if self.latching_model is None:
             self.latching_model = LatchingBaseModel()
 
+        if self.algorithm == 'thresholded':
+            self.check_threshold()
+
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """
@@ -198,6 +201,14 @@ class ChargeSensedDotArray:
         output_noise = self.noise_model.sample_output_noise(N_sensor.shape)
 
         return signal + output_noise, n_closed
+
+    def check_threshold(self):
+        """
+        Computes the threshold for the thresholded algorithm
+        """
+        optimal_threshold = compute_threshold(self.cdd)
+        if self.threshold < optimal_threshold:
+            print(f'The threshold is below the suggested threshold of {optimal_threshold}.')
 
     def _assert_shape(self):
         """
