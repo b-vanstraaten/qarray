@@ -6,11 +6,11 @@ and the charge sensor output for both open and closed dot arrays.
 from dataclasses import dataclass
 
 import numpy as np
-from pydantic import NonNegativeInt
 
-from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation, \
-    check_and_warn_user
-from ..functions import _optimal_Vg, _convert_to_maxwell_with_sensor, lorentzian, compute_threshold
+from ._helper_functions import check_algorithm_and_implementation, \
+    check_and_warn_user, lorentzian, _convert_to_maxwell_with_sensor
+from .ground_state import _ground_state_open, _ground_state_closed
+from ..functions import _optimal_Vg, compute_threshold
 from ..latching_models import LatchingBaseModel
 from ..noise_models import BaseNoiseModel
 from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector, \
@@ -41,7 +41,6 @@ class ChargeSensedDotArray:
     - noise_model: the noise model to use to add noise to the charge sensor output
 
     """
-
 
     Cdd: CddNonMaxwell  # an (n_dot, n_dot) array of the capacitive coupling between dots
     Cgd: CgdNonMaxwell  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
@@ -115,7 +114,6 @@ class ChargeSensedDotArray:
         if self.algorithm in ['thresholded', 'default']:
             check_and_warn_user(self)
 
-
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """
         Computes the optimal dot voltages for a given charge configuration, of shape (n_dot + n_sensor,).
@@ -125,7 +123,7 @@ class ChargeSensedDotArray:
         """
         n_charges = Vector(n_charges)
         assert n_charges.shape == (
-        self.n_dot + self.n_sensor,), 'The n_charge vector must be of shape (n_dot + n_sensor)'
+            self.n_dot + self.n_sensor,), 'The n_charge vector must be of shape (n_dot + n_sensor)'
         return _optimal_Vg(cdd_inv=self.cdd_inv_full, cgd=self.cgd_full, n_charges=n_charges, rcond=rcond)
 
     def ground_state_open(self, vg: VectorList | np.ndarray) -> np.ndarray:
@@ -168,7 +166,7 @@ class ChargeSensedDotArray:
 
         return signal + output_noise, n_open
 
-    def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
+    def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: int) -> np.ndarray:
         """
         Computes the ground state for a closed dot array.
         :param vg: (..., n_gate) array of dot voltages to compute the ground state for

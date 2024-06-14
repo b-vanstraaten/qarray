@@ -1,40 +1,12 @@
 """
 This file contains functions that are used elesewhere in the code.
 """
-from typing import Callable
 
-import jax.numpy as jnp
 import numpy as np
 import scipy.linalg
 
-from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, Tetrad,
-                           NegativeValuedMatrix, Vector)
-
-
-def _batched_vmap(f: Callable, Vg: VectorList, n_dot: int, batch_size: int) -> VectorList:
-    assert batch_size > 1, 'Batch size must be greater than one'
-    vg_size = Vg.shape[0]
-    n_gate = Vg.shape[1]
-
-    # if the size of vg is smaller than the batch size just call it no padding
-    match vg_size > batch_size:
-        case True:
-            # computing how many batched are required
-            N = (vg_size // batch_size)
-            # padding the Vg array with zeros so that it is a multiple of batch size
-            remainder = vg_size % batch_size
-            if remainder != 0:
-                N = N + 1
-                Vg = jnp.concatenate([Vg, jnp.zeros((batch_size - remainder, n_dot))], axis=0)
-
-            # reshaping into the batches along the first axis
-            Vg = Vg.reshape(N, batch_size, n_gate)
-
-            # calling the function over the batches
-            N = jnp.stack([f(Vg[i, ...]) for i in range(N)])
-            return VectorList(N.reshape(-1, n_dot)[:vg_size, :])
-        case False:
-            return VectorList(f(Vg))
+from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, Tetrad,
+                           Vector)
 
 
 def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
@@ -57,37 +29,8 @@ def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -
     values = values[np.newaxis, np.newaxis, :]
     return (n * values).sum(axis=-1)
 
-def lorentzian(x, x0, gamma):
-    """
-    Function to compute the lorentzian function.
-
-    :param x: the x values
-    :param x0: the peak position
-    :param gamma: the width of the peak
-
-    :return: the lorentzian function
-    """
-    return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
 
 
-def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
-    """
-    Function which computes the dot product between the dot change state and the
-    values in "values", thereby assigning a scalar value to each charge state.
-
-    :param n: the dot occupation vector of shape (..., n_dot)
-    :param values: the values to assign to each charge state of shape (n_dot)
-
-    :return: the dot product between the dot change state and the values in "values" of shape (...)
-    """
-    if not isinstance(n, Tetrad):
-        n = Tetrad(n)
-
-    if not isinstance(values, Vector):
-        values = Vector(values)
-
-    values = values[np.newaxis, np.newaxis, :]
-    return (n * values).sum(axis=-1)
 
 def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     """
@@ -121,52 +64,6 @@ def _optimal_Vg(cdd_inv: CddInv, cgd: Cgd_holes, n_charges: VectorList, rcond: f
     M = np.linalg.pinv(R @ cgd, rcond=rcond) @ R
     return np.einsum('ij, ...j', M, n_charges)
 
-
-def _convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell,
-                                    cds_non_maxwell: CddNonMaxwell, cgs_non_maxwell: CgdNonMaxwell):
-    """
-    Function to convert the non Maxwell capacitance matrices to their maxwell form, with the addition of a sensor
-    :param cdd_non_maxwell: the non maxwell capturing the capacitive coupling between dots
-    :param cgd_non_maxwell: the non maxwell capturing the capacitive coupling between dots and gates
-    :param cds_non_maxwell: the non maxwell cds matrix capturing the capacitive coupling between dots and sensor dots
-    :param cgs_non_maxwell: the non maxwell cgs matrix capturing the capacitive coupling between gates and sensor dots
-    :return:
-    """
-    # extracting shapes of the matrices
-    n_dot = cdd_non_maxwell.shape[0]
-    n_sensor = cds_non_maxwell.shape[0]
-    n_gate = cgd_non_maxwell.shape[1]
-
-    # performing slicing and concatenation to get the full maxwell matrices
-    cdd_non_maxwell_full = np.zeros((n_dot + n_sensor, n_dot + n_sensor))
-    cdd_non_maxwell_full[:n_dot, :n_dot] = cdd_non_maxwell
-    cdd_non_maxwell_full[n_dot:, :n_dot] = cds_non_maxwell
-    cdd_non_maxwell_full[:n_dot, n_dot:] = cds_non_maxwell.T
-    cdd_non_maxwell_full = CddNonMaxwell(cdd_non_maxwell_full)
-
-    # populating the cgd matrix, with zeros for the sensor dots
-    cgd_non_maxwell_full = np.zeros((n_dot + n_sensor, n_gate))
-    cgd_non_maxwell_full[:n_dot, :] = cgd_non_maxwell
-    cgd_non_maxwell_full[n_dot:, :] = cgs_non_maxwell
-    cgd_non_maxwell_full = CgdNonMaxwell(cgd_non_maxwell_full)
-
-    return convert_to_maxwell(cdd_non_maxwell_full, cgd_non_maxwell_full)
-
-
-def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (
-        Cdd, CddInv, NegativeValuedMatrix):
-    """
-    Function to convert the non Maxwell capacitance matrices to their maxwell form.
-    :param cdd_non_maxwell:
-    :param cgd_non_maxwell:
-    :return:
-    """
-    cdd_sum = cdd_non_maxwell.sum(axis=1)
-    cgd_sum = cgd_non_maxwell.sum(axis=1)
-    cdd = Cdd(np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell)
-    cdd_inv = CddInv(np.linalg.inv(cdd))
-    cgd = NegativeValuedMatrix(-cgd_non_maxwell)
-    return cdd, cdd_inv, cgd
 
 def compute_threshold(cdd: Cdd) -> float:
     """

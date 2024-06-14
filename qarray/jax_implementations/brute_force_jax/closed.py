@@ -5,16 +5,15 @@ from functools import partial
 
 import jax
 import jax.numpy as jnp
-from pydantic import NonNegativeInt
 
-from qarray.functions import _batched_vmap
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes, Cdd
 from .charge_configuration_generators import open_change_configurations_brute_force_jax
+from ..helper_functions import _batched_vmap
 
 
 def ground_state_closed_brute_force_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
-                                        n_charge: NonNegativeInt, T: float = 0, batch_size: int = 10000) -> VectorList:
+                                        n_charge: int, T: float = 0, batch_size: int = 10000) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at
@@ -40,7 +39,7 @@ def ground_state_closed_brute_force_jax(vg: VectorList, cgd: Cgd_holes, cdd: Cdd
 
 @jax.jit
 def _ground_state_closed_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray,
-                            n_charge: NonNegativeInt, n_list, T: float) -> jnp.ndarray:
+                            n_charge: int, n_list, T: float) -> jnp.ndarray:
     """
     Computes the ground state for a closed array.
     :param vg: the dot voltage coordinate vector

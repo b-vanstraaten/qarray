@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 
 import numpy as np
-from pydantic import NonNegativeInt
 
-from ._helper_functions import (_ground_state_open, _ground_state_closed, check_algorithm_and_implementation,
-                                check_and_warn_user)
-from ..functions import convert_to_maxwell, _optimal_Vg, compute_threshold
+from ._helper_functions import (check_algorithm_and_implementation,
+                                check_and_warn_user, convert_to_maxwell)
+from .ground_state import _ground_state_open, _ground_state_closed
+from ..functions import _optimal_Vg, compute_threshold
 from ..latching_models import LatchingBaseModel
 from ..qarray_types import Cdd as CddType  # to avoid name clash with dataclass cdd
 from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix, \
@@ -78,8 +78,8 @@ class DotArray:
         :return: None
         """
 
-        self.Cdd = PositiveValuedMatrix(self.Cdd)
-        self.Cgd = PositiveValuedMatrix(self.Cgd)
+        self.Cdd = PositiveValuedMatrix(Cdd)
+        self.Cgd = PositiveValuedMatrix(Cgd)
         self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.Cdd, self.Cgd)
 
 
@@ -163,7 +163,7 @@ class DotArray:
         """
         return _ground_state_open(self, vg)
 
-    def ground_state_closed(self, vg: VectorList | np.ndarray, n_charges: NonNegativeInt) -> np.ndarray:
+    def ground_state_closed(self, vg: VectorList | np.ndarray, n_charges: int) -> np.ndarray:
         """
         Computes the ground state for a closed dot array.
         :param vg: (..., n_gate) array of dot voltages to compute the ground state for

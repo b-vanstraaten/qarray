@@ -4,7 +4,7 @@ from typing import List
 import numpy as np
 
 from qarray import DotArray
-from qarray.functions import convert_to_maxwell
+from qarray.DotArrays._helper_functions import convert_to_maxwell
 from qarray.qarray_types import CddInv, Cgd_holes, Cdd
 
 

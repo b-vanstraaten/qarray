@@ -1,17 +1,67 @@
 import numpy as np
-from pydantic import NonNegativeInt
 
 from qarray.functions import compute_threshold
-from qarray.jax_implementations.brute_force_jax import ground_state_closed_brute_force_jax, \
-    ground_state_open_brute_force_jax
-from qarray.jax_implementations.default_jax import ground_state_open_default_jax, ground_state_closed_default_jax
-from qarray.python_implementations.brute_force_python import ground_state_open_brute_force_python, \
-    ground_state_closed_brute_force_python
-from ..python_implementations import ground_state_open_default_or_thresholded_python, \
-    ground_state_closed_default_or_thresholded_python
-from ..qarray_types import VectorList
-from ..rust_implemenations import ground_state_open_default_or_thresholded_rust, \
-    ground_state_closed_default_or_thresholded_rust
+from ..qarray_types import (CddInv, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, NegativeValuedMatrix)
+
+
+def _convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell,
+                                    cds_non_maxwell: CddNonMaxwell, cgs_non_maxwell: CgdNonMaxwell):
+    """
+    Function to convert the non Maxwell capacitance matrices to their maxwell form, with the addition of a sensor
+    :param cdd_non_maxwell: the non maxwell capturing the capacitive coupling between dots
+    :param cgd_non_maxwell: the non maxwell capturing the capacitive coupling between dots and gates
+    :param cds_non_maxwell: the non maxwell cds matrix capturing the capacitive coupling between dots and sensor dots
+    :param cgs_non_maxwell: the non maxwell cgs matrix capturing the capacitive coupling between gates and sensor dots
+    :return:
+    """
+    # extracting shapes of the matrices
+    n_dot = cdd_non_maxwell.shape[0]
+    n_sensor = cds_non_maxwell.shape[0]
+    n_gate = cgd_non_maxwell.shape[1]
+
+    # performing slicing and concatenation to get the full maxwell matrices
+    cdd_non_maxwell_full = np.zeros((n_dot + n_sensor, n_dot + n_sensor))
+    cdd_non_maxwell_full[:n_dot, :n_dot] = cdd_non_maxwell
+    cdd_non_maxwell_full[n_dot:, :n_dot] = cds_non_maxwell
+    cdd_non_maxwell_full[:n_dot, n_dot:] = cds_non_maxwell.T
+    cdd_non_maxwell_full = CddNonMaxwell(cdd_non_maxwell_full)
+
+    # populating the cgd matrix, with zeros for the sensor dots
+    cgd_non_maxwell_full = np.zeros((n_dot + n_sensor, n_gate))
+    cgd_non_maxwell_full[:n_dot, :] = cgd_non_maxwell
+    cgd_non_maxwell_full[n_dot:, :] = cgs_non_maxwell
+    cgd_non_maxwell_full = CgdNonMaxwell(cgd_non_maxwell_full)
+
+    return convert_to_maxwell(cdd_non_maxwell_full, cgd_non_maxwell_full)
+
+
+def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (
+        Cdd, CddInv, NegativeValuedMatrix):
+    """
+    Function to convert the non Maxwell capacitance matrices to their maxwell form.
+    :param cdd_non_maxwell:
+    :param cgd_non_maxwell:
+    :return:
+    """
+    cdd_sum = cdd_non_maxwell.sum(axis=1)
+    cgd_sum = cgd_non_maxwell.sum(axis=1)
+    cdd = Cdd(np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell)
+    cdd_inv = CddInv(np.linalg.inv(cdd))
+    cgd = NegativeValuedMatrix(-cgd_non_maxwell)
+    return cdd, cdd_inv, cgd
+
+
+def lorentzian(x, x0, gamma):
+    """
+    Function to compute the lorentzian function.
+
+    :param x: the x values
+    :param x0: the peak position
+    :param gamma: the width of the peak
+
+    :return: the lorentzian function
+    """
+    return np.reciprocal((((x - x0) / gamma) ** 2 + 1))
 
 
 def check_and_warn_user(model):
@@ -35,6 +85,7 @@ def check_and_warn_user(model):
             print(f'Warning: The threshold is below the optimal threshold of {optimal_threshold:.3f}'
                   f' for this system. This may produce distortions in the charge stability diagram.')
 
+
 def check_algorithm_and_implementation(algorithm: str, implementation: str):
     algorithm_implementation_combinations = {
         'default': ['rust', 'python', 'jax'],
@@ -49,235 +100,11 @@ def check_algorithm_and_implementation(algorithm: str, implementation: str):
 # Boltzmann constant in eV/K
 k_B = 8.617333262145e-5  # eV/K
 
-def _validate_vg(vg: VectorList, n_gate: NonNegativeInt):
+
+def _validate_vg(vg: VectorList, n_gate: int):
     """
     This function is used to validate the shape of the dot voltage array.
     :param vg: the dot voltage array
     """
     if vg.shape[-1] != n_gate:
         raise ValueError(f'The shape of vg is in correct it should be of shape (..., n_gate) = (...,{n_gate})')
-
-
-def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
-    """
-    This function is used to compute the ground state for an open system.
-    :param vg: the dot voltages to compute the ground state at
-    :return: the lowest energy charge configuration for each dot voltage coordinate vector
-    """
-
-    # validate the shape of the dot voltage array
-    _validate_vg(vg, model.n_gate)
-
-    # grabbing the shape of the dot voltage array
-    vg_shape = vg.shape
-    nd_shape = (*vg_shape[:-1], model.n_dot)
-    # reshaping the dot voltage array to be of shape (n_points, n_gate)
-    vg = vg.reshape(-1, model.n_gate)
-
-    # performing the type conversion if necessary
-    if not isinstance(vg, VectorList):
-        vg = VectorList(vg)
-
-    kB_T = 8.617333262145e-5 * model.T
-
-    # calling the appropriate core function to compute the ground state
-    match model.implementation:
-        case 'rust' | 'Rust' | 'RUST' | 'r':
-
-            # matching to the algorithm
-            match model.algorithm.lower():
-                case 'thresholded':
-                    threshold = model.threshold
-                case 'default':
-                    threshold = 1
-                case _:
-                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
-
-            result = ground_state_open_default_or_thresholded_rust(
-                vg=vg, cgd=model.cgd,
-                cdd_inv=model.cdd_inv,
-                threshold=threshold,
-                polish=model.polish, T=kB_T
-            )
-
-        case 'jax' | 'Jax' | 'JAX' | 'j':
-
-            if model.batch_size is None:
-                model.batch_size = vg.shape[0]
-
-            match model.algorithm.lower():
-                case 'default':
-                    result = ground_state_open_default_jax(
-                        vg=vg, cgd=model.cgd,
-                        cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size
-                    )
-                case 'brute_force':
-
-                    if model.max_charge_carriers is None:
-                        message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
-                                   '\nmodel.max_charge_carriers = #')
-                        raise ValueError(message)
-
-                    result = ground_state_open_brute_force_jax(
-                        vg=vg, cgd=model.cgd,
-                        cdd_inv=model.cdd_inv,
-                        max_number_of_charge_carriers=model.max_charge_carriers,
-                        T=kB_T,
-                        batch_size=model.batch_size
-                    )
-                case _:
-                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
-
-        case 'python' | 'Python' | 'python':
-            match model.algorithm.lower():
-                case 'default':
-
-                    result = ground_state_open_default_or_thresholded_python(
-                        vg=vg, cgd=model.cgd,
-                        cdd_inv=model.cdd_inv,
-                        threshold=1.,
-                        polish=model.polish, T=kB_T
-                    )
-
-                case 'thresholded':
-
-                    result = ground_state_open_default_or_thresholded_python(
-                        vg=vg, cgd=model.cgd,
-                        cdd_inv=model.cdd_inv,
-                        threshold=model.threshold,
-                        polish=model.polish, T=kB_T
-                    )
-
-                case 'brute_force':
-
-                    if model.max_charge_carriers is None:
-                        message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
-                                   '\nmodel.max_charge_carriers = #')
-                        raise ValueError(message)
-
-                    result = ground_state_open_brute_force_python(
-                        vg=vg, cgd=model.cgd,
-                        cdd_inv=model.cdd_inv,
-                        max_number_of_charge_carriers=model.max_charge_carriers,
-                        T=kB_T
-                    )
-                case _:
-                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
-
-        case _:
-            ValueError(f'Incorrect value passed for algorithm {model.implementation}')
-
-    assert np.all(result.astype(int) >= 0), 'The number of charges is negative something went wrong'
-
-    result = model.latching_model.add_latching(result, measurement_shape=nd_shape)
-    return result.reshape(nd_shape)
-
-
-def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: NonNegativeInt) -> np.ndarray:
-    """
-    This function is used to compute the ground state for a closed system, with a given number of changes.
-    :param vg: the dot voltages to compute the ground state at
-    :param n_charge: the number of changes in the system
-    :return: the lowest energy charge configuration for each dot voltage coordinate vector
-    """
-    # validate the shape of the dot voltage array
-    _validate_vg(vg, model.n_gate)
-
-    # grabbing the shape of the dot voltage array
-    vg_shape = vg.shape
-    nd_shape = (*vg_shape[:-1], model.n_dot)
-    # reshaping the dot voltage array to be of shape (n_points, n_gate)
-    vg = vg.reshape(-1, model.n_gate)
-
-    # performing the type conversion if necessary
-    if not isinstance(vg, VectorList):
-        vg = VectorList(vg)
-
-    kB_T = 8.617333262145e-5 * model.T
-
-    match model.implementation:
-        case 'rust' | 'Rust' | 'RUST' | 'r':
-
-            # matching to the algorithm
-            match model.algorithm.lower():
-                case 'thresholded':
-                    threshold = model.threshold
-                case 'default':
-                    threshold = 1
-                case _:
-                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
-
-            result = ground_state_closed_default_or_thresholded_rust(
-                vg=vg, cgd=model.cgd, cdd=model.cdd,
-                cdd_inv=model.cdd_inv,
-                threshold=threshold,
-                polish=model.polish, T=kB_T, n_charge=n_charge
-            )
-
-        case 'jax' | 'Jax' | 'JAX' | 'j':
-
-            if model.batch_size is None:
-                model.batch_size = vg.shape[0]
-
-            match model.algorithm.lower():
-                case 'default':
-                    result = ground_state_closed_default_jax(
-                        vg=vg, cgd=model.cgd, cdd=model.cdd,
-                        cdd_inv=model.cdd_inv, T=kB_T, batch_size=model.batch_size, n_charge=n_charge
-                    )
-                case 'brute_force':
-
-                    if model.max_charge_carriers is None:
-                        message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
-                                   '\nmodel.max_charge_carriers = #')
-                        raise ValueError(message)
-
-                    result = ground_state_closed_brute_force_jax(
-                        vg=vg, cgd=model.cgd, cdd=model.cdd,
-                        cdd_inv=model.cdd_inv,
-                        T=kB_T,
-                        batch_size=model.batch_size, n_charge=n_charge
-                    )
-                case _:
-                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
-
-        case 'python' | 'Python' | 'python':
-            match model.algorithm.lower():
-                case 'default':
-                    result = ground_state_closed_default_or_thresholded_python(
-                        vg=vg, cgd=model.cgd, cdd=model.cdd,
-                        cdd_inv=model.cdd_inv,
-                        threshold=1.,
-                        polish=model.polish, n_charge=n_charge, T=kB_T
-                    )
-
-                case 'thresholded':
-
-                    result = ground_state_closed_default_or_thresholded_python(
-                        vg=vg, cgd=model.cgd, cdd=model.cdd,
-                        cdd_inv=model.cdd_inv,
-                        threshold=model.threshold,
-                        polish=model.polish, n_charge=n_charge, T=kB_T
-                    )
-
-                case 'brute_force':
-
-                    if model.max_charge_carriers is None:
-                        message = ('The max_charge_carriers must be specified for the jax_brute_force core use:'
-                                   '\nmodel.max_charge_carriers = #')
-                        raise ValueError(message)
-
-                    result = ground_state_closed_brute_force_python(
-                        vg=vg, cgd=model.cgd, cdd=model.cdd,
-                        cdd_inv=model.cdd_inv, n_charge=n_charge,
-                        T=kB_T
-                    )
-                case _:
-                    raise ValueError(f'Incorrect value passed for algorithm {model.algoritm}')
-
-    assert np.all(
-        np.isclose(result.sum(axis=-1), n_charge)), 'The number of charges is not correct something went wrong'
-
-    result = model.latching_model.add_latching(result, measurement_shape=nd_shape)
-
-    return result.reshape(nd_shape)

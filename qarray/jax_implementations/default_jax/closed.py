@@ -6,18 +6,16 @@ from functools import partial
 import jax
 import jax.numpy as jnp
 from jaxopt import BoxOSQP
-from pydantic import NonNegativeInt
-from pydantic import PositiveFloat
 
-from qarray.functions import _batched_vmap
 from qarray.jax_implementations.default_jax.charge_configuration_generators import open_charge_configurations_jax
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes, Cdd, Vector
+from ..helper_functions import _batched_vmap
 
 qp = BoxOSQP(jit=True, check_primal_dual_infeasability=False, verbose=False)
 
 
-def compute_analytical_solution_closed(cdd: Cdd, cgd: Cgd_holes, n_charge: NonNegativeInt, vg: Vector) -> Vector:
+def compute_analytical_solution_closed(cdd: Cdd, cgd: Cgd_holes, n_charge: int, vg: Vector) -> Vector:
     """
     Computes the analytical solution for the continuous charge distribution for a closed array.
     :param cdd: the dot to dot capacitance matrix
@@ -32,7 +30,7 @@ def compute_analytical_solution_closed(cdd: Cdd, cgd: Cgd_holes, n_charge: NonNe
     return n_continuous + isolation_correction
 
 
-def numerical_solver_closed(cdd_inv: CddInv, cgd: Cgd_holes, n_charge: NonNegativeInt, vg: VectorList) -> VectorList:
+def numerical_solver_closed(cdd_inv: CddInv, cgd: Cgd_holes, n_charge: int, vg: VectorList) -> VectorList:
     """
     Solve the quadratic program for the continuous charge distribution for a closed array.
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
@@ -71,8 +69,8 @@ def compute_continuous_solution_closed(cdd: Cdd, cdd_inv: CddInv, cgd: Cgd_holes
     )
 
 
-def ground_state_closed_default_jax(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
-                                    T: PositiveFloat = 0.,
+def ground_state_closed_default_jax(vg: VectorList, n_charge: int, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
+                                    T: int = 0.,
                                     batch_size: int = 10000) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
@@ -99,7 +97,7 @@ def ground_state_closed_default_jax(vg: VectorList, n_charge: NonNegativeInt, cg
 
 @jax.jit
 def _ground_state_closed_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray, cdd: jnp.ndarray,
-                            n_charge: NonNegativeInt, T: PositiveFloat) -> jnp.ndarray:
+                            n_charge: int, T: float) -> jnp.ndarray:
     """
     Computes the ground state for a closed array.
     :param vg: the dot voltage coordinate vector
@@ -115,7 +113,7 @@ def _ground_state_closed_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndar
     return compute_argmin_closed(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, n_charge=n_charge, T=T)
 
 
-def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge, T: PositiveFloat):
+def compute_argmin_closed(n_continuous, cdd_inv, cgd, Vg, n_charge, T: float = 0.):
     """
     Computes the lowest energy charge configuration for a closed array.
     :param n_continuous: the continuous charge distribution

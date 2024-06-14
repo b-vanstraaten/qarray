@@ -6,16 +6,15 @@ from functools import partial
 
 import jax
 import jax.numpy as jnp
-from pydantic.types import PositiveInt
 
-from qarray.functions import _batched_vmap
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes
 from .charge_configuration_generators import open_change_configurations_brute_force_jax
+from ..helper_functions import _batched_vmap
 
 
 def ground_state_open_brute_force_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv,
-                                      max_number_of_charge_carriers: PositiveInt, T: float = 0,
+                                      max_number_of_charge_carriers: int, T: float = 0,
                                       batch_size: int = 10000) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.

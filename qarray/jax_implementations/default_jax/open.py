@@ -8,12 +8,11 @@ import jax
 import jax.numpy as jnp
 import numpy as np
 from jaxopt import BoxOSQP
-from pydantic.types import PositiveFloat
 
-from qarray.functions import _batched_vmap
 from qarray.jax_implementations.default_jax.charge_configuration_generators import open_charge_configurations_jax
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes, Vector
+from ..helper_functions import _batched_vmap
 
 qp = BoxOSQP(check_primal_dual_infeasability=False, verbose=False)
 
@@ -63,7 +62,7 @@ def compute_continuous_solution_open(cdd_inv: CddInv, cgd: Cgd_holes, vg):
     )
 
 
-def ground_state_open_default_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, T: PositiveFloat = 0.,
+def ground_state_open_default_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv, T: float = 0.,
                                   batch_size: int = 10000) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
@@ -85,7 +84,7 @@ def ground_state_open_default_jax(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddIn
 
 
 @jax.jit
-def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray, T: PositiveFloat) -> jnp.ndarray:
+def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarray, T: float) -> jnp.ndarray:
     """
     Computes the ground state for an open array.
     :param vg: the dot voltage coordinate vector
@@ -99,7 +98,7 @@ def _ground_state_open_0d(vg: jnp.ndarray, cgd: jnp.ndarray, cdd_inv: jnp.ndarra
     return compute_argmin_open(n_continuous=n_continuous, cdd_inv=cdd_inv, cgd=cgd, Vg=vg, T=T)
 
 
-def compute_argmin_open(n_continuous, cdd_inv, cgd, Vg, T: PositiveFloat = 0.0):
+def compute_argmin_open(n_continuous, cdd_inv, cgd, Vg, T: float = 0.0):
     """
     Computes the lowest energy charge configuration for an open array.
     :param n_continuous: the continuous charge distribution
