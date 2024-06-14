@@ -12,18 +12,17 @@ from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
-    Cdd=6.25 * np.array([
-        [0., 0.9],
-        [0.9, 0.]
+    Cdd=np.array([
+        [0., 10],
+        [10, 0.]
     ]),
-    Cgd=6.25 * np.array([
+    Cgd=np.array([
         [1., 0.],
-        [0.2, 1]
+        [0., 1]
     ]),
     algorithm='thresholded',
     implementation='rust', charge_carrier='h', T=0., threshold=0.5
 )
-model.check_threshold()
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
@@ -41,8 +40,8 @@ ground_state_funcs = [
 ]
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -0.5, 0.5
-vy_min, vy_max = -0.5, 0.5
+vx_min, vx_max = -5, 5
+vy_min, vy_max = -5, 5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(0, vy_min, vx_max, 500, 1, vy_min, vy_max, 500)
 

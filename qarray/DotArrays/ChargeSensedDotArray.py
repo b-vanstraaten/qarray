@@ -8,7 +8,8 @@ from dataclasses import dataclass
 import numpy as np
 from pydantic import NonNegativeInt
 
-from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation
+from ._helper_functions import _ground_state_open, _ground_state_closed, check_algorithm_and_implementation, \
+    check_and_warn_user
 from ..functions import _optimal_Vg, _convert_to_maxwell_with_sensor, lorentzian, compute_threshold
 from ..latching_models import LatchingBaseModel
 from ..noise_models import BaseNoiseModel
@@ -64,16 +65,13 @@ class ChargeSensedDotArray:
     noise_model: BaseNoiseModel | None = None
     latching_model: LatchingBaseModel | None = None
 
-    def __post_init__(self):
+    def update_capacitance_matrices(self, Cdd: CddNonMaxwell, Cgd: CgdNonMaxwell, Cds: CdsNonMaxwell,
+                                    Cgs: CgsNonMaxwell):
 
-        # converting to the non-maxwellian capacitance matrices to their respective type. This
-        # is done to ensure that the capacitance matrices are of the correct type and the values are correct. Aka
-        # the capacitance matrices are positive and the diagonal elements are zero.
-        self.Cdd = PositiveValuedMatrix(self.Cdd)
-        self.Cgd = PositiveValuedMatrix(self.Cgd)
-        self.Cds = PositiveValuedMatrix(self.Cds)
-        self.Cgs = PositiveValuedMatrix(self.Cgs)
-
+        self.Cdd = PositiveValuedMatrix(Cdd)
+        self.Cgd = PositiveValuedMatrix(Cgd)
+        self.Cds = PositiveValuedMatrix(Cds)
+        self.Cgs = PositiveValuedMatrix(Cgs)
 
         self.n_dot = self.Cdd.shape[0]
         self.n_sensor = self.Cds.shape[0]
@@ -87,6 +85,14 @@ class ChargeSensedDotArray:
         self.cdd = self.cdd_full[:self.n_dot, :self.n_dot]
         self.cdd_inv = self.cdd_inv_full[:self.n_dot, :self.n_dot]
         self.cgd = self.cgd_full[:self.n_dot, :]
+
+    def __post_init__(self):
+
+        # converting to the non-maxwellian capacitance matrices to their respective type. This
+        # is done to ensure that the capacitance matrices are of the correct type and the values are correct. Aka
+        # the capacitance matrices are positive and the diagonal elements are zero.
+
+        self.update_capacitance_matrices(self.Cdd, self.Cgd, self.Cds, self.Cgs)
 
         # type casting the temperature to a float
         self.T = float(self.T)
@@ -106,8 +112,8 @@ class ChargeSensedDotArray:
         if self.latching_model is None:
             self.latching_model = LatchingBaseModel()
 
-        if self.algorithm == 'thresholded':
-            self.check_threshold()
+        if self.algorithm in ['thresholded', 'default']:
+            check_and_warn_user(self)
 
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
@@ -204,11 +210,29 @@ class ChargeSensedDotArray:
 
     def check_threshold(self):
         """
-        Computes the threshold for the thresholded algorithm
+        Checks if the threshold is below the optimal threshold for the system
         """
         optimal_threshold = compute_threshold(self.cdd)
-        if self.threshold < optimal_threshold:
-            print(f'The threshold is below the suggested threshold of {optimal_threshold}.')
+
+        if optimal_threshold > 1:
+            print(f'Warning: The default nor thresholded algorithm is not recommended for this system')
+            return
+
+        match self.algorithm:
+            case 'thresholded':
+
+                if self.threshold < optimal_threshold:
+                    print(f'Warning: The threshold is below the suggested threshold of {optimal_threshold}.')
+                    return
+            case 'default':
+                if optimal_threshold > 1:
+                    print(f'Warning: The default algorithm is not recommended for this system')
+
+    def compute_threshold_estimate(self):
+        """
+        Computes the threshold estimate for the dot array for use with the thresholded algorithm
+        """
+        return compute_threshold(self.cdd)
 
     def _assert_shape(self):
         """

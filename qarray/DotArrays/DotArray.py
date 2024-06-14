@@ -3,7 +3,8 @@ from dataclasses import dataclass
 import numpy as np
 from pydantic import NonNegativeInt
 
-from ._helper_functions import (_ground_state_open, _ground_state_closed, check_algorithm_and_implementation)
+from ._helper_functions import (_ground_state_open, _ground_state_closed, check_algorithm_and_implementation,
+                                check_and_warn_user)
 from ..functions import convert_to_maxwell, _optimal_Vg, compute_threshold
 from ..latching_models import LatchingBaseModel
 from ..qarray_types import Cdd as CddType  # to avoid name clash with dataclass cdd
@@ -67,6 +68,21 @@ class DotArray:
 
     latching_model: LatchingBaseModel | None = None  # a latching model to add latching to the dot occupation vector
 
+    def update_capacitance_matrices(self, Cdd: CddNonMaxwell, Cgd: CgdNonMaxwell):
+        """
+        Updates the capacitance matrices of the dot array
+
+        :param Cdd: the new Cdd matrix
+        :param Cgd: the new Cgd matrix
+
+        :return: None
+        """
+
+        self.Cdd = PositiveValuedMatrix(self.Cdd)
+        self.Cgd = PositiveValuedMatrix(self.Cgd)
+        self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.Cdd, self.Cgd)
+
+
     def __post_init__(self):
         """
         This function is called after the initialization of the dataclass. It checks that the capacitance matrices
@@ -81,11 +97,9 @@ class DotArray:
 
         # if the non maxwell pair is passed, convert it to maxwell
         if non_maxwell_pair_passed:
-            self.Cdd = PositiveValuedMatrix(self.Cdd)
-            self.Cgd = PositiveValuedMatrix(self.Cgd)
-            self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.Cdd, self.Cgd)
+            self.update_capacitance_matrices(self.Cdd, self.Cgd)
         else:
-            self.cdd = np.array(self.cdd)
+            self.cdd = CddType(self.cdd)
             self.cgd = np.array(self.cgd)
 
         # setting the cdd_inv attribute as the inverse of cdd
@@ -129,8 +143,8 @@ class DotArray:
         if self.latching_model is None:
             self.latching_model = LatchingBaseModel()
 
-        if self.algorithm == 'thresholded':
-            self.check_threshold()
+        if self.algorithm in ['thresholded', 'default']:
+            check_and_warn_user(self)
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """
@@ -168,10 +182,8 @@ class DotArray:
         F = np.einsum('...i, ij, ...j', delta, self.cdd_inv, delta)
         return F
 
-    def check_threshold(self):
+    def compute_threshold_estimate(self):
         """
-        Computes the threshold for the thresholded algorithm
+        Computes the threshold estimate for the dot array for the thresholded algorithm
         """
-        optimal_threshold = compute_threshold(self.cdd)
-        if self.threshold < optimal_threshold:
-            print(f'The threshold is below the suggested threshold of {optimal_threshold}.')
+        return compute_threshold(self.cdd)

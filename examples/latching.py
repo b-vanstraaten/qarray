@@ -31,7 +31,7 @@ latching_model = LatchingModel(
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.05, T=5,
+    coulomb_peak_width=0.05, T=50,
     algorithm='default',
     implementation='rust',
     noise_model=WhiteNoise(amplitude=1e-3),

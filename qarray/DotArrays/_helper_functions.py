@@ -1,6 +1,7 @@
 import numpy as np
 from pydantic import NonNegativeInt
 
+from qarray.functions import compute_threshold
 from qarray.jax_implementations.brute_force_jax import ground_state_closed_brute_force_jax, \
     ground_state_open_brute_force_jax
 from qarray.jax_implementations.default_jax import ground_state_open_default_jax, ground_state_closed_default_jax
@@ -12,6 +13,27 @@ from ..qarray_types import VectorList
 from ..rust_implemenations import ground_state_open_default_or_thresholded_rust, \
     ground_state_closed_default_or_thresholded_rust
 
+
+def check_and_warn_user(model):
+    """
+    Checks if the threshold is below the optimal threshold for the system
+    """
+    k = np.linalg.cond(model.cdd)
+    n = model.cdd.shape[0]
+
+    k_max = 1 + 4 / n
+
+    optimal_threshold = compute_threshold(model.cdd)
+
+    if optimal_threshold > 1 and k > k_max:
+        print(f'Warning: The default nor thresholded algorithm is not recommended for this system. The cdd matrix '
+              f'contains off diagonal elements which are sufficiently strong that it cannnot be treaded as an approximatly diagonal matrix.')
+        return
+
+    if model.algorithm == 'thresholded':
+        if model.threshold < optimal_threshold:
+            print(f'Warning: The threshold is below the optimal threshold of {optimal_threshold:.3f}'
+                  f' for this system. This may produce distortions in the charge stability diagram.')
 
 def check_algorithm_and_implementation(algorithm: str, implementation: str):
     algorithm_implementation_combinations = {

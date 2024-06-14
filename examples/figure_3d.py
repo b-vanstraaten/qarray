@@ -33,13 +33,10 @@ cgd_non_maxwell = np.array([
 model = DotArray(
     Cdd=cdd_non_maxwell,
     Cgd=cgd_non_maxwell,
-    algorithm='thresholded',
+    algorithm='default',
     implementation='rust',
     T=300.,
-    threshold=0.5,
 )
-
-print(np.linalg.cond(model.cdd))
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d

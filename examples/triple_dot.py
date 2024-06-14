@@ -13,8 +13,8 @@ from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
     Cdd=[
-        [0., 0.1, 0.05],
-        [0.1, 0., 0.1],
+        [0., 1, 0.05],
+        [1, 0., 0.1],
         [0.05, 0.1, 0]
     ],
     Cgd=[
@@ -46,7 +46,7 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 2, vy_min, vy_max, 400)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
