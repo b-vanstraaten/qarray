@@ -59,7 +59,6 @@ z = lorentzian(v_sensor, 0.5, 0.1)
 n = scipy.ndimage.gaussian_filter(np.random.randn(z.size), 1).reshape(z.shape)
 z += n * 0.00015
 
-
 z = -np.gradient(z, axis=0)
 z = (z - z.min()) / (z.max() - z.min())
 

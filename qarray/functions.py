@@ -9,6 +9,35 @@ from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, Tetrad,
                            Vector)
 
 
+def unique_last_axis(arr):
+    """
+    Find unique arrays in the last axis of a numpy ndarray.
+
+    Parameters:
+    arr (np.ndarray): Input array.
+
+    Returns:
+    np.ndarray: Array of unique arrays in the last axis.
+    indices (np.ndarray): Indices of the first occurrences of the unique arrays.
+    inverse_indices (np.ndarray): Indices to reconstruct the original array from the unique array.
+    """
+    # Ensure input is a numpy array
+    arr = np.asarray(arr)
+
+    # Get the shape of the input array
+    original_shape = arr.shape
+
+    # Reshape the array to 2D where each element along the last axis becomes a row
+    reshaped_arr = arr.reshape(-1, original_shape[-1])
+
+    # Use np.unique to find unique rows and their indices
+    unique_rows, indices, inverse_indices = np.unique(reshaped_arr, axis=0, return_index=True, return_inverse=True)
+
+    # Reshape unique rows back to the original last axis shape
+    unique_arrays = unique_rows.reshape(-1, *original_shape[-1:])
+
+    return unique_arrays
+
 def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
     """
     Function which computes the dot product between the dot change state and the

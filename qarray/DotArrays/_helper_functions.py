@@ -1,3 +1,7 @@
+"""
+This module contains helper functions used in the DotArrays module.
+"""
+
 import numpy as np
 
 from qarray.functions import compute_threshold

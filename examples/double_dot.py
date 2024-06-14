@@ -30,7 +30,6 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate, n_dot=model.n_dot)
 voltage_composer.virtual_gate_matrix = np.linalg.pinv(model.cdd_inv @ model.cgd)
 voltage_composer.virtual_gate_origin = np.zeros(model.n_gate)
 
-
 # defining the functions to compute the ground state for the different cases
 ground_state_funcs = [
     model.ground_state_open,
@@ -63,7 +62,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     # z = np.gradient(z, axis=0)
 
     ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,
-                 interpolation='antialiased')
+              interpolation='antialiased')
     ax.set_aspect('equal')
 
 fig.tight_layout()
