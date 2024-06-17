@@ -4,7 +4,6 @@ This module contains the functions for computing the ground state of a closed ar
 from functools import partial
 
 import numpy as np
-from pydantic import NonNegativeInt
 
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes, Cdd
@@ -12,7 +11,7 @@ from .charge_configuration_generators import open_change_configurations_brute_fo
 
 
 def ground_state_closed_brute_force_python(vg: VectorList, cgd: Cgd_holes, cdd: Cdd, cdd_inv: CddInv,
-                                           n_charge: NonNegativeInt, T: float = 0) -> VectorList:
+                                           n_charge: int, T: float = 0) -> VectorList:
     """
    A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at
@@ -29,7 +28,7 @@ def ground_state_closed_brute_force_python(vg: VectorList, cgd: Cgd_holes, cdd: 
 
 
 def _ground_state_closed_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray,
-                            n_charge: NonNegativeInt, n_list, T: float) -> np.ndarray:
+                            n_charge: int, n_list, T: float) -> np.ndarray:
     """
     Computes the ground state for a closed array.
     :param vg: the dot voltage coordinate vector

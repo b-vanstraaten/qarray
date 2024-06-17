@@ -8,7 +8,6 @@ from functools import partial
 import numpy as np
 import osqp
 from loguru import logger
-from pydantic import NonNegativeInt
 from scipy import sparse
 
 from qarray.python_implementations.default_and_thresholded_python.charge_configuration_generators import (
@@ -28,7 +27,7 @@ def compute_analytical_solution_closed(cdd, cgd, n_charge, vg):
     return n_continuous + isolation_correction
 
 
-def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd_holes, n_charge: NonNegativeInt | None = None,
+def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd_holes, n_charge: int | None = None,
                       polish: bool = True) -> osqp.OSQP:
     """
     Initializes the OSQP solver for the closed dot array model_threshold_1
@@ -124,7 +123,7 @@ def ground_state_open_default_or_thresholded_python(vg: VectorList, cgd: Cgd_hol
     return VectorList(list(N))
 
 
-def ground_state_closed_default_or_thresholded_python(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes,
+def ground_state_closed_default_or_thresholded_python(vg: VectorList, n_charge: int, cgd: Cgd_holes,
                                                       cdd: Cdd,
                                                       cdd_inv: CddInv, threshold: float,
                                                       polish: bool = True, T: float = 0) -> VectorList:

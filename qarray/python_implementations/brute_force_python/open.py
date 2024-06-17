@@ -5,7 +5,6 @@ This module contains the functions for computing the ground state of an open arr
 from functools import partial
 
 import numpy as np
-from pydantic.types import PositiveInt
 
 from qarray.jax_implementations.helper_functions import softargmin, hardargmin
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes
@@ -13,7 +12,7 @@ from .charge_configuration_generators import open_change_configurations_brute_fo
 
 
 def ground_state_open_brute_force_python(vg: VectorList, cgd: Cgd_holes, cdd_inv: CddInv,
-                                         max_number_of_charge_carriers: PositiveInt, T: float = 0) -> VectorList:
+                                         max_number_of_charge_carriers: int, T: float = 0) -> VectorList:
     """
     A jax implementation for the ground state function that takes in numpy arrays and returns numpy arrays.
     :param vg: the dot voltage coordinate vectors to evaluate the ground state at

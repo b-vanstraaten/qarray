@@ -2,7 +2,6 @@
 Type hinted wrappers for the rust core functions.
 """
 import numpy as np
-from pydantic import NonNegativeInt
 from qarray_rust_core import (ground_state_open, ground_state_closed,
                               closed_charge_configurations, open_charge_configurations)
 
@@ -22,7 +21,7 @@ def open_charge_configurations_rust(n_continuous: Vector, threshold: float = np.
     return VectorList(open_charge_configurations(n_continuous, threshold))
 
 
-def closed_charge_configurations_rust(n_continuous: Vector, n_charge: NonNegativeInt,
+def closed_charge_configurations_rust(n_continuous: Vector, n_charge: int,
                                       threshold: float = np.inf) -> VectorList:
     """
     A wrapper for the rust closed charge configurations function that takes in numpy arrays and returns numpy arrays.
@@ -56,7 +55,7 @@ def ground_state_open_default_or_thresholded_rust(vg: VectorList, cgd: Cgd_holes
     return VectorList(ground_state_open(vg, cgd, cdd_inv, threshold, polish, T))
 
 
-def ground_state_closed_default_or_thresholded_rust(vg: VectorList, n_charge: NonNegativeInt, cgd: Cgd_holes, cdd: Cdd,
+def ground_state_closed_default_or_thresholded_rust(vg: VectorList, n_charge: int, cgd: Cgd_holes, cdd: Cdd,
                                                     cdd_inv: CddInv, threshold: float, T: float = 0,
                                                     polish: bool = True) -> VectorList:
     """
