@@ -4,6 +4,7 @@ when all changes are positive.
 """
 
 import unittest
+from time import perf_counter
 
 import numpy as np
 
@@ -29,19 +30,32 @@ class TestOsqpSolver(unittest.TestCase):
 
         models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
 
+        N = 0
+        t = 0
+
         for model in models:
             vg_list = np.random.uniform(-5, 0, (N_VOLTAGES, n_gate))
             prob = init_osqp_problem(cdd_inv=model.cdd_inv, cgd=model.cgd)
 
             for vg in vg_list:
                 analytical_solution = compute_analytical_solution_open(cgd=model.cgd, vg=vg)
+
+                t0 = perf_counter()
+
                 prob.update(q=-model.cdd_inv @ model.cgd @ vg)
                 res = prob.solve()
+
+                t1 = perf_counter()
+
+                N += 1
+                t += t1 - t0
 
                 if np.all(analytical_solution >= 0.):
                     self.assertTrue(np.allclose(res.x, analytical_solution, atol=ATOL),
                                     msg=f'vg: {vg}, {analytical_solution}, {res.x}'
                                     )
+
+        print(f'Average time: {t / N}')
 
     def test_double_dot_closed(self):
 
@@ -84,19 +98,28 @@ class TestOsqpSolver(unittest.TestCase):
 
         models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
 
+        N = 0
+        t = 0
+
         for model in models:
             vg_list = np.random.uniform(-5, 0, (N_VOLTAGES, n_gate))
             prob = init_osqp_problem(cdd_inv=model.cdd_inv, cgd=model.cgd)
 
             for vg in vg_list:
                 analytical_solution = compute_analytical_solution_open(cgd=model.cgd, vg=vg)
+                t0 = perf_counter()
                 prob.update(q=-model.cdd_inv @ model.cgd @ vg)
                 res = prob.solve()
+                t1 = perf_counter()
+
+                N += 1
+                t += t1 - t0
 
                 if np.all(analytical_solution >= 0.):
                     self.assertTrue(np.allclose(res.x, analytical_solution, atol=ATOL),
                                     msg=f'vg: {vg}, {analytical_solution}, {res.x}'
                                     )
+        print(f'Average time: {t / N}')
 
     def test_quadruple_dot_open(self):
 
@@ -109,6 +132,9 @@ class TestOsqpSolver(unittest.TestCase):
         n_dot = 4
         n_gate = 4
 
+        N = 0
+        t = 0
+
         models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
 
         for model in models:
@@ -118,9 +144,16 @@ class TestOsqpSolver(unittest.TestCase):
             for vg in vg_list:
                 analytical_solution = compute_analytical_solution_open(cgd=model.cgd, vg=vg)
 
+                t0 = perf_counter()
                 prob.update(q=-model.cdd_inv @ model.cgd @ vg)
                 res = prob.solve()
+                t1 = perf_counter()
+
+                N += 1
+                t += t1 - t0
 
                 if np.all(analytical_solution >= 0.):
                     self.assertTrue(np.allclose(res.x, analytical_solution, atol=ATOL),
                                     msg=f'vg: {vg}, {analytical_solution}, {res.x}')
+
+        print(f'Average time: {t / N}')

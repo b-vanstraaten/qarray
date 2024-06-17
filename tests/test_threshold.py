@@ -2,9 +2,10 @@
 Tests to check the capacitance model_threshold_1 works for double dot arrays
 """
 
+from unittest import TestCase
+
 import matplotlib.pyplot as plt
 import numpy as np
-from tqdm import tqdm
 
 from qarray import (_optimal_Vg,
                     GateVoltageComposer, dot_occupation_changes)
@@ -12,7 +13,7 @@ from .GLOBAL_OPTIONS import N_ITERATIONS, N_VOLTAGES
 from .helper_functions import randomly_generate_model
 
 
-class threshold_tests:
+class ThresholdTests(TestCase):
     def test_threshold_double_dot_open(self):
         """
         Test that the python and rust open double dot ground state functions return the same result.
@@ -26,7 +27,7 @@ class threshold_tests:
         models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
-        for model in tqdm(models):
+        for model in models:
             vg = voltage_composer.do2d(0, -5, 5, N_VOLTAGES, -1, -5, 5, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_open(vg)
 
@@ -47,13 +48,13 @@ class threshold_tests:
         models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
-        for model in tqdm(models):
+        for model in models:
             model.core = 'python'
             vg = voltage_composer.do2d(0, -10, 5, N_VOLTAGES, -1, -10, 5, N_VOLTAGES)
-            n_threshold_not_of_1 = model.ground_state_closed(vg, n_charge=5)
+            n_threshold_not_of_1 = model.ground_state_closed(vg, n_charges=5)
 
             model.threshold = 1.
-            n_threshold_of_1 = model.ground_state_closed(vg, n_charge=5)
+            n_threshold_of_1 = model.ground_state_closed(vg, n_charges=5)
             self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
 
     def test_threshold_triple_dot(self):
@@ -102,10 +103,10 @@ class threshold_tests:
         for model in models:
             model.core = 'python'
             vg = voltage_composer.do2d(0, -20, 5, N_VOLTAGES, -1, -20, 5, N_VOLTAGES)
-            n_threshold_not_of_1 = model.ground_state_closed(vg, n_charge=2)
+            n_threshold_not_of_1 = model.ground_state_closed(vg, n_charges=2)
 
             model.threshold = 1.
-            n_threshold_of_1 = model.ground_state_closed(vg, n_charge=2)
+            n_threshold_of_1 = model.ground_state_closed(vg, n_charges=2)
 
             if not np.allclose(n_threshold_of_1, n_threshold_not_of_1):
                 fig, ax = plt.subplots(1, 3)

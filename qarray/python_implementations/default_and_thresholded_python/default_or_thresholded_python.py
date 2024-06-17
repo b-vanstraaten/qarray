@@ -54,7 +54,7 @@ def init_osqp_problem(cdd_inv: CddInv, cgd: Cgd_holes, n_charge: NonNegativeInt 
         A = sparse.csc_matrix(np.eye(dim))
 
     prob = osqp.OSQP()
-    prob.setup(P, q, A, l, u, alpha=1., verbose=False, polish=polish)
+    prob.setup(P, q, A, l, u, verbose=False, polish=polish)
     return prob
 
 
