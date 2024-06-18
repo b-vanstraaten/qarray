@@ -8,6 +8,7 @@ from qarray.python_implementations.brute_force_python import ground_state_open_b
 from ._helper_functions import _validate_vg
 from ..python_implementations import ground_state_open_default_or_thresholded_python, \
     ground_state_closed_default_or_thresholded_python
+from ..python_implementations.cvxpy import ground_state_open_cvxpy, ground_state_closed_cvxpy
 from ..qarray_types import VectorList
 from ..rust_implemenations import ground_state_open_default_or_thresholded_rust, \
     ground_state_closed_default_or_thresholded_rust
@@ -93,6 +94,10 @@ def _ground_state_open(model, vg: VectorList | np.ndarray) -> np.ndarray:
                         threshold=1.,
                         polish=model.polish, T=kB_T
                     )
+
+                case 'cvxpy':
+
+                    result = ground_state_open_cvxpy(vg=vg, cgd=model.cgd, cdd_inv=model.cdd_inv)
 
                 case 'thresholded':
 
@@ -205,6 +210,9 @@ def _ground_state_closed(model, vg: VectorList | np.ndarray, n_charge: int) -> n
                         threshold=1.,
                         polish=model.polish, n_charge=n_charge, T=kB_T
                     )
+
+                case 'cvxpy':
+                    result = ground_state_closed_cvxpy(vg=vg, n_charges=n_charge, cgd=model.cgd, cdd_inv=model.cdd_inv)
 
                 case 'thresholded':
 

@@ -95,6 +95,7 @@ def check_algorithm_and_implementation(algorithm: str, implementation: str):
         'default': ['rust', 'python', 'jax'],
         'thresholded': ['rust', 'python'],
         'brute_force': ['jax', 'python'],
+        'cvxpy': ['python'],
     }
     assert algorithm.lower() in algorithm_implementation_combinations.keys(), f'Algorithm {algorithm} not supported'
     implementations = algorithm_implementation_combinations[algorithm.lower()]

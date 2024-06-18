@@ -9,7 +9,7 @@ Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive couplin
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.05, T=100
+    coulomb_peak_width=0.05, T=100, algorithm='cvxpy', implementation='python'
 )
 
 voltage_composer = GateVoltageComposer(model.n_gate)
