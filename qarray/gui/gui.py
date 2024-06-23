@@ -7,10 +7,10 @@ from dash import dcc, html
 from dash.dependencies import Input, Output
 
 from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
-from .helper_funcitons import create_gate_options, n_charges_options, unique_last_axis
+from .helper_functions import create_gate_options, n_charges_options, unique_last_axis
 
 
-def create_gui(model, port=27182):
+def create_gui(model, port=27182, run=True):
     """
     Create the GUI for the DotArray model.
 
@@ -239,4 +239,6 @@ def create_gui(model, port=27182):
         return fig
 
     print(f'Starting the server at http://localhost:{port}')
-    app.run(debug=False, port=port, reload=True)
+    if run:
+        app.run(debug=False, port=port)
+    return app

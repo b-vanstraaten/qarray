@@ -31,7 +31,7 @@ class TestFunctions(unittest.TestCase):
         self.assertTrue(np.allclose(result, expected))
 
     def test_unique_last_index(self):
-        from qarray.functions import unique_last_axis
+        from qarray.gui.helper_functions import unique_last_axis
 
         a = np.array([[[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 2], [3, 4]]])
         b = np.array([[[1, 2], [3, 4]], [[1, 2], [3, 4]], [[1, 2], [3, 4]]])
