@@ -13,6 +13,7 @@ from .ground_state import _ground_state_open, _ground_state_closed
 from ..functions import _optimal_Vg, compute_threshold
 from ..latching_models import LatchingBaseModel
 from ..noise_models import BaseNoiseModel
+from ..python_implementations.helper_functions import free_energy
 from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector, \
     PositiveValuedMatrix
 
@@ -156,12 +157,16 @@ class ChargeSensedDotArray:
         # computing the noise to be added to the charge sensor potential before it is used in as the input to the lorentzian
         input_noise = self.noise_model.sample_input_noise(N_sensor.shape)
         # iterating over the nearest transitions and adding a lorentizan at each
-        signal = np.zeros_like(N_sensor)
-        for n in range(-self.n_peak, self.n_peak + 1):
-            N_full = np.concatenate([n_open, N_sensor + n], axis=-1)
-            V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, N_cont - N_full)[..., self.n_dot:]
-            signal = signal + lorentzian(V_sensor + input_noise, 0.5, self.coulomb_peak_width)
 
+        F = np.zeros(shape=(2 * self.n_peak + 1, *N_sensor.shape))
+        for sensor in range(self.n_sensor):
+            for i, n in enumerate(range(-self.n_peak, self.n_peak + 1)):
+                perturbed_N_sensor = N_sensor.copy()
+                perturbed_N_sensor[..., sensor] = perturbed_N_sensor[..., sensor] + n
+                N_full = np.concatenate([n_open, perturbed_N_sensor + input_noise], axis=-1)
+                F[i, ..., sensor] = free_energy(self.cdd_inv_full, self.cgd_full, vg, N_full)
+
+        signal = lorentzian(np.diff(F, axis=0), 0, self.coulomb_peak_width).sum(axis=0)
         output_noise = self.noise_model.sample_output_noise(N_sensor.shape)
 
         return signal + output_noise, n_open
@@ -196,12 +201,15 @@ class ChargeSensedDotArray:
         # computing the noise to be added to the charge sensor potential before it is used in as the input to the lorentzian
         input_noise = self.noise_model.sample_input_noise(N_sensor.shape)
 
-        signal = np.zeros_like(N_sensor)
-        for n in range(-self.n_peak, self.n_peak + 1):
-            N_full = np.concatenate([n_closed, N_sensor + n], axis=-1)
-            V_sensor = np.einsum('ij, ...j -> ...i', self.cdd_inv_full, N_cont - N_full)[..., self.n_dot:]
-            signal = signal + lorentzian(V_sensor + input_noise, 0.5, self.coulomb_peak_width)
+        F = np.zeros(shape=(2 * self.n_peak + 1, *N_sensor.shape))
+        for sensor in range(self.n_sensor):
+            for i, n in enumerate(range(-self.n_peak, self.n_peak + 1)):
+                perturbed_N_sensor = N_sensor.copy()
+                perturbed_N_sensor[..., sensor] = perturbed_N_sensor[..., sensor] + n
+                N_full = np.concatenate([n_closed, perturbed_N_sensor + input_noise], axis=-1)
+                F[i, ..., sensor] = free_energy(self.cdd_inv_full, self.cgd_full, vg, N_full)
 
+        signal = lorentzian(np.diff(F, axis=0), 0, self.coulomb_peak_width).sum(axis=0)
         output_noise = self.noise_model.sample_output_noise(N_sensor.shape)
 
         return signal + output_noise, n_closed

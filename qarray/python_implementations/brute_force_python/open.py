@@ -6,7 +6,7 @@ from functools import partial
 
 import numpy as np
 
-from qarray.jax_implementations.helper_functions import softargmin, hardargmin
+from qarray.python_implementations.helper_functions import softargmin, hardargmin, free_energy
 from qarray.qarray_types import VectorList, CddInv, Cgd_holes
 from .charge_configuration_generators import open_change_configurations_brute_force_python
 
@@ -37,9 +37,7 @@ def _ground_state_open_0d(vg: np.ndarray, cgd: np.ndarray, cdd_inv: np.ndarray, 
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :return: the lowest energy charge configuration
     """
-    v_dash = cgd @ vg
-    # computing the free energy of the change configurations
-    F = np.einsum('...i, ij, ...j', n_list - v_dash, cdd_inv, n_list - v_dash)
+    F = free_energy(cdd_inv, cgd, vg, n_list)
     # returning the lowest energy change configuration
     match T > 0.:
         case True:
