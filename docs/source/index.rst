@@ -1,8 +1,9 @@
 Qarray documentation
 ==================================
 
+
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    :caption: Contents:
 
    introduction
@@ -11,6 +12,7 @@ Qarray documentation
    examples
 
    api
+
 
 Indices and tables
 ==================
