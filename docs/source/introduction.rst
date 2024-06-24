@@ -11,32 +11,27 @@ Introduction
 
 
 **QArray** harnesses the speed of the systems programming language Rust
-or the compute power of GPUs using JAX XLA to deliver constant
-capacitance model charge stability diagrams in seconds or milliseconds.
+or the compute power of GPUs using JAX XLA to calculate charge stability diagrams via the constant
+capacitance model in seconds or milliseconds.
 It couples highly optimised and parallelised code with two new
-algorithms to compute the ground state charge configuration. These
+algorithms to compute the ground state charge configuration of the simulated system. Our
 algorithms scale better than the traditional brute-force approach and do
-not require the user to specify the maximum number of charge carriers a
-priori. It can simulate the charge stability diagram of quantum dot arrays both
-open and closed (isolated such that the number of charge carriers is fixed within the array).
+not require the user to specify the maximum number of charge carriers `a priori`. QArray can simulate the charge stability diagrams of quantum dot arrays in regimes where charges can tunnel between the dots and reservoirs (the open regime), as well as the case where the dots are isolated from the reservoirs (the closed regime).
 
 QArray runs on both CPUs and GPUs and is designed to be easy to use and
 integrate into your existing workflow. It was developed on macOS running
 on Apple Silicon and is continuously tested on Windows-lastest, macOs13,
 macOS14 and Ubuntu-latest.
 
-Finally, QArray captures physical effects such as measuring the charge
-stability diagram with a SET and thermal broadening of charge
-transitions. The combination of these effects permits the simulation of
+QArray captures physical effects including charge sensing measurements and the thermal broadening of charge transitions. The combination of these effects permits the simulation of
 charge stability diagrams that are visually similar to those measured
 experimentally.
 
-The plots on the right below are measured
-experimentally, and the plots on the left are simulated using QArray. Figure (a) shows the
+The plots on the left below are measured
+experimentally, and the plots on the right are simulated using QArray. Figure (a) shows the
 charge stability diagram of an open quadruple quantum dot array recreated with permission
 from `[1] <#%5B1%5D>`__ while (b) is a simulated using QArray. Figure (c) shows the charge
-stability diagram of a closed five dot quantum recreated with permission from `[2] <#%5B2%5D>`__
-and (d) is simulated using QArray.
+stability diagram of a closed five dot quantum recreated with permission from `[2] <#%5B2%5D>`__; (d) is our simulated recreation.
 
 |recreations|
 
@@ -56,6 +51,9 @@ Authors
 Barnaby van Straaten
 Joseph Hickie
 
+
+References
+----------
 
 [1] `M. R. Delbecq, T. Nakajima, T. Otsuka, S. Amaha, J. D. Watson, M. J. Manfra, S. Tarucha; Full control of quadruple quantum dot circuit charge states in the single electron regime. Appl. Phys. Lett. 5 May 2014; 104 (18): 183111. https://doi.org/10.1063/1.4875909 <https://pubs.aip.org/aip/apl/article/104/18/183111/24127/Full-control-of-quadruple-quantum-dot-circuit>`__
 

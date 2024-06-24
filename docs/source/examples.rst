@@ -3,20 +3,15 @@ Examples
 ########
 
 Here we will provide some examples which show off some of the more advanced functionally
-provided by Qarray.
+provided by QArray.
 
 +++++++++
 Charge sensing
 +++++++++
 
-In this example we will simulate the measuring a double quantum dots charge stability diagram
-through a charge sensor. To do this we will use the `ChargeSensedDotArray` class to simulate the charge.
-This class is similar to the `DotArray` class, but it also includes the charge sensor. Therefore,
-it is necessary to pass two extra capacitance matrices. One for the coupling between the dots and the sensor (`Cds`)
-and one for the coupling between the gates and the sensor (`Cgs`). In addition, we must specify the
-width of the Coulomb peak (`coulomb_peak_width`)
+To simulate a charge sensing measurement, we use the :code:`ChargeSensedDotArray` class. This class is functionally similar to the :code:`DotArray` class, but includes a quantum dot charge sensor coupled to the device array. We can control the strength of this coupling via the two additional matrices that it is necessary to include upon initialising the :code:`ChargeSensedDotArray` class. The first (:code:`Cds`) specifies the strength  of the coupling between the device array's dots and the charge sensor, and the second (:code:`Cgs`) specifies the strength of the coupling between the device array's gates and the charge sensor. The width of the Coulomb peak in the simulated charge sensing quantum dot is passed via the :code:`coulomb_peak_width` keyword argument.
 
-As demonstrated below:
+The snippet below is an example of how we can use these classes to generate a charge-sensed measurement.
 
 .. code:: python
 
@@ -31,20 +26,18 @@ As demonstrated below:
     # creating the model
     model = ChargeSensedDotArray(
         Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-        coulomb_peak_width=0.05, T = 100
+        coulomb_peak_width=0.05, T=100
     )
 
 It is important to note that for the double dot there are now three gates,
 one for each dot and one for the charge sensor. The index 0 corresponds to the first dot,
-index 1 to the second dot and index 2 to the charge sensor, when using the GateVoltageComposer, discussed next.
+index 1 to the second dot and index 2 to the charge sensor. This is important when using the :code:`GateVoltageComposer` with the :code:`ChargeSensedDotArray`.
 
-As before, we can use the `GateVoltageComposer` to create a gate voltage sweep. However, this time we well use
-an addition piece of functionality, provided by both the `DotArray` and `ChargeSensedDotArray` classes, which is the
-`optimal_Vg` method. This method returns the optimal gate voltages which minimise the free energy of the passed charge state.
-For example if we have a charge state of `[1., 1., 1.]` (two dots one charge sensing dot) the `optimal_Vg` method will return the gate voltages
-in the middle of the [1, 1] charge state and directly ontop of the first charge sensing coloumb peak. Whilst if the user passes `[0.5, 0.5, 0.5]` the
-method will return the gate voltages in the middle of the [0, 1] - [1,0] interdot charge transition and exactly halfway between two charge sensing
-coulomb peaks.
+As before, we can use the :code:`GateVoltageComposer` to create a gate voltage sweep. However, this time we will use
+an addition piece of functionality, provided by both the :code:`DotArray` and :code:`ChargeSensedDotArray` classes, which is the
+:code:`optimal_Vg` method. This method returns the optimal gate voltages which minimise the free energy of a given charge state.
+For example, if we have a charge state of `[1., 1., 1.]` (in the case of two array dots and one charge sensing dot), the `optimal_Vg` method will return the gate voltages that configure the simulated device to be in the middle of the [1, 1] charge state and directly on top of the first Coloumb peak in the charge sensor. If the user passes `[0.5, 0.5, 0.5]`, the
+method will return the gate voltages corresponding to the middle of the [0, 1] - [1,0] interdot charge transition and exactly halfway between two Coulomb peaks in the charge sensing dot. This can be useful for centring your simulation on a specific charge transition or state, as demonstrated in the snippet below.
 
 .. code:: python
 
@@ -63,7 +56,7 @@ coulomb peaks.
     z, n = model.charge_sensor_open(vg)
     dz_dV1 = np.gradient(z, axis=0) + np.gradient(z, axis=1)
 
-And now we can plot the output of the charge sensor and its gradient with respect to the gate voltages.
+We can plot the output of the charge sensor and its gradient with respect to the gate voltages:
 
 .. code:: python
 
@@ -72,13 +65,13 @@ And now we can plot the output of the charge sensor and its gradient with respec
 
     fig, axes = plt.subplots(1, 2, sharex=True, sharey=True)
 
-    # plotting the charge stability diagram
+    # plotting the charge stability diagram measured via the charge sensor
     axes[0].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap = 'hot')
     axes[0].set_xlabel('$Vx$')
     axes[0].set_ylabel('$Vy$')
     axes[0].set_title('$z$')
 
-    # plotting the charge sensor output
+    # plotting the gradient of the charge sensor output
     axes[1].imshow(dz_dV1, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap = 'hot')
     axes[1].set_xlabel('$Vx$')
     axes[1].set_ylabel('$Vy$')
@@ -89,20 +82,18 @@ And now we can plot the output of the charge sensor and its gradient with respec
 The output of the code above is shown below:
 |charge_sensing|
 
-Whilst this plot looks closer to what we see experimentally it is still too perfect. Where is the noise?
+Whilst this plot looks closer to what we see experimentally, we are missing noise. If only there were a way to include noise in the simulation!
 
 +++++++++
-Noise
+Including noise in the simulation
 +++++++++
 
-To add noise to the simulation we can import some of noise classes provided by Qarray.
+To add noise to the simulation, we can import some of noise classes provided by QArray. In the example below we demonstrate the use of the :code:`WhiteNoise` and :code:`TelegraphNoise` classes.
 
-In the example below we will demonstrate two of our noise models, `WhiteNoise` and `TelegraphNoise`.
-
-The `WhiteNoise` class adds white noise to the simulation, of a particular amplitude (std).
-The `TelegraphNoise` simulates a charge trap randomly switching near the charge sensor. The probabilities
-of the trap switching between the two states are given by `p01` and `p10`.
-The amplitude of the noise is given by `amplitude`.
+The :code:`WhiteNoise` class adds white noise to the simulation, of a particular amplitude (std).
+The :code:`TelegraphNoise` simulates a charge trap randomly switching near the charge sensor. The probabilities
+of the trap switching between the two states are given by :code:`p01` and :code:`p10`.
+The amplitude of the noise is given by :code:`amplitude`.
 
 In addition, all our noise models overload the `+` operator,
 so we can combine them to create more complex noise models.
@@ -156,20 +147,19 @@ so we can combine them to create more complex noise models.
 Latching
 +++++++++
 
-Within Qarray we provide two latching models, `LatchingModel` and `PSBLatchingModel`. The `LatchingModel` simulates latching on the transitions to the leads and inter-dot transitions,
-due to slow tunnel rates. The `PSBLatchingModel` simulates latching only when the moving from (1, 1) to (0, 2) as indicative of PSB.
-So there is directionality based on which direction the transition is crossed.
-In the below we will demonstrate the use of the `LatchingModel` with the `ChargeSensedDotArray` class.
+Within QArray we provide two latching models: :code:`LatchingModel` and :code:`PSBLatchingModel`. The :code:`LatchingModel` simulates latching on the transitions to the leads and inter-dot transitions, caused in reality by slow tunnel rates. The :code:`PSBLatchingModel` simulates latching only when the moving from (1, 1) to (0, 2) as indicative of Pauli spin blockade.
+As in the real world, there is a polarity to this latching, based on the direction in the transition is crossed.
+In this section, we demonstrate the use of the :code:`LatchingModel` with the :code:`ChargeSensedDotArray` class.
 
-Firstly we do the necessary imports, define the capacitance matrices.
-Then we define the latching model and the charge sensed dot array model. The latching model class
+To begin, we import the necessary elements and define the capacitance matrices.
+We then define the latching model and the charge sensed dot array model. The latching model class
 takes three arguments:
 
-- The number of dots.
+- The number of dots in the device array.
 
-- A vector, p_leads, encoding information about the tunnel rate to the leads. Such that if the (N, M) -> (N + 1, M) charge transition is crossed p_leads[0] is the probability that the dot's charge configuration will change from (N, M) to (N + 1, M) in the next pixel of the charge stability diagram. In our case we set both proboabilities to 0.25.
+- A vector, :code:`p_leads`, encoding information about the tunnel rate to the leads. The elements are such that if the voltage configuration crosses the (N, M) -> (N + 1, M) charge transition, :code:`p_leads[0]` is the probability that the dot's charge configuration will change from (N, M) to (N + 1, M) in the next pixel of the charge stability diagram. In our case we set both probabilities to `0.25`.
 
-- A matrix, p_inter, encoding information about the tunnel rate between dots. Such that if the (N, M) -> (N - 1, M + 1) charge transition is crossed p_inter[0][1] is the probability that the dot's charge configuration will change from (N, M) to (N - 1, M + 1) in the next pixel of the charge stability diagram. As such the digaonal elements of the matrix are not used. In our case we set the off diagonals to 1, meaning no latching will occur on the interdot transition. The code to do this is shown below:
+- A matrix, :code:`p_inter`, encoding information about the tunnel rates between dots. These elements are such that if the (N, M) -> (N - 1, M + 1) charge transition is crossed, :code:`p_inter[0][1]` is the probability that the dot's charge configuration will change from (N, M) to (N - 1, M + 1) in the next pixel of the charge stability diagram. Note that the unlatched case, the probability of this transition is `1`. The diagonal elements of the matrix are not used. In the example below we set the off-diagonals to 1, meaning no latching will occur on the inter-dot transition.
 
 
 .. code:: python
@@ -197,13 +187,6 @@ takes three arguments:
         ]
     )
 
-    # # a latching model which simulates latching only when the moving from (1, 1) to (0, 2) as indicative of PSB
-    # latching_model = PSBLatchingModel(
-    #     n_dots=2,
-    #     p_psb=0.2
-    #     # probability of the a charge transition from (1, 1) to (0, 2) when the (0, 2) is lower in energy per pixel
-    # )
-
     # creating the model
     model = ChargeSensedDotArray(
         Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
@@ -214,11 +197,17 @@ takes three arguments:
         latching_model=latching_model,
     )
 
-Included by commented out is the code to use the `PSBLatchingModel` instead. THis model only has one parameter, the probability of latching
-when moving from (1, 1) to (0, 2) as indicative of PSB.
+Alternatively, we can use the Pauli spin blockade latching model via :code:`PSBLatchingModel`. This model only has one parameter, which is the probability of latching when moving from the (1, 1) to (0, 2) charge states as indicative of PSB.
 
-We then use the `GateVoltageComposer` to create a gate voltage sweep and the `optimal_Vg` method to find the optimal gate voltages.
-in the same way as before. We plot the output of the charge sensor, which is shown below.
+.. code:: python
+
+    # a latching model which simulates latching only when the moving from (1, 1) to (0, 2) as indicative of PSB
+    latching_model = PSBLatchingModel(
+        n_dots=2,
+        p_psb=0.2
+    )
+
+With our array and latching models defined, we use the :code:`GateVoltageComposer` to create a gate voltage sweep and the :code:`optimal_Vg` method to find the optimal gate voltages in the same way as before. We plot the output of the charge sensor, shown below.
 
 .. code:: python
 
