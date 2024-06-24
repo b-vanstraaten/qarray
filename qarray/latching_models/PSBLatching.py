@@ -21,10 +21,9 @@ class PSBLatchingModel(LatchingBaseModel):
     vector at the current time step is the same as the dot occupation vector at the previous time step.
 
     Parameters:
-    - n_dots (int): The number of dots in the dot occupation vector.
-    - p_psb (float | np.ndarray): The probability of latching for the inter-dot couplings. If a float, the same probability is
-    used for all inter-dot couplings. If an np.ndarray, the probability of latching for each inter-dot coupling is specified.
 
+    - n_dots (int): The number of dots in the dot occupation vector.
+    - p_psb (float | np.ndarray): The probability of latching for the inter-dot couplings. If a float, the same probability is used for all inter-dot couplings. If an np.ndarray, the probability of latching for each inter-dot coupling is specified.
 
     """
     n_dots: int
@@ -48,6 +47,7 @@ class PSBLatchingModel(LatchingBaseModel):
         Add latching to the dot occupation vector.
 
         Parameters:
+
         - n (np.ndarray): The dot occupation vector of shape (..., n_dots).
         - measurement_shape (tuple): The shape of the measurement.
 
