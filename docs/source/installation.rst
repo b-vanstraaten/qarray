@@ -3,8 +3,8 @@ Installation
 ##############
 
 We have tried to precompile the binaries for as many platforms as
-possible if you are running one of those operating systems, you can
-install QArray with just pip:
+possible. If you are running one of the supported operating systems (which you most likely are), you can
+install QArray via pip:
 
 .. code:: bash
 
@@ -12,43 +12,43 @@ install QArray with just pip:
 
 If you slip through the gaps, then the pip install will try to compile
 the binaries for you. This might require you to install some additional
-dependencies. In particular, might need to have cmake and rust
+dependencies. In particular, you will need to have cmake and rust
 installed.
 
 Install Rust from: https://www.rust-lang.org/tools/install
 
-Install CMake from: https://cmake.org/download/ however, on macOS and
-Ubuntu, you can install cmake using homebrew and apt, respectively.
+Install CMake from: https://cmake.org/download/. On macOS and
+Ubuntu, it may be more straightforward to install cmake using homebrew and apt, respectively.
 
 Also, setting up JAX on macOS running on M series chips can be a bit
 finicky. We outline the steps that worked for us in `macOS
 installation <#macOS-installation>`__. Alternatively, just spin up a
-`Github Codespace <https://github.com/codespaces>`__, then
-``pip install qarray`` and you are done.
+`Github Codespace <https://github.com/codespaces>`__ and
+``pip install qarray`` for an easy route around the various issues.
 
 macOS installation from scratch
 ------------------
 
-Getting JAX to work macOS on M Series chips can be rather finicky. Here
+Getting JAX to work macOS on M Series chips can be problematic. Here
 are the steps we used to get everything working starting from a fresh OS
 install.
 
 1. Install homebrew from https://brew.sh and run through the install
-   script
+   script.
 
-2. Use homebrew to install miniconda
+2. Use homebrew to install miniconda:
 
 .. code:: zsh
 
    brew install  miniconda
 
-3. Use homebrew to install cmake
+3. Use homebrew to install cmake:
 
 .. code:: zsh
 
    brew install cmake
 
-4. Create a new conda environment and install pip
+4. Create a new conda environment and install pip:
 
 .. code:: zsh
 
@@ -56,7 +56,7 @@ install.
    conda activate qarray
    conda install pip
 
-5. Install qarray using pip
+5. Install qarray using pip:
 
 .. code:: zsh
 
