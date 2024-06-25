@@ -34,7 +34,7 @@ model = ChargeSensedDotArray(
     coulomb_peak_width=0.05, T=50,
     algorithm='default',
     implementation='rust',
-    noise_model=WhiteNoise(amplitude=1e-3),
+    noise_model=WhiteNoise(amplitude=1e-4),
     latching_model=latching_model,
 )
 

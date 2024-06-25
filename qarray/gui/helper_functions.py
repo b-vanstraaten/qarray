@@ -33,7 +33,7 @@ def unique_last_axis(arr):
 
 def create_gate_options(N):
     true_gates = [f'P{i + 1}' for i in range(N)]
-    virtual_gates = [f'P{i + 1}v' for i in range(N)]
+    virtual_gates = []
     return [{'label': gate, 'value': gate} for gate in true_gates + virtual_gates]
 
 
