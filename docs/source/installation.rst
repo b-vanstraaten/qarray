@@ -69,3 +69,17 @@ command:
 .. code:: zsh
 
    pip install git+https://github.com/b-vanstraaten/qarray.git@main
+
+
+Jaxlib GPU
+------------------
+
+By default we install the CPU version of JAX, with the dependency 'jax[cpu]>=0.2', this is done
+for compatibility reasons. If you want to use the GPU version of JAX, you need to install it by running:
+
+.. code:: zsh
+
+    pip install -U "jax[cuda12]"
+
+This will install the GPU version of JAX with CUDA 12 support. If you are using a different version of CUDA, you can specify it by changing the version number in the brackets.
+For more instructions see here: https://jax.readthedocs.io/en/latest/installation.html

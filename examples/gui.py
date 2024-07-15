@@ -1,5 +1,4 @@
 from qarray import (DotArray)
-from qarray.gui import create_gui
 
 Cdd = [
     [0., 0.3, 0.05, 0.01],
@@ -21,7 +20,7 @@ model = DotArray(
     Cdd=Cdd,
     Cgd=Cgd,
     algorithm='thresholded',
-    implementation='rust', charge_carrier='h', T=0., threshold=0.5,
+    implementation='rust', charge_carrier='h', T=0., threshold=1.,
     max_charge_carriers=4,
 )
-create_gui(model, print_compute_time=True)
+model.run_gui()

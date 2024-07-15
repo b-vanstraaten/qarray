@@ -187,3 +187,12 @@ class DotArray:
         Computes the threshold estimate for the dot array for the thresholded algorithm
         """
         return compute_threshold(self.cdd)
+
+    def run_gui(self, port=27182, print_compute_time: bool = True):
+
+        # importing the run_gui function here to avoid circular imports
+        from ..gui import run_gui
+        """
+        Creates a GUI for the dot array
+        """
+        run_gui(self, port=port, print_compute_time=print_compute_time)

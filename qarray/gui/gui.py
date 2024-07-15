@@ -12,7 +12,7 @@ from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
 from .helper_functions import create_gate_options, n_charges_options, unique_last_axis
 
 
-def create_gui(model, port=27182, run=True, print_compute_time=False):
+def run_gui(model, port=27182, run=True, print_compute_time=False):
     """
     Create the GUI for the DotArray model.
 
