@@ -264,7 +264,6 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
             height=600,
         )
 
-
         return fig
 
     if run:

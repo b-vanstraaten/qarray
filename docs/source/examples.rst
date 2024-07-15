@@ -156,4 +156,4 @@ With our array and latching models defined, we use the :code:`GateVoltageCompose
 
 .. |charge_sensing| image:: ./figures/charge_sensing.jpg
 .. |charge_sensing_noise| image:: ./figures/charge_sensing_noise.jpg
-.. |latching| image:: ./figures/latching.jpg
+.. |latching| image:: ./figures/latching.png

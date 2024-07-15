@@ -3,7 +3,7 @@ An example demonstrating the use of the latching models
 """
 from matplotlib import pyplot as plt
 
-from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, LatchingModel
+from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, PSBLatchingModel
 
 # defining the capacitance matrices
 Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
@@ -12,26 +12,26 @@ Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling be
 Cgs = [[0.06, 0.02, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
 
 # a latching model which simulates latching on the transitions to the leads and inter-dot transitions
-latching_model = LatchingModel(
-    n_dots=2,
-    p_leads=[0.25, 0.25],
-    p_inter=[
-        [0., 1.],
-        [1., 0.],
-    ]
-)
-
-# # a latching model which simulates latching only when the moving from (1, 1) to (0, 2) as indicative of PSB
-# latching_model = PSBLatchingModel(
+# latching_model = LatchingModel(
 #     n_dots=2,
-#     p_psb=0.2
-#     # probability of the a charge transition from (1, 1) to (0, 2) when the (0, 2) is lower in energy per pixel
+#     p_leads=[0.25, 0.25],
+#     p_inter=[
+#         [0., 1.],
+#         [1., 0.],
+#     ]
 # )
+
+# a latching model which simulates latching only when the moving from (1, 1) to (0, 2) as indicative of PSB
+latching_model = PSBLatchingModel(
+    n_dots=2,
+    p_psb=0.2
+    # probability of the a charge transition from (1, 1) to (0, 2) when the (0, 2) is lower in energy per pixel
+)
 
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.05, T=50,
+    coulomb_peak_width=0.05, T=10,
     algorithm='default',
     implementation='rust',
     noise_model=WhiteNoise(amplitude=1e-4),
@@ -56,5 +56,7 @@ plt.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='a
 plt.xlabel('Vx')
 plt.ylabel('Vy')
 plt.title('Latching')
-plt.savefig('../docs/source/figures/latching.jpg')
+plt.xticks([-0.1, 0, 0.1])
+plt.yticks([-0.1, 0, 0.1])
+plt.savefig('../docs/source/figures/latching.png')
 plt.show()
