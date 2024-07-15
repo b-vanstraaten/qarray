@@ -1,4 +1,4 @@
-from qarray import (DotArray)
+from qarray import DotArray
 
 Cdd = [
     [0., 0.3, 0.05, 0.01],
@@ -12,7 +12,6 @@ Cgd = [
     [0.05, 0.2, 1., 0.2],
     [0.01, 0.05, 0.2, 1]
 ]
-
 
 
 # setting up the constant capacitance model_threshold_1

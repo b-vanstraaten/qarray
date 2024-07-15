@@ -251,7 +251,7 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
                 showarrow=False,
                 font=dict(
                     color='black',
-                    size=10
+                    size=7
                 )
             )
 
