@@ -11,6 +11,7 @@ from dash.dependencies import Input, Output
 from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
 from .helper_functions import create_gate_options, n_charges_options, unique_last_axis
 
+import re
 
 def run_gui(model, port=27182, run=True, print_compute_time=False):
     """
@@ -194,14 +195,79 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
         model.update_capacitance_matrices(Cdd=cdd_matrix, Cgd=Cgd.to_numpy())
 
         voltage_composer = GateVoltageComposer(n_gate=model.n_gate, n_dot=model.n_dot)
-        for i in range(model.n_gate):
-            voltage_composer.name_gate(f'P{i + 1}', i)
+        voltage_composer.virtual_gate_origin = dac_values
+        voltage_composer.virtual_gate_matrix = -np.linalg.pinv(model.cdd_inv @ model.cgd)
 
-        vg = voltage_composer.do2d(
-            x_gate, -x_amplitude / 2, x_amplitude / 2, x_resolution,
-            y_gate, -y_amplitude / 2, y_amplitude / 2, y_resolution
-        )
-        vg = vg + dac_values[np.newaxis, np.newaxis, :]
+        patterns = {
+            'P': re.compile(r'^P(\d+)$'),
+            'vP': re.compile(r'^vP(\d+)$'),
+            'e': re.compile(r'^e (\d+) (\d+)$'),
+            'u': re.compile(r'^U (\d+) (\d+)$')
+        }
+
+        for key, pattern in patterns.items():
+            match = pattern.match(x_gate)
+            if match:
+                x_gate_case = key
+                x_groups = match.groups()
+
+        match x_gate_case:
+            case 'P':
+                x_gate = int(x_groups[0]) - 1
+                vx = voltage_composer.do1d(x_gate, -x_amplitude / 2, x_amplitude / 2, x_resolution)
+            case 'vP':
+                x_dot = int(x_groups[0]) - 1
+                vx = voltage_composer.do1d_virtual(x_dot, -x_amplitude / 2, x_amplitude / 2, x_resolution)
+            case 'e':
+                dot_1, dot_2 = x_groups
+                dot_1, dot_2 = int(dot_1) - 1, int(dot_2) - 1
+
+                v1 = voltage_composer.do1d_virtual(dot_1, -x_amplitude / 2, x_amplitude / 2, x_resolution)
+                v2 = voltage_composer.do1d_virtual(dot_2, -x_amplitude / 2, x_amplitude / 2, x_resolution)
+                vx = v1 - v2
+            case 'u':
+                dot_1, dot_2 = x_groups
+                dot_1, dot_2 = int(dot_1) - 1, int(dot_2) - 1
+
+                v1 = voltage_composer.do1d_virtual(dot_1, -x_amplitude / 2, x_amplitude / 2, x_resolution)
+                v2 = voltage_composer.do1d_virtual(dot_2, -x_amplitude / 2, x_amplitude / 2, x_resolution)
+                vx = (v1 + v2)/2
+            case _:
+                raise ValueError(f'x_gate {x_gate} is not in the correct format')
+
+
+        # doing the same for the y_gate
+        for key, pattern in patterns.items():
+            match = pattern.match(y_gate)
+            if match:
+                y_gate_case = key
+                y_groups = match.groups()
+
+        match y_gate_case:
+            case 'P':
+                y_gate = int(y_groups[0]) - 1
+                vy = voltage_composer.do1d(y_gate, -y_amplitude / 2, y_amplitude / 2, y_resolution)
+            case 'vP':
+                y_dot = int(y_groups[0]) - 1
+                vy = voltage_composer.do1d_virtual(y_dot, -y_amplitude / 2, y_amplitude / 2, y_resolution)
+            case 'e':
+                dot_1, dot_2 = y_groups
+                dot_1, dot_2 = int(dot_1) - 1, int(dot_2) - 1
+
+                v1 = voltage_composer.do1d_virtual(dot_1, -y_amplitude / 2, y_amplitude / 2, y_resolution)
+                v2 = voltage_composer.do1d_virtual(dot_2, -y_amplitude / 2, y_amplitude / 2, y_resolution)
+                vy = v1 - v2
+            case 'u':
+                dot_1, dot_2 = y_groups
+                dot_1, dot_2 = int(dot_1) - 1, int(dot_2) - 1
+
+                v1 = voltage_composer.do1d_virtual(dot_1, -y_amplitude / 2, y_amplitude / 2, y_resolution)
+                v2 = voltage_composer.do1d_virtual(dot_2, -y_amplitude / 2, y_amplitude / 2, y_resolution)
+                vy = (v1 + v2)/2
+            case _:
+                raise ValueError(f'y_gate {y_gate} is not in the correct format')
+
+        vg = vx[np.newaxis, :] + vy[:, np.newaxis] + dac_values[np.newaxis, np.newaxis, :]
 
         t0 = perf_counter()
         if n_charges == 'any':

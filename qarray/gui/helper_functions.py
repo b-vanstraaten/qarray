@@ -1,4 +1,5 @@
 import numpy as np
+from itertools import combinations
 
 
 def unique_last_axis(arr):
@@ -33,8 +34,11 @@ def unique_last_axis(arr):
 
 def create_gate_options(N):
     true_gates = [f'P{i + 1}' for i in range(N)]
-    virtual_gates = []
-    return [{'label': gate, 'value': gate} for gate in true_gates + virtual_gates]
+    virtual_gates = [f'vP{i + 1}' for i in range(N)]
+    e_gates = [f'e {i + 1} {j + 1}' for i, j in combinations(range(N), 2)]
+    u_gates = [f'U {i + 1} {j + 1}' for i, j in combinations(range(N), 2)]
+
+    return [{'label': gate, 'value': gate} for gate in true_gates + virtual_gates + e_gates + u_gates]
 
 
 n_charges_options = [
