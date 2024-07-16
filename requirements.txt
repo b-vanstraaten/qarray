@@ -7,3 +7,6 @@ loguru>=0.5
 jax[cpu]>=0.2
 jaxopt>=0.4
 tqdm>=4.62
+pandas>=2.2
+dash>=2.17
+plotly>=5.22

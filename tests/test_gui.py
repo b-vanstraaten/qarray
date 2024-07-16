@@ -7,7 +7,7 @@ class TestGUI(unittest.TestCase):
         import numpy as np
 
         from qarray import (DotArray)
-        from qarray.gui import create_gui
+        from qarray.gui import run_gui
 
         # setting up the constant capacitance model_threshold_1
         model = DotArray(
@@ -23,4 +23,4 @@ class TestGUI(unittest.TestCase):
             implementation='rust', charge_carrier='h', T=0., threshold=0.5
         )
 
-        app = create_gui(model, run=False)
+        app = run_gui(model, run=False)

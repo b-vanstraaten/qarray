@@ -100,11 +100,139 @@ The `DotArray` class init has additional arguments that we left at their default
 - `threshold` : float : The threshold used in the thresholded algorithm (see Section III B 2 of `the paper <https://arxiv.org/pdf/2404.04994>`_).
 - `max_charge_carriers`: int : The maximum number of charge carriers that can be on a dot, when using the brute_force algorithm.
 
++++++++++
+Making use of the GUI
++++++++++
+
+QArray also comes with a GUI that allows you to interact with the DotArray class. So rather than writing code, you can use the GUI to create the capacitance matrices and generate the gate voltage arrays. You can then use the GUI to calculate the charge configuration of the quantum dot system at each of these voltage configurations and plot the output.
+Below is an example of how to use the GUI to explore the charge stability diagram of a quadruple quantum dot.
+
+
+.. code:: python
+
+    from qarray import DotArray
+
+    Cdd = [
+        [0., 0.3, 0.05, 0.01],
+        [0.3, 0., 0.3, 0.05],
+        [0.05, 0.3, 0., 0.3],
+        [0.01, 0.05, 0.3, 0]
+    ]
+    Cgd = [
+        [1., 0.2, 0.05, 0.01],
+        [0.2, 1., 0.2, 0.05],
+        [0.05, 0.2, 1., 0.2],
+        [0.01, 0.05, 0.2, 1]
+    ]
+
+    # setting up the constant capacitance model_threshold_1
+    model = DotArray(
+        Cdd=Cdd,
+        Cgd=Cgd,
+        charge_carrier='h', T=0., threshold=1.,
+    )
+    model.run_gui()
+
+Running this code will produce the terminal output:
+
+.. code:: bash
+    Starting the server at http://localhost:27182
+
+Simply click on the link to open the GUI in your browser. The GUI will allow you to interact with the DotArray class and explore the charge stability diagram of a quadruple quantum dot.
+
+From the GUI, you can:
+
+- Edit the capacitance matrices for the quantum dot system.
+- Edit the 2D gate voltage scan parameters, such as the gate voltages, the number of points in the scan, and the range of the scan.
+- Run the simulation in the open or closed regime (specifying the number of charge carriers in the system).
+
+The GUI will then plot the charge stability diagram of the quantum dot system at each gate voltage configuration.
+In addition it labels the charge states with the number of charge carriers in each dot. The GUI output of this code looks like this:
+
+|GUI|
 
 +++++++++
-Simulating charge sensing measurements
+Charge sensing
 +++++++++
+
+To simulate a charge sensing measurement, we use the :code:`ChargeSensedDotArray` class. This class is functionally similar to the :code:`DotArray` class, but includes a quantum dot charge sensor coupled to the device array. We can control the strength of this coupling via the two additional matrices that it is necessary to include upon initialising the :code:`ChargeSensedDotArray` class. The first (:code:`Cds`) specifies the strength  of the coupling between the device array's dots and the charge sensor, and the second (:code:`Cgs`) specifies the strength of the coupling between the device array's gates and the charge sensor. The width of the Coulomb peak in the simulated charge sensing quantum dot is passed via the :code:`coulomb_peak_width` keyword argument.
+
+The snippet below is an example of how we can use these classes to generate a charge-sensed measurement.
+
+.. code:: python
+
+    from qarray import ChargeSensedDotArray, GateVoltageComposer
+
+    # defining the capacitance matrices
+    Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
+    Cgd = [[1., 0.2, 0.05], [0.2, 1., 0.05], ]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
+    Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
+    Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
+
+    # creating the model
+    model = ChargeSensedDotArray(
+        Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
+        coulomb_peak_width=0.05, T=100
+    )
+
+It is important to note that for the double dot there are now three gates,
+one for each dot and one for the charge sensor. The index 0 corresponds to the first dot,
+index 1 to the second dot and index 2 to the charge sensor. This is important when using the :code:`GateVoltageComposer` with the :code:`ChargeSensedDotArray`.
+
+As before, we can use the :code:`GateVoltageComposer` to create a gate voltage sweep. However, this time we will use
+an addition piece of functionality, provided by both the :code:`DotArray` and :code:`ChargeSensedDotArray` classes, which is the
+:code:`optimal_Vg` method. This method returns the optimal gate voltages which minimise the free energy of a given charge state.
+For example, if we have a charge state of `[1., 1., 1.]` (in the case of two array dots and one charge sensing dot), the `optimal_Vg` method will return the gate voltages that configure the simulated device to be in the middle of the [1, 1] charge state and directly on top of the first Coloumb peak in the charge sensor. If the user passes `[0.5, 0.5, 0.5]`, the
+method will return the gate voltages corresponding to the middle of the [0, 1] - [1,0] interdot charge transition and exactly halfway between two Coulomb peaks in the charge sensing dot. This can be useful for centring your simulation on a specific charge transition or state, as demonstrated in the snippet below.
+
+.. code:: python
+
+    voltage_composer = GateVoltageComposer(model.n_gate)
+
+    # defining the min and max values for the dot voltage sweep
+    vx_min, vx_max = -5, 5
+    vy_min, vy_max = -5, 5
+    # using the dot voltage composer to create the dot voltage array for the 2d sweep
+    vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 1, vy_min, vy_max, 200)
+
+    # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
+    vg += model.optimal_Vg([0.5, 0.5, 0.6])
+
+    # calculating the output of the charge sensor and the charge state for each gate voltage
+    z, n = model.charge_sensor_open(vg)
+    dz_dV1 = np.gradient(z, axis=0) + np.gradient(z, axis=1)
+
+We can plot the output of the charge sensor and its gradient with respect to the gate voltages:
+
+.. code:: python
+
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    fig, axes = plt.subplots(1, 2, sharex=True, sharey=True)
+
+    # plotting the charge stability diagram measured via the charge sensor
+    axes[0].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap = 'hot')
+    axes[0].set_xlabel('$Vx$')
+    axes[0].set_ylabel('$Vy$')
+    axes[0].set_title('$z$')
+
+    # plotting the gradient of the charge sensor output
+    axes[1].imshow(dz_dV1, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap = 'hot')
+    axes[1].set_xlabel('$Vx$')
+    axes[1].set_ylabel('$Vy$')
+    axes[1].set_title('$\\frac{dz}{dVx} + \\frac{dz}{dVy}$')
+
+    plt.show()
+
+The output of the code above is shown below:
+|charge_sensing|
+
+Whilst this plot looks closer to what we see experimentally, we are missing noise. See the examples section for how to do this.
+
 
 .. |getting_started_example| image:: ./figures/getting_started_example.jpg
 
 .. |structure| image:: ./figures/structure.png
+
+.. |GUI| image:: ./figures/GUI.png

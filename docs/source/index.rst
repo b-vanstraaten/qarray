@@ -15,6 +15,7 @@ For the accompanying paper, see `ArXiv <https://arxiv.org/pdf/2404.04994>`_.
    examples
 
    api
+   authors
 
 
 Indices and tables

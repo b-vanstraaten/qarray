@@ -45,12 +45,6 @@ stability diagram of a closed five dot quantum recreated with permission from `[
 .. |structure| image:: ./figures/structure.png
 .. |capacitance_model| image:: ./figures/capacitance_model.png
 
-+++++++++
-Authors
-+++++++++
-Barnaby van Straaten
-Joseph Hickie
-
 
 References
 ----------
