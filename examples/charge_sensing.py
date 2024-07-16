@@ -1,4 +1,7 @@
 from qarray import ChargeSensedDotArray, GateVoltageComposer
+import matplotlib.pyplot as plt
+import numpy as np
+
 
 # defining the capacitance matrices
 Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
@@ -23,8 +26,6 @@ vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
 # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
 vg += model.optimal_Vg([0.5, 0.5, 0.6])
 
-import matplotlib.pyplot as plt
-import numpy as np
 
 # calculating the output of the charge sensor and the charge state for each gate voltage
 z, n = model.charge_sensor_open(vg)
