@@ -34,4 +34,4 @@ model = DotArray(
     implementation='rust', charge_carrier='h', T=0., threshold=1.,
     max_charge_carriers=4,
 )
-model.run_gui()
+model.run_gui(plot = 'colour_map', cmap = 'viridis')

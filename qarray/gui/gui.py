@@ -8,12 +8,15 @@ from dash import dash_table
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
+import plotly.express as px
+
+from qarray import DotArray, GateVoltageComposer, dot_occupation_changes, charge_state_to_unique_index
 from .helper_functions import create_gate_options, n_charges_options, unique_last_axis
 
 import re
 
-def run_gui(model, port=27182, run=True, print_compute_time=False):
+
+def run_gui(model, port=27182, run=True, print_compute_time=False, plot='changes', cmap=None):
     """
     Create the GUI for the DotArray model.
 
@@ -23,7 +26,11 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
     model : DotArray
     port : int
     run : bool
-
+    print_compute_time : bool
+    plot : str : 'changes' or 'colour_map' (default 'changes')
+    cmap : str : the colormap to use for the plot if None the default colormap is used.
+    This is only used for the 'colour_map' plot argument. The allowed values are the names of the colour maps
+    in plotly.express.colors.named_colorscales()
     """
 
     app = dash.Dash(__name__)
@@ -159,8 +166,8 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
         Input('dropdown-menu-n-charges', 'value'),
         *[Input(f'dac_{i}', 'value') for i in range(model.n_gate)]
     )
-    def update_heatmap_and_inverses(rows1, rows2, x_gate, x_amplitude, x_resolution, y_gate, y_amplitude, y_resolution,
-                                    n_charges, *dac_values):
+    def update(Cdd, Cgd, x_gate, x_amplitude, x_resolution, y_gate, y_amplitude, y_resolution,
+               n_charges, *dac_values, cmap=cmap):
         """
         Update the heatmap based on the input values.
         """
@@ -176,12 +183,11 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
 
         try:
             # Convert table data back to matrices
-            Cdd = pd.DataFrame(rows1).set_index('index').astype(float)
-            Cgd = pd.DataFrame(rows2).set_index('index').astype(float)
+            Cdd = pd.DataFrame(Cdd).set_index('index').astype(float)
+            Cgd = pd.DataFrame(Cgd).set_index('index').astype(float)
         except ValueError:
             print('Error the capacitance matrices cannot be converted to float. \n')
             return go.Figure()
-
 
         cdd_matrix = Cdd.to_numpy()
 
@@ -213,8 +219,8 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
 
         match x_gate_case:
             case 'P':
-                x_gate = int(x_groups[0]) - 1
-                vx = voltage_composer.do1d(x_gate, -x_amplitude / 2, x_amplitude / 2, x_resolution)
+                x_gate_number = int(x_groups[0]) - 1
+                vx = voltage_composer.do1d(x_gate_number, -x_amplitude / 2, x_amplitude / 2, x_resolution)
             case 'vP':
                 x_dot = int(x_groups[0]) - 1
                 vx = voltage_composer.do1d_virtual(x_dot, -x_amplitude / 2, x_amplitude / 2, x_resolution)
@@ -231,10 +237,9 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
 
                 v1 = voltage_composer.do1d_virtual(dot_1, -x_amplitude / 2, x_amplitude / 2, x_resolution)
                 v2 = voltage_composer.do1d_virtual(dot_2, -x_amplitude / 2, x_amplitude / 2, x_resolution)
-                vx = (v1 + v2)/2
+                vx = (v1 + v2) / 2
             case _:
                 raise ValueError(f'x_gate {x_gate} is not in the correct format')
-
 
         # doing the same for the y_gate
         for key, pattern in patterns.items():
@@ -245,8 +250,8 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
 
         match y_gate_case:
             case 'P':
-                y_gate = int(y_groups[0]) - 1
-                vy = voltage_composer.do1d(y_gate, -y_amplitude / 2, y_amplitude / 2, y_resolution)
+                y_gate_number = int(y_groups[0]) - 1
+                vy = voltage_composer.do1d(y_gate_number, -y_amplitude / 2, y_amplitude / 2, y_resolution)
             case 'vP':
                 y_dot = int(y_groups[0]) - 1
                 vy = voltage_composer.do1d_virtual(y_dot, -y_amplitude / 2, y_amplitude / 2, y_resolution)
@@ -263,7 +268,7 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
 
                 v1 = voltage_composer.do1d_virtual(dot_1, -y_amplitude / 2, y_amplitude / 2, y_resolution)
                 v2 = voltage_composer.do1d_virtual(dot_2, -y_amplitude / 2, y_amplitude / 2, y_resolution)
-                vy = (v1 + v2)/2
+                vy = (v1 + v2) / 2
             case _:
                 raise ValueError(f'y_gate {y_gate} is not in the correct format')
 
@@ -278,12 +283,28 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
         if print_compute_time:
             print(f'Time taken to compute the charge state: {t1 - t0:.3f}s')
 
-        z = dot_occupation_changes(n).astype(float)
+        match plot:
+            case 'changes':
+                z = dot_occupation_changes(n).astype(float)
 
+                if cmap is None:
+                    cmap = 'gray'
+
+            case 'colour_map':
+                z = charge_state_to_unique_index(n).astype(float)
+                z = np.log2(z + 1)
+
+                if cmap is None:
+                    cmap = 'cividis'
+
+            case _:
+                raise ValueError(f'Plot {plot} is not recognized the options are "changes" or "colour_map"')
+
+        assert cmap in px.colors.named_colorscales(), f'cmap {cmap} is not a valid colormap the options are {px.colors.named_colorscales()}'
         # Create the heatmap
         fig = go.Figure(data=go.Heatmap(
             z=z,
-            colorscale='greys',
+            colorscale=cmap,
             showscale=False,  # This removes the colorbar
         ))
 
@@ -332,6 +353,7 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
 
         return fig
 
+    # Run the server
     if run:
         print(f'Starting the server at http://localhost:{port}')
         app.run(debug=False, port=port)

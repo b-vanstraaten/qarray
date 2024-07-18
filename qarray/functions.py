@@ -9,6 +9,61 @@ from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, Tetrad,
                            Vector)
 
 
+def charge_state_to_random_index(n: Tetrad | np.ndarray) -> int:
+    """
+    Function to convert the charge state to a random index.
+    This is useful for plotting the change state. So that the
+    vector of charges in converted to a random integer value.
+
+    As such nearby charge states will have different colors.
+
+    :param n: the charge state of the dots of shape (n_dot)
+
+    :return: the random index
+    """
+    indexs = charge_state_to_unique_index(n)
+    unique_indexes = np.unique(indexs)
+
+
+
+    # generate random indicies
+    random_indicies = np.arange(len(unique_indexes))
+    np.random.shuffle(random_indicies)
+
+    # place the random indicies in the correct correct locations in the array
+    z = np.zeros_like(indexs)
+    for i, unique_index in zip(random_indicies, unique_indexes):
+        z[indexs == unique_index] = i
+    return z
+
+
+
+
+
+
+
+def charge_state_to_unique_index(n: Tetrad | np.ndarray) -> int:
+    """
+    Function to convert the charge state to a unique index, using the binary representation.
+
+    Function to convert the charge state to a random index.
+    This is useful for plotting the change state. So that the
+    vector of charges in converted to a random integer value.
+    As such nearby charge states will have similar colors.
+
+    For plotting we recommend taking, if the output of this function is z, then
+    we reccomend plotting np.log2(z + 1) to get a better color map.
+
+    :param n: the charge state of the dots of shape (n_dot)
+
+    :return: the unique index
+    """
+
+    if not isinstance(n, Tetrad):
+        n = Tetrad(n)
+
+    return np.sum(2 ** np.arange(n.shape[-1])[np.newaxis, np.newaxis] * n, axis = -1)
+
 def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
     """
     Function which computes the dot product between the dot change state and the

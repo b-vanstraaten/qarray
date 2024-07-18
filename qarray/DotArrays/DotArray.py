@@ -188,10 +188,10 @@ class DotArray:
         """
         return compute_threshold(self.cdd)
 
-    def run_gui(self, port=27182, print_compute_time: bool = False):
+    def run_gui(self, port=27182, print_compute_time: bool = False, plot = 'changes', cmap = 'viridis'):
         """
         Creates a GUI for the dot array
         """
         # importing the run_gui function here to avoid circular imports
         from ..gui import run_gui
-        run_gui(self, port=port, print_compute_time=print_compute_time)
+        run_gui(self, port=port, print_compute_time=print_compute_time, plot = plot, cmap = cmap)
