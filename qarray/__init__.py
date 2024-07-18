@@ -5,7 +5,7 @@ to compute charge stability diagrams of large both open and closed arrays in mil
 __version__ = "1.2.0"
 
 from .DotArrays import (DotArray, GateVoltageComposer, ChargeSensedDotArray)
-from .functions import (_optimal_Vg, dot_occupation_changes, charge_state_contrast)
+from .functions import (_optimal_Vg, dot_occupation_changes, charge_state_contrast, charge_state_to_unique_index, charge_state_to_random_index)
 from .latching_models import *
 from .noise_models import *
 
