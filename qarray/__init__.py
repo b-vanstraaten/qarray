@@ -12,6 +12,8 @@ from .noise_models import *
 __all__ = [
     'DotArray', 'GateVoltageComposer', 'ChargeSensedDotArray',
     '_optimal_Vg', 'dot_occupation_changes', 'charge_state_contrast',
+    'charge_state_to_unique_index',
+    'charge_state_to_random_index'
 ]
 
 submodules = ['latching_models', 'noise_models']
