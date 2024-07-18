@@ -188,7 +188,7 @@ class DotArray:
         """
         return compute_threshold(self.cdd)
 
-    def run_gui(self, port=27182, print_compute_time: bool = False, plot = 'changes', cmap = 'viridis'):
+    def run_gui(self, port=27182, print_compute_time: bool = False, plot = 'changes', cmap = None):
         """
         Creates a GUI for the dot array
         """

@@ -286,9 +286,8 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, plot='changes
         match plot:
             case 'changes':
                 z = dot_occupation_changes(n).astype(float)
-
                 if cmap is None:
-                    cmap = 'gray'
+                    cmap = 'greys'
 
             case 'colour_map':
                 z = charge_state_to_unique_index(n).astype(float)
