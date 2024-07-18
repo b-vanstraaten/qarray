@@ -37,11 +37,6 @@ def charge_state_to_random_index(n: Tetrad | np.ndarray) -> int:
     return z
 
 
-
-
-
-
-
 def charge_state_to_unique_index(n: Tetrad | np.ndarray) -> int:
     """
     Function to convert the charge state to a unique index, using the binary representation.
