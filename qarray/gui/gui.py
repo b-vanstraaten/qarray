@@ -1,22 +1,20 @@
+import re
 from time import perf_counter
 
 import dash
 import numpy as np
 import pandas as pd
+import plotly.express as px
 import plotly.graph_objects as go
 from dash import dash_table
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-import plotly.express as px
-
 from qarray import DotArray, GateVoltageComposer, dot_occupation_changes, charge_state_to_unique_index
-from .helper_functions import create_gate_options, n_charges_options, unique_last_axis
-
-import re
+from .helper_functions import create_gate_options, n_charges_options, unique_last_axis, plot_options
 
 
-def run_gui(model, port=27182, run=True, print_compute_time=False, plot='changes', cmap=None):
+def run_gui(model, port=27182, run=True, print_compute_time=False):
     """
     Create the GUI for the DotArray model.
 
@@ -27,10 +25,6 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, plot='changes
     port : int
     run : bool
     print_compute_time : bool
-    plot : str : 'changes' or 'colour_map' (default 'changes')
-    cmap : str : the colormap to use for the plot if None the default colormap is used.
-    This is only used for the 'colour_map' plot argument. The allowed values are the names of the colour maps
-    in plotly.express.colors.named_colorscales()
     """
 
     app = dash.Dash(__name__)
@@ -134,23 +128,35 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, plot='changes
             ], style={'display': 'inline-block', 'width': '30%', 'vertical-align': 'top'}),
 
             html.Div([
-                html.H4("n charges options"),
+                html.H4("Open/Closed options"),
                 dcc.Dropdown(
                     id='dropdown-menu-n-charges',
                     placeholder='Select n charges',
                     options=n_charges_options,
                     value='any'
+                ),
+
+                html.H4("Plot options"),
+                dcc.Dropdown(
+                    id='plot-options',
+                    placeholder='Whether to plot changes or colours and if so the colour map',
+                    options=plot_options,
+                    value='changes'
                 )
+
             ], style={'display': 'inline-block', 'width': '30%', 'margin-right': '2%', 'vertical-align': 'top'}),
+
         ], style={'text-align': 'left', 'margin-bottom': '20px', 'display': 'flex',
                   'justify-content': 'space-between'}),
 
+        html.Div([
         html.Div([
             dcc.Graph(
                 id='heatmap',
                 style={'width': '100%', 'display': 'block', 'margin-left': 'auto', 'margin-right': 'auto'}
             )
         ], style={'text-align': 'center', 'margin-top': '20px'})
+        ])
     ])
 
     @app.callback(
@@ -164,10 +170,11 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, plot='changes
         Input('input-scalar1', 'value'),
         Input('input-scalar2', 'value'),
         Input('dropdown-menu-n-charges', 'value'),
+        Input('plot-options', 'value'),
         *[Input(f'dac_{i}', 'value') for i in range(model.n_gate)]
     )
     def update(Cdd, Cgd, x_gate, x_amplitude, x_resolution, y_gate, y_amplitude, y_resolution,
-               n_charges, *dac_values, cmap=cmap):
+               n_charges, plot_options, *dac_values):
         """
         Update the heatmap based on the input values.
         """
@@ -283,23 +290,17 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, plot='changes
         if print_compute_time:
             print(f'Time taken to compute the charge state: {t1 - t0:.3f}s')
 
-        match plot:
-            case 'changes':
-                z = dot_occupation_changes(n).astype(float)
-                if cmap is None:
-                    cmap = 'greys'
+        if plot_options in px.colors.named_colorscales():
+            z = charge_state_to_unique_index(n).astype(float)
+            z = np.log2(z + 1)
+            cmap = plot_options
+        elif plot_options == 'changes':
+            z = dot_occupation_changes(n).astype(float)
+            cmap = 'greys'
+        else:
+            raise ValueError(
+                f'Plot {plot_options} is not recognized the options are "changes" or a colour map in {px.colors.named_colorscales()}')
 
-            case 'colour_map':
-                z = charge_state_to_unique_index(n).astype(float)
-                z = np.log2(z + 1)
-
-                if cmap is None:
-                    cmap = 'cividis'
-
-            case _:
-                raise ValueError(f'Plot {plot} is not recognized the options are "changes" or "colour_map"')
-
-        assert cmap in px.colors.named_colorscales(), f'cmap {cmap} is not a valid colormap the options are {px.colors.named_colorscales()}'
         # Create the heatmap
         fig = go.Figure(data=go.Heatmap(
             z=z,
@@ -337,7 +338,7 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, plot='changes
                 showarrow=False,
                 font=dict(
                     color='black',
-                    size=7
+                    size=11
                 )
             )
 

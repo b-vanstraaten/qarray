@@ -1,5 +1,7 @@
-import numpy as np
 from itertools import combinations
+
+import numpy as np
+import plotly.express as px
 
 
 def unique_last_axis(arr):
@@ -39,6 +41,10 @@ def create_gate_options(N):
     u_gates = [f'U {i + 1} {j + 1}' for i, j in combinations(range(N), 2)]
 
     return [{'label': gate, 'value': gate} for gate in true_gates + virtual_gates + e_gates + u_gates]
+
+
+plot_options = [{'label': 'charge transitions', 'value': 'changes'}] + [{'label': name, 'value': name} for name in
+                                                                        px.colors.named_colorscales()]
 
 
 n_charges_options = [

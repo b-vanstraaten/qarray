@@ -19,6 +19,8 @@ model = DotArray(
     charge_carrier='h', T=0.,
 )
 
+model.run_gui()
+
 # a helper class designed to make it easy to create gate voltage arrays for nd sweeps
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 
