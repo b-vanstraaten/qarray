@@ -56,16 +56,7 @@ This scan sweeps the gate voltages of the quantum dot system from -5 to 5 in bot
 sweep over the virtualised plunger gates simply use the arguments 'vP1' and 'vP2' instead of 'P1' and 'P2'. To sweep over the detuning and onsite energy
 use the
 
-.. code:: python
-
-        # using the dot voltage composer to create the dot voltage array for the 2d sweep
-        vg = voltage_composer.do2d(
-            x_gate = 'e1_2', x_min = -5, x_max = 5 , x_res = 100,
-            y_gate = 'U1_2', y_min = -5, y_max = 5 , y_res = 100
-        )
-
 Now that we have the gate voltage arrays, we can calculate the charge configuration of the quantum dot system at each of these voltage configurations. We can do this for an open dot array (where the array is able freely exchange charge carriers with the reservoir) or a closed dot array (where the number of charge carriers is fixed).
-
 
 .. code:: python
 
@@ -82,25 +73,56 @@ With the calculations handled, we can now plot the output. We encode the change 
 
 .. code:: python
 
-        charge_state_contrast_array = [0.8, 1.2]
+    # importing a function which dots the charge occupation with the charge state contrast to yield a z value for plotting by imshow.
+    from qarray import charge_state_contrast
 
-        # creating arrays that encode when the dot occupation changes
-        z_open = charge_state_contrast(n_open, charge_state_contrast_array)
-        z_closed = charge_state_contrast(n_closed, charge_state_contrast_array)
+    # plot the results
+    fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+    ax[0].imshow(z_open, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[0].set_title('Open Dot Array')
+    ax[0].set_xlabel('e1_2')
+    ax[0].set_ylabel('U1_2')
+    ax[1].imshow(z_closed, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[1].set_title('Closed Dot Array')
+    ax[1].set_xlabel('e1_2')
+    ax[1].set_ylabel('U1_2')
 
-        # plot the results
-        fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-        ax[0].imshow(z_open.T, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
-        ax[0].set_title('Open Dot Array')
-        ax[0].set_xlabel('Vx')
-        ax[0].set_ylabel('Vy')
-        ax[1].imshow(z_closed.T, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
-        ax[1].set_title('Closed Dot Array')
-        ax[1].set_xlabel('Vx')
-        ax[1].set_ylabel('Vy')
-        plt.tight_layout()
 
-|getting_started_example|
+|getting_started_example_plunger_plunger|
+
+However, we are not limted to just sweeping the plunger gates. We can sweep the virtualised plunger gates by charging the
+arguments to 'vP1' and 'vP2'. We can also sweep the detuning and onsite energy by changing the arguments to 'e1_2' and 'U1_2' respectively.
+This is shown below:
+
+.. code:: python
+
+    # using the dot voltage composer to create the dot voltage array for the 2d sweep
+            vg = voltage_composer.do2d(
+                x_gate = 'e1_2', x_min = -5, x_max = 5 , x_res = 100,
+                y_gate = 'U1_2', y_min = -5, y_max = 5 , y_res = 100
+            )
+
+    # importing a function which dots the charge occupation with the charge state contrast to yield a z value for plotting by imshow.
+    from qarray import charge_state_contrast
+
+    charge_state_contrast_array = [0.8, 1.2]
+
+    # creating arrays that encode when the dot occupation changes
+    z_open = charge_state_contrast(n_open, charge_state_contrast_array)
+    z_closed = charge_state_contrast(n_closed, charge_state_contrast_array)
+
+    fig, ax = plt.subplots(1, 2, figsize=(10, 5))
+    ax[0].imshow(z_open, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[0].set_title('Open Dot Array')
+    ax[0].set_xlabel('e1_2')
+    ax[0].set_ylabel('U1_2')
+    ax[1].imshow(z_closed, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[1].set_title('Closed Dot Array')
+    ax[1].set_xlabel('e1_2')
+    ax[1].set_ylabel('U1_2')
+    plt.tight_layout()
+
+|getting_started_example_detuning_onsight|
 
 The `DotArray` class init has additional arguments that we left at their default values for the example above. For more control over your simulation, you may wish to use any of the following:
 
@@ -111,56 +133,6 @@ The `DotArray` class init has additional arguments that we left at their default
 - `threshold` : float : The threshold used in the thresholded algorithm (see Section III B 2 of `the paper <https://arxiv.org/pdf/2404.04994>`_).
 - `max_charge_carriers`: int : The maximum number of charge carriers that can be on a dot, when using the brute_force algorithm.
 
-+++++++++
-Making use of the GUI
-+++++++++
-
-QArray also comes with a GUI that allows you to interact with the DotArray class. So rather than writing code, you can use the GUI to create the capacitance matrices and generate the gate voltage arrays. You can then use the GUI to calculate the charge configuration of the quantum dot system at each of these voltage configurations and plot the output.
-Below is an example of how to use the GUI to explore the charge stability diagram of a quadruple quantum dot.
-
-
-.. code:: python
-
-    from qarray import DotArray
-
-    Cdd = [
-        [0., 0.3, 0.05, 0.01],
-        [0.3, 0., 0.3, 0.05],
-        [0.05, 0.3, 0., 0.3],
-        [0.01, 0.05, 0.3, 0]
-    ]
-    Cgd = [
-        [1., 0.2, 0.05, 0.01],
-        [0.2, 1., 0.2, 0.05],
-        [0.05, 0.2, 1., 0.2],
-        [0.01, 0.05, 0.2, 1]
-    ]
-
-    # setting up the constant capacitance model_threshold_1
-    model = DotArray(
-        Cdd=Cdd,
-        Cgd=Cgd,
-        charge_carrier='h', T=0., threshold=1.,
-    )
-    model.run_gui()
-
-Running this code will produce the terminal output:
-
-.. code:: bash
-    Starting the server at http://localhost:27182
-
-Simply click on the link to open the GUI in your browser. The GUI will allow you to interact with the DotArray class and explore the charge stability diagram of a quadruple quantum dot.
-
-From the GUI, you can:
-
-- Edit the capacitance matrices for the quantum dot system.
-- Edit the 2D gate voltage scan parameters, such as the gate voltages, the number of points in the scan, and the range of the scan.
-- Run the simulation in the open or closed regime (specifying the number of charge carriers in the system).
-
-The GUI will then plot the charge stability diagram of the quantum dot system at each gate voltage configuration.
-In addition it labels the charge states with the number of charge carriers in each dot. The GUI output of this code looks like this:
-
-|GUI|
 
 +++++++++
 Charge sensing
@@ -242,8 +214,12 @@ The output of the code above is shown below:
 Whilst this plot looks closer to what we see experimentally, we are missing noise. See the examples section for how to do this.
 
 
-.. |getting_started_example| image:: ./figures/getting_started_example.jpg
+.. |getting_started_example_plunger_plunger| image:: ./figures/getting_started_example_plunger_plunger.jpg
+
+.. |getting_started_example_detuning_onsight| image:: ./figures/getting_started_example_detuning_onsite.jpg
 
 .. |structure| image:: ./figures/structure.png
 
 .. |GUI| image:: ./figures/GUI.png
+
+.. |charge_sensing| image:: ./figures/charge_sensing.jpg

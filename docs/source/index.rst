@@ -12,7 +12,8 @@ For the accompanying paper, see `ArXiv <https://arxiv.org/pdf/2404.04994>`_.
    introduction
    installation
    getting_started
-   examples
+   gui
+   advanced_functionality
 
    api
    authors

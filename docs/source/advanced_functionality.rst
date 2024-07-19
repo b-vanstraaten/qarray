@@ -1,5 +1,5 @@
 ########
-Examples
+Advanced functionality
 ########
 
 Here we will provide some examples which show off some of the more advanced functionally

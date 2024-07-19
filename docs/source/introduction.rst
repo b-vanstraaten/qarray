@@ -18,6 +18,15 @@ algorithms to compute the ground state charge configuration of the simulated sys
 algorithms scale better than the traditional brute-force approach and do
 not require the user to specify the maximum number of charge carriers `a priori`. QArray can simulate the charge stability diagrams of quantum dot arrays in regimes where charges can tunnel between the dots and reservoirs (the open regime), as well as the case where the dots are isolated from the reservoirs (the closed regime).
 
+QArray includes a graphical user interface (GUI) that allows users to interact with the simulation in real-time.
+
+|GUI|
+
+
+.. |GUI| image:: ./figures/GUI.jpg
+
+
+
 QArray runs on both CPUs and GPUs and is designed to be easy to use and
 integrate into your existing workflow. It was developed on macOS running
 on Apple Silicon and is continuously tested on Windows-lastest, macOs13,
