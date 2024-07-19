@@ -30,12 +30,12 @@ model = DotArray(
 )
 model.max_charge_carriers = 2
 
-voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
+voltage_composer = GateVoltageComposer(n_gate=model.n_gate, n_dot=model.n_dot)
 
 vx_min, vx_max = -1.4, 0.6
 vy_min, vy_max = -1, 1
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 3, vy_min, vy_max, 200)
+vg = voltage_composer.do2d(1, vy_min, vx_max, 200, 4, vy_min, vy_max, 200)
 vg += model.optimal_Vg(np.array([0.7, 0.57, 0.52, 1]))
 
 n = model.ground_state_open(vg)

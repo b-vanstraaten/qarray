@@ -1,9 +1,9 @@
-from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, TelegraphNoise, LatchingModel
+import cv2
 import matplotlib.pyplot as plt
 import numpy as np
-import cv2
 from scipy.ndimage import gaussian_filter
 
+from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, LatchingModel
 
 # defining the capacitance matrices
 Cdd = [[0., 0.3], [0.3, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
@@ -41,7 +41,7 @@ voltage_composer = GateVoltageComposer(model.n_gate)
 vx_min, vx_max = -1, 1
 vy_min, vy_max = -1, 1
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg = voltage_composer._do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
 
 # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
 vg += model.optimal_Vg([1, 1, 0.55])

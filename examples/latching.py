@@ -1,8 +1,8 @@
 """
 An example demonstrating the use of the latching models
 """
-from matplotlib import pyplot as plt
 import numpy as np
+from matplotlib import pyplot as plt
 
 from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, LatchingModel, TelegraphNoise
 
@@ -29,7 +29,7 @@ latching_model = LatchingModel(
 #     # probability of the a charge transition from (1, 1) to (0, 2) when the (0, 2) is lower in energy per pixel
 # )
 
-white_noise = WhiteNoise(amplitude=1e-3)
+white_noise = WhiteNoise(amplitude=1e-10)
 
 # defining a telegraph noise model with p01 = 5e-4, p10 = 5e-3 and an amplitude of 1e-2
 random_telegraph_noise = TelegraphNoise(p01=5e-4, p10=5e-3, amplitude=1e-2)
@@ -64,7 +64,7 @@ voltage_composer.virtual_gate_matrix = virtual_gate_matrix
 vx_min, vx_max = -0.5, 0.5
 vy_min, vy_max = -0.5, 0.5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d_virtual(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg = voltage_composer.do2d(1, vy_min, vx_max, 100, 2, vy_min, vy_max, 100)
 
 
 # creating the figure and axes

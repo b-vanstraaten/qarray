@@ -1,30 +1,49 @@
 """
 This file contains snippets from the paper.
 """
-from qarray import (DotArray, GateVoltageComposer)
+from qarray import DotArray
 
-# setting up the constant capacitance model_threshold_1
+
 model = DotArray(
-    cdd=[
-        [1.3, -0.1],
-        [-0.1, 1.3]
+    Cdd=[
+        [0.0, 0.1],
+        [0.1, 0.0]
     ],
-    cgd=[
-        [1., 0.2],
-        [0.2, 1]
+    Cgd=[
+        [1., 0.1],
+        [0.1, 1]
     ],
-    algorithm='default',
-    implementation='rust',
-    charge_carrier='h', polish=True, T=0.0,
+    algorithm="default",
+    implementation="rust",
+    charge_carrier="holes",
+    T=0.0,
 )
 
-voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
+min, max, n_points = -4, 4, 400
 
-# using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(
-    x_gate=0, x_min=-3, x_max=3, x_res=100,
-    y_gate=1, y_min=-3, y_max=3, y_res=100
-)
+n = model.do2d_open("P1", min, max, n_points, "P2", min, max, n_points)
+n_closed = model.do2d_closed("P1", min, max, n_points, "P2", min, max, n_points, n_charges=2)
+n_virtual = model.do2d_open("vP1", min, max, n_points, "vP2", min, max, n_points)
+n_detuning_U = model.do2d_open("e1_2", min, max, n_points, "U1_2", min, max, n_points)
 
-n = model.ground_state_open(vg)
-n_closed = model.ground_state_closed(vg, n_charges=10)
+# plotting the results
+import matplotlib.pyplot as plt
+from qarray import charge_state_to_scalar
+
+fig, ax = plt.subplots(2, 2)
+
+ax[0, 0].imshow(charge_state_to_scalar(n), origin="lower", extent=(min, max, min, max), cmap='Blues')
+ax[0, 0].set_xlabel("P1")
+ax[0, 0].set_ylabel("P2")
+
+ax[0, 1].imshow(charge_state_to_scalar(n_closed), origin="lower", extent=(min, max, min, max), cmap='Blues')
+ax[0, 1].set_xlabel("P1")
+ax[0, 1].set_ylabel("P2")
+
+ax[1, 0].imshow(charge_state_to_scalar(n_virtual), origin="lower", extent=(min, max, min, max), cmap='Blues')
+ax[1, 0].set_xlabel("vP1")
+ax[1, 0].set_ylabel("vP2")
+
+ax[1, 1].imshow(charge_state_to_scalar(n_detuning_U), origin="lower", extent=(min, max, min, max), cmap='Blues')
+ax[1, 1].set_xlabel("e1_2")
+ax[1, 1].set_ylabel("U1_2")

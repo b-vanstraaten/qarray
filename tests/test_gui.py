@@ -24,3 +24,4 @@ class TestGUI(unittest.TestCase):
         )
 
         app = run_gui(model, run=False)
+

@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath('../..'))
 # Project information
 project = 'Qarray'
 author = 'Barnaby van Straaten'
-release = '1.1.1'
+release = '1.3.0'
 
 # Add any Sphinx extension module names here, as strings.
 extensions = ['sphinx.ext.autodoc', 'sphinx.ext.napoleon', 'sphinx_rtd_theme']

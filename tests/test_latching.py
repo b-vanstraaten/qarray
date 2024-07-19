@@ -47,7 +47,7 @@ class TestLatching(unittest.TestCase):
         vx_min, vx_max = -0.1, 0.1
         vy_min, vy_max = -0.1, 0.1
         # using the dot voltage composer to create the dot voltage array for the 2d sweep
-        vg = voltage_composer.do2d(0, vy_min, vx_max, 20, 1, vy_min, vy_max, 20)
+        vg = voltage_composer.do2d(1, vy_min, vx_max, 20, 2, vy_min, vy_max, 20)
         vg += model.optimal_Vg([0.5, 1.5, 0.7])
 
         # creating the figure and axes

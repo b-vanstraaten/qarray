@@ -9,35 +9,7 @@ from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, Tetrad,
                            Vector)
 
 
-def charge_state_to_random_index(n: Tetrad | np.ndarray) -> int:
-    """
-    Function to convert the charge state to a random index.
-    This is useful for plotting the change state. So that the
-    vector of charges in converted to a random integer value.
-
-    As such nearby charge states will have different colors.
-
-    :param n: the charge state of the dots of shape (n_dot)
-
-    :return: the random index
-    """
-    indexs = charge_state_to_unique_index(n)
-    unique_indexes = np.unique(indexs)
-
-
-
-    # generate random indicies
-    random_indicies = np.arange(len(unique_indexes))
-    np.random.shuffle(random_indicies)
-
-    # place the random indicies in the correct correct locations in the array
-    z = np.zeros_like(indexs)
-    for i, unique_index in zip(random_indicies, unique_indexes):
-        z[indexs == unique_index] = i
-    return z
-
-
-def charge_state_to_unique_index(n: Tetrad | np.ndarray) -> int:
+def charge_state_to_scalar(n: Tetrad | np.ndarray) -> int:
     """
     Function to convert the charge state to a unique index, using the binary representation.
 

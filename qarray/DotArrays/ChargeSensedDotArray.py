@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from .GateVoltageComposer import GateVoltageComposer
 from ._helper_functions import check_algorithm_and_implementation, \
     check_and_warn_user, lorentzian, _convert_to_maxwell_with_sensor
 from .ground_state import _ground_state_open, _ground_state_closed
@@ -40,6 +41,7 @@ class ChargeSensedDotArray:
     - coulomb_peak_width: the width of the lorentzian peaks
 
     - noise_model: the noise model to use to add noise to the charge sensor output
+
 
     """
 
@@ -114,6 +116,79 @@ class ChargeSensedDotArray:
 
         if self.algorithm in ['thresholded', 'default']:
             check_and_warn_user(self)
+
+        self.gate_voltage_composer = GateVoltageComposer(n_gate=self.n_gate, n_dot=self.n_dot)
+        self.gate_voltage_composer.virtual_gate_matrix = -np.linalg.pinv(self.cdd_inv @ self.cgd)
+        self.gate_voltage_composer.virtual_gate_origin = np.zeros(self.n_gate)
+
+    def do1d_open(self, gate: int | str, min: float, max: float, points: int) -> np.ndarray:
+        """
+        Performs a 1D sweep of the dot array with the gate in the open configuration
+
+        :param gate: the gate to sweep
+        :param min: the minimum value of the gate to sweep
+        :param max: the maximum value of the gate to sweep
+        :param points: the number of points to sweep the gate over
+
+        returns the ground state of the dot array which is a np.ndarray of shape (points, n_dot) in the open configuration
+        """
+
+        vg = self.gate_voltage_composer.do1d(gate, min, max, points)
+        return self.charge_sensor_open(vg)
+
+    def do1d_closed(self, gate: int | str, min: float, max: float, points: int, n_charge: int) -> np.ndarray:
+        """
+        Performs a 1D sweep of the dot array with the gate in the closed configuration
+
+        :param gate: the gate to sweep
+        :param min: the minimum value of the gate to sweep
+        :param max: the maximum value of the gate to sweep
+        :param points: the number of points to sweep the gate over
+
+        returns the ground state of the dot array which is a np.ndarray of shape (points, n_dot) in the closed configuration
+        """
+        vg = self.gate_voltage_composer.do1d(gate, min, max, points)
+        return self.charge_sensor_closed(vg, n_charge)
+
+    def do2d_open(self, x_gate: int | str, x_min: float, x_max: float, x_points: int,
+                  y_gate: int | str, y_min: float, y_max: float, y_points: int) -> np.ndarray:
+        """
+        Performs a 2D sweep of the dot array with the gates x_gate and y_gate in the open configuration
+
+        :param x_gate: the gate to sweep in the x direction
+        :param x_min: the minimum value of the gate to sweep
+        :param x_max: the maximum value of the gate to sweep
+        :param x_points: the number of points to sweep the gate over
+        :param y_gate: the gate to sweep in the y direction
+        :param y_min: the minimum value of the gate to sweep
+        :param y_max: the maximum value of the gate to sweep
+        :param y_points: the number of points to sweep
+
+        returns the ground state of the dot array which is a np.ndarray of shape (x_points, y_points, n_dot) in the open
+        configuration
+        """
+
+        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_points, y_gate, y_min, y_max, y_points)
+        return self.charge_sensor_open(vg)
+
+    def do2d_closed(self, x_gate: int | str, x_min: float, x_max: float, x_points: int,
+                    y_gate: int | str, y_min: float, y_max: float, y_points: int, n_charge: int) -> np.ndarray:
+        """
+        Performs a 2D sweep of the dot array with the gates x_gate and y_gate in the open configuration
+
+        :param x_gate: the gate to sweep in the x direction
+        :param x_min: the minimum value of the gate to sweep
+        :param x_max: the maximum value of the gate to sweep
+        :param x_points: the number of points to sweep the gate over
+        :param y_gate: the gate to sweep in the y direction
+        :param y_min: the minimum value of the gate to sweep
+        :param y_max: the maximum value of the gate to sweep
+        :param y_points: the number of points to sweep
+
+        returns the ground state of the dot array which is a np.ndarray of shape (x_points, y_points, n_dot)
+        in the closed configuration
+        """
+
 
     def optimal_Vg(self, n_charges: VectorList, rcond: float = 1e-3) -> np.ndarray:
         """

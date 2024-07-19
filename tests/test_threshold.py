@@ -28,7 +28,7 @@ class ThresholdTests(TestCase):
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
         for model in models:
-            vg = voltage_composer.do2d(0, -5, 5, N_VOLTAGES, -1, -5, 5, N_VOLTAGES)
+            vg = voltage_composer.do2d(1, -5, 5, N_VOLTAGES, 2, -5, 5, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_open(vg)
 
             model.threshold = 1.
@@ -50,7 +50,7 @@ class ThresholdTests(TestCase):
 
         for model in models:
             model.core = 'python'
-            vg = voltage_composer.do2d(0, -10, 5, N_VOLTAGES, -1, -10, 5, N_VOLTAGES)
+            vg = voltage_composer.do2d(1, -10, 5, N_VOLTAGES, 2, -10, 5, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_closed(vg, n_charges=5)
 
             model.threshold = 1.
@@ -70,7 +70,7 @@ class ThresholdTests(TestCase):
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
         for model in models:
-            vg = voltage_composer.do2d(0, -10, 5, N_VOLTAGES, -1, -10, 5, N_VOLTAGES)
+            vg = voltage_composer.do2d(1, -10, 5, N_VOLTAGES, 2, -10, 5, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_open(vg)
 
             model.threshold = 1.
@@ -102,7 +102,7 @@ class ThresholdTests(TestCase):
 
         for model in models:
             model.core = 'python'
-            vg = voltage_composer.do2d(0, -20, 5, N_VOLTAGES, -1, -20, 5, N_VOLTAGES)
+            vg = voltage_composer.do2d(1, -20, 5, N_VOLTAGES, 3, -20, 5, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_closed(vg, n_charges=2)
 
             model.threshold = 1.
@@ -131,7 +131,7 @@ class ThresholdTests(TestCase):
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
         for model in models:
-            vg = voltage_composer.do2d(0, -5, 0, N_VOLTAGES, -1, -5, 0, N_VOLTAGES)
+            vg = voltage_composer.do2d(1, -5, 0, N_VOLTAGES, 4, -5, 0, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_open(vg)
 
             model.threshold = 1.
@@ -162,7 +162,7 @@ class ThresholdTests(TestCase):
 
         for model in models:
             model.core = 'python'
-            vg = voltage_composer.do2d(0, -4, 0, N_VOLTAGES, -1, -4, 0, N_VOLTAGES)
+            vg = voltage_composer.do2d(1, -4, 0, N_VOLTAGES, 4, -4, 0, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_closed(vg, 4)
 
             model.threshold = 1.
@@ -194,7 +194,7 @@ class ThresholdTests(TestCase):
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
         for model in models:
-            vg = voltage_composer.do2d(0, -5, 5, N_VOLTAGES, -1, -5, 5, N_VOLTAGES)
+            vg = voltage_composer.do2d(1, -5, 5, N_VOLTAGES, 5, -5, 5, N_VOLTAGES)
             vg = vg + _optimal_Vg(model.cdd_inv, model.cgd, np.random.uniform(1, 5, size=n_gate))
 
             n_threshold_not_of_1 = model.ground_state_open(vg)
@@ -228,7 +228,7 @@ class ThresholdTests(TestCase):
         for model in models:
             model.core = 'python'
             print(model.threshold)
-            vg = voltage_composer.do2d(0, -20, 0, N_VOLTAGES, -1, -20, 0, N_VOLTAGES)
+            vg = voltage_composer.do2d(1, -20, 0, N_VOLTAGES, 5, -20, 0, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_closed(vg, 4)
 
             model.threshold = 1.

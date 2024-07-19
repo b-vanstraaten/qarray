@@ -45,6 +45,7 @@ virtual_gate_origin = np.zeros(shape=(model.n_gate,))
 
 voltage_composer = GateVoltageComposer(
     n_gate=model.n_gate,
+    n_dot=model.n_dot,
     virtual_gate_matrix=virtual_gate_matrix,
     virtual_gate_origin=virtual_gate_origin
 )
@@ -54,19 +55,17 @@ N = 400
 vx_min, vx_max = -1.6, 1.6
 vy_min, vy_max = -2.4, 2.4
 
-vg = voltage_composer.do2d_virtual(1, vy_min, vx_max, N, 3, vy_min, vy_max, N)
-
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg_lt = voltage_composer.do2d_virtual(1, vx_min, vx_max, N, 0, vy_min, vy_max, N)
-vg_lb = voltage_composer.do2d_virtual(1, vx_min, vx_max, N, 4, -vy_min, -vy_max, N)
-vg_rt = voltage_composer.do2d_virtual(3, -vx_min, -vx_max, N, 0, vy_min, vy_max, N)
-vg_rb = voltage_composer.do2d_virtual(3, -vx_min, -vx_max, N, 4, -vy_min, -vy_max, N)
+vg_lt = voltage_composer.do2d('vP2', vx_min, vx_max, N, 'vP1', vy_min, vy_max, N)
+vg_lb = voltage_composer.do2d('vP2', vx_min, vx_max, N, 'vP5', -vy_min, -vy_max, N)
+vg_rt = voltage_composer.do2d('vP4', -vx_min, -vx_max, N, 'vP1', vy_min, vy_max, N)
+vg_rb = voltage_composer.do2d('vP4', -vx_min, -vx_max, N, 'vP5', -vy_min, -vy_max, N)
 
 vg = vg_lt + vg_lb + vg_rt + vg_rb
 scale = -0.5
 shift = -0.
 
-vg = vg + voltage_composer.do1d(2, shift - scale, shift + scale, N)[:, np.newaxis, :]
+vg = vg + voltage_composer.do1d('vP3', shift - scale, shift + scale, N)[:, np.newaxis, :]
 
 t0 = time.time()
 n = model.ground_state_closed(vg, 5)

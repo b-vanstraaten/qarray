@@ -49,8 +49,19 @@ to perform a scan of the quantum dot system. These arrays contain the simulated 
 
         # using the dot voltage composer to create the dot voltage array for the 2d sweep
         vg = voltage_composer.do2d(
-            x_gate = 0, x_min = -5, x_max = 5 , x_res = 100,
-            y_gate = 0, y_min = -5, y_max = 5 , y_res = 100
+            x_gate = 'P1', x_min = -5, x_max = 5 , x_res = 100,
+            y_gate = 'P2', y_min = -5, y_max = 5 , y_res = 100
+        )
+This scan sweeps the gate voltages of the quantum dot system from -5 to 5 in both the x and y directions, with 100 points in each direction. The :code:`do2d` method returns a (100, 100, 2) array encoding the gate voltage for each gate at each point in the measurement. To
+sweep over the virtualised plunger gates simply use the arguments 'vP1' and 'vP2' instead of 'P1' and 'P2'. To sweep over the detuning and onsite energy
+use the
+
+.. code:: python
+
+        # using the dot voltage composer to create the dot voltage array for the 2d sweep
+        vg = voltage_composer.do2d(
+            x_gate = 'e1_2', x_min = -5, x_max = 5 , x_res = 100,
+            y_gate = 'U1_2', y_min = -5, y_max = 5 , y_res = 100
         )
 
 Now that we have the gate voltage arrays, we can calculate the charge configuration of the quantum dot system at each of these voltage configurations. We can do this for an open dot array (where the array is able freely exchange charge carriers with the reservoir) or a closed dot array (where the number of charge carriers is fixed).
@@ -193,7 +204,7 @@ method will return the gate voltages corresponding to the middle of the [0, 1] -
     vx_min, vx_max = -5, 5
     vy_min, vy_max = -5, 5
     # using the dot voltage composer to create the dot voltage array for the 2d sweep
-    vg = voltage_composer.do2d(0, vy_min, vx_max, 200, 1, vy_min, vy_max, 200)
+    vg = voltage_composer.do2d('P1', vy_min, vx_max, 200, 'P2', vy_min, vy_max, 200)
 
     # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
     vg += model.optimal_Vg([0.5, 0.5, 0.6])

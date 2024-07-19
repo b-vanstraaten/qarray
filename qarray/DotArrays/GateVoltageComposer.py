@@ -1,12 +1,17 @@
 import builtins
-from collections.abc import Iterable
+import re
 from dataclasses import dataclass
 from typing import List
 
 import numpy as np
 
-from ..qarray_types import Vector
-
+patterns = {
+    'P': re.compile(r'^P(\d+)$'),
+    'vP': re.compile(r'^vP(\d+)$'),
+    'e': re.compile(r'^e(\d+)_(\d+)$'),
+    'u': re.compile(r'^U(\d+)_(\d+)$'),
+    'U': re.compile(r'^U(\d+)_(\d+)$')
+}
 
 @dataclass
 class GateVoltageComposer:
@@ -15,109 +20,68 @@ class GateVoltageComposer:
     """
     n_gate: int  # the number of gates
     n_dot: int | None = None
-    gate_voltages: Vector | None = None  # vector of dot voltages encoding the current DC voltages set to the array
-    gate_names: dict[str, int] | None = None  # a dictionary of dot names which can be defined for convenience
     virtual_gate_origin: np.ndarray | None = None  # the origin to consider virtual gates from
     virtual_gate_matrix: np.ndarray | None = None  # a matrix of virtual gates to be used for the dot array
 
-    def __post_init__(self):
-        """
-        post initialise the class. If values are left as none they are set to their mutable default values
-        :return:
-        """
-        if self.gate_voltages is None:
-            self.gate_voltages = Vector(np.zeros(self.n_gate))
-
-        if self.gate_names is None:
-            self.gate_names = {}
-
-        if self.virtual_gate_origin is not None and self.virtual_gate_origin is not None:
-            self._check_virtual_gate()
-            self.n_dot = self.virtual_gate_matrix.shape[1]
-
-    def name_gate(self, name: str | Iterable[str], gate: int | Iterable[int]):
-        match (isinstance(name, list | tuple), isinstance(gate, list | tuple)):
-            case (True, True):  # if both iterable
-                for name, gate in zip(name, gate):
-                    assert isinstance(name, str), f'name must be a string, {gate}'
-                    self._check_gate(gate)
-                    # now the validation is done setting the name in the dot dict
-                    self.gate_names[name] = gate
-            case (False, False):  # if neither iterable
-                assert isinstance(name, str), f'name must be a string not {name}'
-                self._check_gate(gate)
-                self.gate_names[name] = gate
-            case _:  # one iterable and the other not
-                raise ValueError(f'Incompatible names and gates arguments {name}, {gate}')
 
     def _check_gate(self, gate: int):
-        if (gate <= - self.n_gate or gate > self.n_gate - 1):
-            raise ValueError(f'Invalid dot {gate}')
+        assert isinstance(gate, int), 'gate must be an int'
+        assert gate in range(1, self.n_gate + 1), f'gate must be in the range 1 to {self.n_gate}'
 
     def _check_dot(self, dot: int):
-        if (dot <= - self.n_dot or dot > self.n_dot - 1):
-            raise ValueError(f'Invalid dot {dot}')
+        assert isinstance(dot, int), 'dot must be an int'
+        assert dot in range(1, self.n_dot + 1), f'dot must be in the range 1 to {self.n_dot}'
 
-    def _check_virtual_gate(self):
-        # checking the virtual dot parameters are set
-        assert self.virtual_gate_origin is not None, 'virtual_gate_origin must be set'
-        assert self.virtual_gate_matrix is not None, 'virtual_gate_matrix must be set'
-
-    def _fetch_and_check_dot(self, dot: str | int) -> int:
-        """
-        This function is used to fetch the gate index from the gate name.
-        :param dot: the gate voltage to be validated and/or looked up from the name dictionary.
-        :return:
-        """
-        match type(dot):
-            case builtins.int:  # parsing int qarray_types
-                # checking the dot number is valid
-                self._check_gate(dot)
-                # parsing negative dot values
-                if dot < 0:
-                    dot = self.n_gate + dot
-                return dot
-            case builtins.str:  # passing string qarray_types
-                # checking the name of the dot is a valid name
-                if dot not in self.gate_names.keys():
-                    raise ValueError(f'Gate {dot} not found in dac_names')
-                dot = self.gate_names[dot]
-                self._check_gate(dot)
-
-                if dot < 0:
-                    dot = self.n_gate + dot
-
-                return dot
-            case _:
-                raise ValueError(f'Gate not of type int of string {type(dot)}')
-
-    def _fetch_and_check_gate(self, gate: str | int) -> int:
-        """
-        This function is used to fetch the dot index from the dot name.
-        :param gate: the dot voltage to be validated and/or looked up from the name dictionary.
-        :return:
-        """
-        match type(gate):
-            case builtins.int:  # parsing int qarray_types
-                # checking the dot number is valid
+    def _parse_and_construct_scan(self, gate, min, max, res):
+        match type(gate):  # parsing int qarray_types
+            case builtins.int:
+                # if the gate is an int the check the gate is valid
                 self._check_gate(gate)
-                # parsing negative dot values
-                if gate < 0:
-                    gate = self.n_gate + gate
-                return gate
-            case builtins.str:  # passing string qarray_types
-                # checking the name of the dot is a valid name
-                if gate not in self.gate_names.keys():
-                    raise ValueError(f'Gate {gate} not found in dac_names')
-                gate = self.gate_names[gate]
-                self._check_gate(gate)
+                return self._do1d(gate, min, max, res)
 
-                if gate < 0:
-                    gate = self.n_gate + gate
+            case builtins.str:
 
-                return gate
-            case _:
-                raise ValueError(f'Gate not of type int of string {type(gate)}')
+                # find which of the regex patterns the gate matches
+                for key, pattern in patterns.items():
+                    match = pattern.match(gate)
+                    if match:
+                        gate_case = key
+                        groups = match.groups()
+                        break
+                else:
+                    raise ValueError(
+                        f'Invalid gate {gate} must be in the form P[int], vP[int], e[int]_[int], U[int]_[int]')
+
+                match gate_case:  # parsing int qarray_types
+                    case 'P':
+                        # moving to 0 indexing
+                        gate_index = int(groups[0])
+                        return self._do1d(gate_index, min, max, res)
+                    case 'vP':
+                        # moving to 0 indexing
+                        dot_index = int(groups[0])
+                        assert self.virtual_gate_origin is not None, 'virtual_gate_origin must be set'
+                        assert self.virtual_gate_matrix is not None, 'virtual_gate_matrix must be set'
+                        return self._do1d_virtual(dot_index, min, max, res)
+                    case 'e':
+                        dot_1_index, dot_2_index = groups
+                        # moving to 0 indexing
+                        dot_1_index, dot_2_index = int(dot_1_index), int(dot_2_index)
+
+                        v1 = self._do1d_virtual(dot_1_index, min, max, res)
+                        v2 = self._do1d_virtual(dot_2_index, min, max, res)
+                        return v1 - v2
+                    case 'u' | 'U':
+
+                        # moving to 0 indexing
+                        dot_1_index, dot_2_index = groups
+                        dot_1_index, dot_2_index = int(dot_1_index), int(dot_2_index)
+
+                        v1 = self._do1d_virtual(dot_1_index, min, max, res)
+                        v2 = self._do1d_virtual(dot_2_index, min, max, res)
+                        return (v1 + v2) / np.sqrt(2)
+                    case _:
+                        raise ValueError(f'x_gate {gate} is not in the correct format')
 
     def meshgrid(self, gates: List[int | str], arrays: List[np.ndarray]) -> np.ndarray:
         """
@@ -131,7 +95,13 @@ class GateVoltageComposer:
         # checking the gates and arrays are the same length and are 1d
         assert all([array.ndim == 1 for array in arrays]), 'arrays must be 1d'
         assert len(gates) == len(arrays), 'gates and arrays must be the same length'
-        gates = list(map(self._fetch_and_check_gate, gates))
+
+        # checking the gates are valid
+        for gate in gates:
+            self._check_gate(gate)
+
+        # moving the gates to 0 indexing
+        gates = list(map(lambda x: x - 1, gates))
 
         # getting the sizes of the arrays
         sizes = [array.size for array in reversed(arrays)]
@@ -146,7 +116,7 @@ class GateVoltageComposer:
         for gate in range(self.n_gate):
             # if the gate is not in the gates list then set it to the current voltage
             if gate not in gates:
-                Vg[..., gate] = self.gate_voltages[gate]
+                Vg[..., gate] = 0
 
             # if the gate is in the gates list then set it to the voltage array from the meshgrid
             if gate in gates:
@@ -170,7 +140,12 @@ class GateVoltageComposer:
         assert all([array.ndim == 1 for array in arrays]), 'arrays must be 1d'
         assert len(dots) == len(arrays), 'gates and arrays must be the same length'
 
-        dots = list(map(self._fetch_and_check_dot, dots))
+        for dot in dots:
+            self._check_dot(dot)
+
+        # moving the dots to 0 indexing
+        dots = list(map(lambda x: x - 1, dots))
+
         sizes = [array.size for array in arrays]
 
         # initialising the voltage array
@@ -183,7 +158,7 @@ class GateVoltageComposer:
         for dot in range(self.n_gate):
             # if the gate is not in the gates list then set it to the current voltage
             if dot not in dots:
-                Vd[..., dot] = self.gate_voltages[dot]
+                Vd[..., dot] = 0
 
             # if the gate is in the gates list then set it to the voltage array from the meshgrid
             if dot in dots:
@@ -192,7 +167,7 @@ class GateVoltageComposer:
 
         return np.einsum('ij,...j->...i', self.virtual_gate_matrix, Vd) + self.virtual_gate_origin
 
-    def do1d(self, x_gate: str | int, x_min: float, x_max: float, x_res: int) -> np.ndarray:
+    def do1d(self, gate: str | int, min: float, max: float, res: int) -> np.ndarray:
         """
         This function is used to compose a 1d dot voltage array.
         :param x_gate:
@@ -201,13 +176,10 @@ class GateVoltageComposer:
         :param x_res:
         :return:
         """
-        return self.meshgrid(
-            [x_gate],
-            [np.linspace(x_min, x_max, x_res)]
-        )
+        return self._parse_and_construct_scan(gate, min, max, res)
 
-    def do2d(self, x_gate: str | int, x_min: float, x_max: float, x_res: int,
-             y_gate: str | int, y_min: float, y_max: float, y_res: int) -> np.ndarray:
+    def do2d(self, x_gate: str | int, x_min: float, x_max: float, x_res: int, y_gate: str | int, y_min: float,
+             y_max: float, y_res: int) -> np.ndarray:
         """
         This function is used to compose a 2d dot voltage array.
         :param x_gate:
@@ -220,32 +192,26 @@ class GateVoltageComposer:
         :param y_res:
         :return:
         """
-        return self.meshgrid(
-            [x_gate, y_gate],
-            [np.linspace(x_min, x_max, x_res), np.linspace(y_min, y_max, y_res)]
-        )
+        vx = self._parse_and_construct_scan(x_gate, x_min, x_max, x_res)
+        vy = self._parse_and_construct_scan(y_gate, y_min, y_max, y_res)
+        return vx[np.newaxis, :] + vy[:, np.newaxis]
 
-    def do1d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_res: int) -> np.ndarray:
-        return self.meshgrid_virtual(
-            [x_dot],
-            [np.linspace(x_min, x_max, x_res)]
-        )
-
-    def do2d_virtual(self, x_dot: str | int, x_min: float, x_max: float, x_res: int,
-                     y_dot: str | int, y_min: float, y_max: float, y_res: int) -> np.ndarray:
+    def _do1d(self, gate: str | int, min: float, max: float, res: int) -> np.ndarray:
         """
-        This function is used to compose a 2d dot voltage array.
-        :param x_dot:
-        :param x_min:
-        :param x_max:
-        :param x_res:
-        :param y_dot:
-        :param y_min:
-        :param y_max:
-        :param y_res:
+        This function is used to compose a 1d dot voltage array.
+        :param gate:
+        :param min:
+        :param max:
+        :param res:
         :return:
         """
+        return self.meshgrid(
+            [gate],
+            [np.linspace(min, max, res)]
+        )
+
+    def _do1d_virtual(self, dot: str | int, min: float, max: float, res: int) -> np.ndarray:
         return self.meshgrid_virtual(
-            [x_dot, y_dot],
-            [np.linspace(x_min, x_max, x_res), np.linspace(y_min, y_max, y_res)]
+            [dot],
+            [np.linspace(min, max, res)]
         )

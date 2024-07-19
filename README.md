@@ -92,7 +92,7 @@ voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
 vx_min, vx_max = -5, 5
 vy_min, vy_max = -5, 5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(0, vy_min, vx_max, 400, 1, vy_min, vy_max, 400)
+vg = voltage_composer._do2d(0, vy_min, vx_max, 400, 1, vy_min, vy_max, 400)
 
 # run the simulation with the quantum dot array open such that the number of charge carriers is not fixed
 n_open = model.ground_state_open(vg)  # n_open is a (100, 100, 2) array encoding the
