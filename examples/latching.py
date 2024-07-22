@@ -15,7 +15,7 @@ Cgs = [[0.06, 0.02, 1]]  # an (n_sensor, n_gate) array of the capacitive couplin
 # a latching model which simulates latching on the transitions to the leads and inter-dot transitions
 latching_model = LatchingModel(
     n_dots=2,
-    p_leads=[0.25, 0.25],
+    p_leads=[0.5, 0.1],
     p_inter=[
         [0., 1.],
         [1., 0.],
@@ -32,9 +32,9 @@ latching_model = LatchingModel(
 white_noise = WhiteNoise(amplitude=1e-10)
 
 # defining a telegraph noise model with p01 = 5e-4, p10 = 5e-3 and an amplitude of 1e-2
-random_telegraph_noise = TelegraphNoise(p01=5e-4, p10=5e-3, amplitude=1e-2)
+random_telegraph_noise = TelegraphNoise(p01=5e-4, p10=5e-3, amplitude=1e-9)
 
-fast_noise = TelegraphNoise(p01=1e-3, p10=1e-3, amplitude=1e-3)
+fast_noise = TelegraphNoise(p01=1e-3, p10=1e-3, amplitude=1e-9)
 
 # combining the white and telegraph noise models
 combined_noise = white_noise + random_telegraph_noise + fast_noise
@@ -51,7 +51,7 @@ model = ChargeSensedDotArray(
 
 # creating the voltage composer
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate, n_dot = model.n_dot + model.n_sensor)
-voltage_composer.virtual_gate_origin = model.optimal_Vg([1., 1., 0.6])
+
 
 virtual_gate_matrix = np.linalg.pinv(model.cdd_inv_full @ model.cgd_full)
 virtual_gate_matrix[2, 0] += 0.02
@@ -64,8 +64,8 @@ voltage_composer.virtual_gate_matrix = virtual_gate_matrix
 vx_min, vx_max = -0.5, 0.5
 vy_min, vy_max = -0.5, 0.5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(1, vy_min, vx_max, 100, 2, vy_min, vy_max, 100)
-
+vg = voltage_composer.do2d(2, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg += model.optimal_Vg([0.5, 0.5, 0.6])
 
 # creating the figure and axes
 z, n = model.charge_sensor_open(vg)
