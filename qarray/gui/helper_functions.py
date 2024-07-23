@@ -34,11 +34,11 @@ def unique_last_axis(arr):
     return unique_arrays
 
 
-def create_gate_options(N):
-    true_gates = [f'P{i + 1}' for i in range(N)]
-    virtual_gates = [f'vP{i + 1}' for i in range(N)]
-    e_gates = [f'e{i + 1}_{j + 1}' for i, j in combinations(range(N), 2)]
-    u_gates = [f'U{i + 1}_{j + 1}' for i, j in combinations(range(N), 2)]
+def create_gate_options(n_gate, n_dot):
+    true_gates = [f'P{i + 1}' for i in range(n_gate)]
+    virtual_gates = [f'vP{i + 1}' for i in range(n_dot)]
+    e_gates = [f'e{i + 1}_{j + 1}' for i, j in combinations(range(n_dot), 2)]
+    u_gates = [f'U{i + 1}_{j + 1}' for i, j in combinations(range(n_dot), 2)]
 
     return [{'label': gate, 'value': gate} for gate in true_gates + virtual_gates + e_gates + u_gates]
 

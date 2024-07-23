@@ -44,6 +44,9 @@ stability diagram of a closed five dot quantum recreated with permission from `[
 
 |recreations|
 
+The code to reproduces these plots can be found in the examples folder of the QArray repository, named
+figure_4b.py and figure_4d.py respectively.
+
 .. |arXiv| image:: https://img.shields.io/badge/arXiv-2404.04994-Green.svg
 .. |PyPI| image:: https://img.shields.io/pypi/v/qarray
 .. |GitHub Workflow Status| image:: https://github.com/b-vanstraaten/qarray/actions/workflows/windows_tests.yaml//badge.svg

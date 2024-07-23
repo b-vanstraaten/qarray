@@ -6,7 +6,7 @@ from .GateVoltageComposer import GateVoltageComposer
 from ._helper_functions import (check_algorithm_and_implementation,
                                 check_and_warn_user, convert_to_maxwell)
 from .ground_state import _ground_state_open, _ground_state_closed
-from ..functions import _optimal_Vg, compute_threshold
+from ..functions import _optimal_Vg, compute_threshold, compute_optimal_virtual_gate_matrix
 from ..latching_models import LatchingBaseModel
 from ..qarray_types import Cdd as CddType  # to avoid name clash with dataclass cdd
 from ..qarray_types import CgdNonMaxwell, CddNonMaxwell, VectorList, Cgd_holes, Cgd_electrons, PositiveValuedMatrix, \
@@ -276,6 +276,18 @@ class DotArray:
         vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_points, y_gate, y_min, y_max, y_points)
         return self.ground_state_closed(vg, n_charges)
 
+    def compute_optimal_virtual_gate_matrix(self):
+        """
+        Computes the optimal virtual gate matrix for the dot array and sets it as the virtual gate matrix
+        in the gate voltage composer.
+
+        The virtual gate matrix is computed as the pseudo inverse of the dot to dot capacitance matrix times the dot to gate capacitance matrix.
+
+        returns np.ndarray: the virtual gate matrix
+        """
+        virtual_gate_matrix = compute_optimal_virtual_gate_matrix(self.cdd_inv, self.cgd)
+        self.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix
+        return virtual_gate_matrix
 
     def run_gui(self, port=27182, print_compute_time: bool = False):
         """

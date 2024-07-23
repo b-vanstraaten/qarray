@@ -9,6 +9,29 @@ from .qarray_types import (CddInv, Cgd_holes, Cdd, VectorList, Tetrad,
                            Vector)
 
 
+def compute_optimal_virtual_gate_matrix(
+        cdd_inv: CddInv, cgd: Cgd_holes, rcond: float = 1e-4) -> np.ndarray:
+    """
+    Function to compute the optimal virtual gate matrix.
+
+    :param cdd_inv: the inverse of the dot to dot capacitance matrix
+    :param cgd: the dot to gate capacitance matrix
+    :param rcond: the rcond parameter for the pseudo inverse
+    :return: the optimal virtual gate matrix
+
+    """
+    n_dot = cdd_inv.shape[0]
+    n_gate = cgd.shape[1]
+    virtual_gate_matrix = -np.linalg.pinv(cdd_inv @ cgd, rcond=rcond)
+
+    # if the number of dots is less than the number of gates then we pad with zeros
+    if n_dot < n_gate:
+        virtual_gate_matrix = np.pad(virtual_gate_matrix, ((0, 0), (0, n_gate - n_dot)), mode='constant')
+
+    return virtual_gate_matrix
+
+
+
 def charge_state_to_scalar(n: Tetrad | np.ndarray) -> int:
     """
     Function to convert the charge state to a unique index, using the binary representation.

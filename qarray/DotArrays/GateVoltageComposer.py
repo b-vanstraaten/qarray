@@ -155,7 +155,7 @@ class GateVoltageComposer:
         V = np.meshgrid(*arrays)
 
         # setting the voltages
-        for dot in range(self.n_gate):
+        for dot in range(self.n_dot):
             # if the gate is not in the gates list then set it to the current voltage
             if dot not in dots:
                 Vd[..., dot] = 0
