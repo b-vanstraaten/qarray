@@ -18,7 +18,7 @@ model = ChargeSensedDotArray(
 model.gate_voltage_composer.virtual_gate_matrix = np.array([
     [1, -0.0, 0],
     [-0.0, 1, 0],
-    [-0.06, -0.05, 0],
+    [-0.06, -0.05, 1],
 ])
 
 # defining the min and max values for the dot voltage sweep
