@@ -13,7 +13,7 @@ from qarray import DotArray, dot_occupation_changes, charge_state_to_scalar
 from .helper_functions import create_gate_options, n_charges_options, unique_last_axis, plot_options
 
 
-def run_gui(model, port=27182, run=True, print_compute_time=False):
+def run_gui(model, port=27182, run=True, print_compute_time=False, initial_dac_values=None):
     """
     Create the GUI for the DotArray model.
 
@@ -48,6 +48,11 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
     virtual_gate_matrix = model.compute_optimal_virtual_gate_matrix()
     virtual_gate_matrix = np.round(virtual_gate_matrix, 3)
     virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float, columns=[f'vP{i + 1}' for i in range(n_gate)])
+
+    if initial_dac_values is None:
+        initial_dac_values = np.zeros(n_gate)
+    else:
+        initial_dac_values = np.round(initial_dac_values, 3)
 
     app.layout = html.Div([
         # First Row: Tables
@@ -152,7 +157,7 @@ def run_gui(model, port=27182, run=True, print_compute_time=False):
                     dcc.Input(
                         id=f'dac_{i}',
                         type='number',
-                        value=0,
+                        value=float(initial_dac_values[i]),
                         placeholder=f'P{i}',
                         step=0.1,
                         style={'margin-bottom': '10px', 'display': 'block'}

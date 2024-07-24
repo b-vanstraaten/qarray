@@ -26,9 +26,8 @@ model = DotArray(
     implementation='rust',
     charge_carrier='electron',
     T=150,
-    threshold=0.1
+    threshold=0.05
 )
-model.max_charge_carriers = 2
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate, n_dot=model.n_dot)
 

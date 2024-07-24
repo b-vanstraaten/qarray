@@ -289,10 +289,15 @@ class DotArray:
         self.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix
         return virtual_gate_matrix
 
-    def run_gui(self, port=27182, print_compute_time: bool = False):
+    def run_gui(self, port=27182, print_compute_time: bool = False, initial_dac_values=None):
         """
         Creates a GUI for the dot array
+
+        :param port: the port to run the GUI on
+        :param print_compute_time: a bool specifying whether to print the compute time
+        :param initial_dac_values: the initial dac values to set the GUI to as a numpy array of length n_gate
+
         """
         # importing the run_gui function here to avoid circular imports
         from ..gui import run_gui
-        run_gui(self, port=port, print_compute_time=print_compute_time)
+        run_gui(self, port=port, print_compute_time=print_compute_time, initial_dac_values=initial_dac_values)
