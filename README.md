@@ -9,7 +9,7 @@
 [QArray: a GPU-accelerated constant capacitance model simulator for large quantum dot arrays; Barnaby van Straaten, Joseph Hickie, Lucas Schorling, Jonas Schuff, Federico Fedele, Natalia Ares](https://arxiv.org/abs/2404.04994)
 
 <p align="center">
-    <img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/structure.jpg" alt="structure" width="600">
+    <img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/gui.jpg" alt="structure" width="600">
 </p>
 
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA to
