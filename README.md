@@ -35,7 +35,7 @@ that are visually similar to those measured experimentally. The plots on the rig
 and the plots on the left are simulated using QArray.
 
 <p align="center">
-<img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/recreations.jpg" alt="structure" width="400">
+<img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/structure.jpg" alt="structure" width="400">
 </p>
 
 Figure (a) shows the charge stability diagram of an open quadruple quantum dot array recreated with permission
