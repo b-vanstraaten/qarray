@@ -220,6 +220,4 @@ Whilst this plot looks closer to what we see experimentally, we are missing nois
 
 .. |structure| image:: ./figures/structure.png
 
-.. |GUI| image:: ./figures/GUI.png
-
 .. |charge_sensing| image:: ./figures/charge_sensing.jpg

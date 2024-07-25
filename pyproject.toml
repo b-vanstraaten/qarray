@@ -6,6 +6,7 @@ build-backend = "flit_core.buildapi"
 name = "qarray"
 authors = [
     { name = "Barnaby van Straaten", email = "barnaby.vanstraaten@kellogg.ox.ac.uk" },
+    { name = "Joseph Hickie", email = "joseph.hickie@trinity.ox.ac.uk" },
     { name = "Jonas Schuff", email = "jonas.schuffn@materials.ox.ac.uk" },
     { name = "Cornelius Carlsson", email = "cornelius.carlsson@eng.ox.ac.uk" }
 ]
@@ -55,5 +56,6 @@ dependencies = [
 
 [project.urls]
 Home = "https://github.com/b-vanstraaten/qarray"
+Documentation = "https://qarray.readthedocs.io/en/latest/"
 Repository = "https://github.com/b-vanstraaten/qarray"
 Issues = "https://github.com/b-vanstraaten/qarray/issues"
