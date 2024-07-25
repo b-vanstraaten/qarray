@@ -69,6 +69,9 @@ in [macOS installation](#macOS-installation). Alternatively, just spin up
 a [Github Codespace](https://github.com/codespaces), then ```pip install qarray``` and
 you are done.
 
+For more information on the installation process, see
+the [installation guide](https://qarray.readthedocs.io/en/latest/installation.html).
+
 ## Getting started - double quantum dot example
 
 ```python
@@ -94,7 +97,7 @@ model = DotArray(
     Cdd=Cdd,
     Cgd=Cgd,
 )
-model.run()
+model.run_gui()
 ```
 ## Examples
 
@@ -114,42 +117,6 @@ dot systems.
 <a name="[2]"></a>
 [2] [Coherent control of individual electron spins in a two-dimensional quantum dot array](https://www.nature.com/articles/s41565-020-00816-w)
 
-## macOS installation
 
-Getting JAX to work macOS on M Series chips can be rather finicky. Here are the steps we used to get everything working
-starting from a fresh OS install.
-
-1. Install homebrew from https://brew.sh and run through the install script
-
-2. Use homebrew to install miniconda
-
-```zsh
-brew install  miniconda
-```
-
-3. Use homebrew to install cmake
-
-```zsh
-brew install cmake
-```
-
-4. Create a new conda environment and install pip
-
-```zsh
-conda create -n qarray python=3.10
-conda activate qarray
-conda install pip
-```
-
-5. Install qarray using pip
-
-```zsh
-pip install qarray
-```
-
-This installation script has been demonstrated to work on macOS Ventura 13.4 and Sonoma 14.4.
-To install directly from the repository, use the command:
-```zsh
-pip install git+https://github.com/b-vanstraaten/qarray.git@main
 ```
 
