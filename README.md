@@ -6,20 +6,24 @@
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/macos_tests.yaml//badge.svg)
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/linux_tests.yaml//badge.svg)
 
-Documentation:[https://qarray.readthedocs.io/en/latest/introduction.html](https://qarray.readthedocs.io/en/latest/introduction.html)
-
 Paper: [QArray: a GPU-accelerated constant capacitance model simulator for large quantum dot arrays; Barnaby van Straaten, Joseph Hickie, Lucas Schorling, Jonas Schuff, Federico Fedele, Natalia Ares](https://arxiv.org/abs/2404.04994)
 
+Documentation:[https://qarray.readthedocs.io/en/latest/introduction.html](https://qarray.readthedocs.io/en/latest/introduction.html)
 
 <p align="center">
-    <img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/GUI.jpg" alt="structure" width="600">
+    <img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/GUI.jpg" alt="structure" width="600">
 </p>
 
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA to
 deliver constant capacitance model charge stability diagrams in seconds or milliseconds. It couples highly optimised and
 parallelised code with two new algorithms to compute the ground state charge configuration. These algorithms scale
 better than the traditional brute-force approach and do not require the user to specify
-the maximum number of charge carriers a priori.
+the maximum number of charge carriers a priori. QArray includes a graphical user interface (GUI) that allows users to
+interact with the simulation in real-time.
+
+<p align="center">
+<img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/GUI.jpg" alt="structure" width="400">
+</p>
 
 QArray runs on both CPUs and GPUs and is designed to be easy to use and integrate into your existing workflow. It was
 developed on macOS running on Apple Silicon and is continuously tested on Windows-lastest, macOs13, macOS14 and
@@ -31,7 +35,7 @@ that are visually similar to those measured experimentally. The plots on the rig
 and the plots on the left are simulated using QArray.
 
 <p align="center">
-<img src="https://github.com/b-vanstraaten/qarray/blob/main/misc/recreations.jpg" alt="structure" width="400">
+<img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/recreations.jpg" alt="structure" width="400">
 </p>
 
 Figure (a) shows the charge stability diagram of an open quadruple quantum dot array recreated with permission
