@@ -1,11 +1,11 @@
-
-# QArray
-
 ![PyPI](https://img.shields.io/pypi/v/qarray)
 [![arXiv](https://img.shields.io/badge/arXiv-2404.04994-Green.svg)](https://arxiv.org/abs/2404.04994)
+[![Read the Docs](https://img.shields.io/readthedocs/qarray)](https://qarray.readthedocs.io/en/latest/introduction.html)
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/windows_tests.yaml//badge.svg)
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/macos_tests.yaml//badge.svg)
 ![GitHub Workflow Status](https://github.com/b-vanstraaten/qarray/actions/workflows/linux_tests.yaml//badge.svg)
+
+# QArray
 
 Paper: [QArray: a GPU-accelerated constant capacitance model simulator for large quantum dot arrays; Barnaby van Straaten, Joseph Hickie, Lucas Schorling, Jonas Schuff, Federico Fedele, Natalia Ares](https://arxiv.org/abs/2404.04994)
 
