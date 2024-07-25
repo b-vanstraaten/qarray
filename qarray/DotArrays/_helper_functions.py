@@ -49,6 +49,10 @@ def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMa
     """
     cdd_sum = cdd_non_maxwell.sum(axis=1)
     cgd_sum = cgd_non_maxwell.sum(axis=1)
+
+    # setting the diagonal elements of the cdd matrix to zero
+    np.fill_diagonal(cdd_non_maxwell, 0)
+
     cdd = Cdd(np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell)
     cdd_inv = CddInv(np.linalg.inv(cdd))
     cgd = NegativeValuedMatrix(-cgd_non_maxwell)
