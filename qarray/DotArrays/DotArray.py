@@ -205,75 +205,75 @@ class DotArray:
         """
         return compute_threshold(self.cdd)
 
-    def do1d_open(self, gate: int | str, min: float, max: float, points: int) -> np.ndarray:
+    def do1d_open(self, gate: int | str, min: float, max: float, res: int) -> np.ndarray:
         """
         Performs a 1D sweep of the dot array with the gate
 
         :param gate: the gate to sweep
         :param min: the minimum value of the gate to sweep
         :param max: the maximum value of the gate to sweep
-        :param points: the number of points to sweep the gate over
+        :param res: the number of res to sweep the gate over
 
-        returns the ground state of the dot array which is a np.ndarray of shape (points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (res, n_dot)
         """
 
-        vg = self.gate_voltage_composer.do1d(gate, min, max, points)
+        vg = self.gate_voltage_composer.do1d(gate, min, max, res)
         return self.ground_state_open(vg)
 
-    def do1d_closed(self, gate: int | str, min: float, max: float, points: int, n_charges: int) -> np.ndarray:
+    def do1d_closed(self, gate: int | str, min: float, max: float, res: int, n_charges: int) -> np.ndarray:
         """
         Performs a 1D sweep of the dot array with the gate
 
         :param gate: the gate to sweep
         :param min: the minimum value of the gate to sweep
         :param max: the maximum value of the gate to sweep
-        :param points: the number of points to sweep the gate over
+        :param res: the number of res to sweep the gate over
         :param n_charges: the number of charges to be confined in the dot array
 
-        returns the ground state of the dot array which is a np.ndarray of shape (points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (res, n_dot)
         """
 
-        vg = self.gate_voltage_composer.do1d(gate, min, max, points)
+        vg = self.gate_voltage_composer.do1d(gate, min, max, res)
         return self.ground_state_closed(vg, n_charges)
 
-    def do2d_open(self, x_gate: int | str, x_min: float, x_max: float, x_points: int,
-                  y_gate: int | str, y_min: float, y_max: float, y_points: int) -> np.ndarray:
+    def do2d_open(self, x_gate: int | str, x_min: float, x_max: float, x_res: int,
+                  y_gate: int | str, y_min: float, y_max: float, y_res: int) -> np.ndarray:
         """
         Performs a 2D sweep of the dot array with the gates x_gate and y_gate
 
         :param x_gate: the gate to sweep in the x direction
         :param x_min: the minimum value of the gate to sweep
         :param x_max: the maximum value of the gate to sweep
-        :param x_points: the number of points to sweep the gate over
+        :param x_res: the number of res to sweep the gate over
         :param y_gate: the gate to sweep in the y direction
         :param y_min: the minimum value of the gate to sweep
         :param y_max: the maximum value of the gate to sweep
-        :param y_points: the number of points to sweep the
+        :param y_res: the number of res to sweep the
 
-        returns the ground state of the dot array which is a np.ndarray of shape (x_points, y_points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (x_res, y_res, n_dot)
         """
 
-        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_points, y_gate, y_min, y_max, y_points)
+        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_res, y_gate, y_min, y_max, y_res)
         return self.ground_state_open(vg)
 
-    def do2d_closed(self, x_gate: int | str, x_min: float, x_max: float, x_points: int,
-                    y_gate: int | str, y_min: float, y_max: float, y_points: int, n_charges: int) -> np.ndarray:
+    def do2d_closed(self, x_gate: int | str, x_min: float, x_max: float, x_res: int,
+                    y_gate: int | str, y_min: float, y_max: float, y_res: int, n_charges: int) -> np.ndarray:
         """
         Performs a 2D sweep of the dot array with the gates x_gate and y_gate
 
         :param x_gate: the gate to sweep in the x direction
         :param x_min: the minimum value of the gate to sweep
         :param x_max: the maximum value of the gate to sweep
-        :param x_points: the number of points to sweep the gate over
+        :param x_res: the number of res to sweep the gate over
         :param y_gate: the gate to sweep in the y direction
         :param y_min: the minimum value of the gate to sweep
         :param y_max: the maximum value of the gate to sweep
-        :param y_points: the number of points to sweep the gate over
+        :param y_res: the number of res to sweep the gate over
         :param n_charges: the number of charges to be confined in the dot array
 
-        returns the ground state of the dot array which is a np.ndarray of shape (x_points, y_points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (x_res, y_res, n_dot)
         """
-        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_points, y_gate, y_min, y_max, y_points)
+        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_res, y_gate, y_min, y_max, y_res)
         return self.ground_state_closed(vg, n_charges)
 
     def compute_optimal_virtual_gate_matrix(self):

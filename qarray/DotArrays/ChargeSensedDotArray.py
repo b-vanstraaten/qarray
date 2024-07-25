@@ -128,9 +128,9 @@ class ChargeSensedDotArray:
         :param gate: the gate to sweep
         :param min: the minimum value of the gate to sweep
         :param max: the maximum value of the gate to sweep
-        :param points: the number of points to sweep the gate over
+        :param points: the number of res to sweep the gate over
 
-        returns the ground state of the dot array which is a np.ndarray of shape (points, n_dot) in the open configuration
+        returns the ground state of the dot array which is a np.ndarray of shape (res, n_dot) in the open configuration
         """
 
         vg = self.gate_voltage_composer.do1d(gate, min, max, points)
@@ -143,9 +143,9 @@ class ChargeSensedDotArray:
         :param gate: the gate to sweep
         :param min: the minimum value of the gate to sweep
         :param max: the maximum value of the gate to sweep
-        :param points: the number of points to sweep the gate over
+        :param points: the number of res to sweep the gate over
 
-        returns the ground state of the dot array which is a np.ndarray of shape (points, n_dot) in the closed configuration
+        returns the ground state of the dot array which is a np.ndarray of shape (res, n_dot) in the closed configuration
         """
         vg = self.gate_voltage_composer.do1d(gate, min, max, points)
         return self.charge_sensor_closed(vg, n_charge)
@@ -158,13 +158,13 @@ class ChargeSensedDotArray:
         :param x_gate: the gate to sweep in the x direction
         :param x_min: the minimum value of the gate to sweep
         :param x_max: the maximum value of the gate to sweep
-        :param x_points: the number of points to sweep the gate over
+        :param x_points: the number of res to sweep the gate over
         :param y_gate: the gate to sweep in the y direction
         :param y_min: the minimum value of the gate to sweep
         :param y_max: the maximum value of the gate to sweep
-        :param y_points: the number of points to sweep
+        :param y_points: the number of res to sweep
 
-        returns the ground state of the dot array which is a np.ndarray of shape (x_points, y_points, n_dot) in the open
+        returns the ground state of the dot array which is a np.ndarray of shape (x_res, y_res, n_dot) in the open
         configuration
         """
 
@@ -179,13 +179,13 @@ class ChargeSensedDotArray:
         :param x_gate: the gate to sweep in the x direction
         :param x_min: the minimum value of the gate to sweep
         :param x_max: the maximum value of the gate to sweep
-        :param x_points: the number of points to sweep the gate over
+        :param x_points: the number of res to sweep the gate over
         :param y_gate: the gate to sweep in the y direction
         :param y_min: the minimum value of the gate to sweep
         :param y_max: the maximum value of the gate to sweep
-        :param y_points: the number of points to sweep
+        :param y_points: the number of res to sweep
 
-        returns the ground state of the dot array which is a np.ndarray of shape (x_points, y_points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (x_res, y_res, n_dot)
         in the closed configuration
         """
 
