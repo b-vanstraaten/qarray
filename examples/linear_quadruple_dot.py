@@ -10,7 +10,13 @@ import numpy as np
 
 from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
 
-# setting up the constant capacitance model_threshold_1
+# setting up the constant capacitance model for a linear quadruple dot
+# the plunger gates couple to their repsective dots with capacitance 1. and to the next dot with capacitance 0.2
+# and the next dot with capacitance 0.05 and finally the furthest dot with strength 0.01.
+# the interdot capacitance between neighbouring dots are 0.3
+# the interdot capacitance between next nerest neighbours are 0.05
+# the interdot capacitance between the furthest dots are 0.01
+
 cdd_non_maxwell = [
     [0., 0.3, 0.05, 0.01],
     [0.3, 0., 0.3, 0.05],
@@ -27,14 +33,7 @@ cgd_non_maxwell = [
 model = DotArray(
     Cdd=cdd_non_maxwell,
     Cgd=cgd_non_maxwell,
-    algorithm='thresholded',
-    implementation='rust',
-    charge_carrier='h',
-    threshold=0.2,
-    T=0.00,
 )
-
-print(np.linalg.cond(model.cdd))
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
 # for sweeping in 1d and 2d
