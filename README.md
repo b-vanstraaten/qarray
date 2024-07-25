@@ -11,7 +11,7 @@ Paper: [QArray: a GPU-accelerated constant capacitance model simulator for large
 Documentation:[https://qarray.readthedocs.io/en/latest/introduction.html](https://qarray.readthedocs.io/en/latest/introduction.html)
 
 <p align="center">
-    <img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/GUI.jpg" alt="structure" width="600">
+    <img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/GUI.jpg" alt="structure" width="800">
 </p>
 
 **QArray** harnesses the speed of the systems programming language Rust or the compute power of GPUs using JAX XLA to
@@ -22,7 +22,7 @@ the maximum number of charge carriers a priori. QArray includes a graphical user
 interact with the simulation in real-time.
 
 <p align="center">
-<img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/GUI.jpg" alt="structure" width="400">
+<img src="https://github.com/b-vanstraaten/qarray/blob/main/docs/source/figures/structure.jpg" alt="structure" width="400">
 </p>
 
 QArray runs on both CPUs and GPUs and is designed to be easy to use and integrate into your existing workflow. It was
