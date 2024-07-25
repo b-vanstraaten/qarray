@@ -15,14 +15,17 @@ model = ChargeSensedDotArray(
     coulomb_peak_width=0.05, T=100
 )
 
+model.gate_voltage_composer.virtual_gate_matrix = np.array([
+    [1, -0.0, 0],
+    [-0.0, 1, 0],
+    [-0.06, -0.05, 0],
+])
 
 # defining the min and max values for the dot voltage sweep
 vx_min, vx_max = -2, 2
 vy_min, vy_max = -2, 2
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = model.gate_voltage_composer.do2d(1, vy_min, vx_max, 100, 2, vy_min, vy_max, 100)
-
-z, n = model.do2d_open(1, vy_min, vx_max, 100, 2, vy_min, vy_max, 100)
+vg = model.gate_voltage_composer.do2d('vP1', vy_min, vx_max, 100, 'vP2', vy_min, vy_max, 100)
 
 # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
 vg += model.optimal_Vg([0.5, 0.5, 0.6])

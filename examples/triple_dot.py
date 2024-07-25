@@ -46,7 +46,7 @@ ground_state_funcs = [
 vx_min, vx_max = -10, 10
 vy_min, vy_max = -10, 10
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(1, vy_min, vx_max, 400, 3, vy_min, vy_max, 400)
+vg = model.gate_voltage_composer.do2d('vP1', vy_min, vx_max, 400, 'vP3', vy_min, vy_max, 400)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)

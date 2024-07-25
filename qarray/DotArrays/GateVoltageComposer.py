@@ -20,9 +20,9 @@ class GateVoltageComposer:
     """
     n_gate: int  # the number of gates
     n_dot: int | None = None
+    n_sensor: int | None = 0
     virtual_gate_origin: np.ndarray | None = None  # the origin to consider virtual gates from
     virtual_gate_matrix: np.ndarray | None = None  # a matrix of virtual gates to be used for the dot array
-
 
     def _check_gate(self, gate: int):
         assert isinstance(gate, int), 'gate must be an int'
@@ -149,7 +149,7 @@ class GateVoltageComposer:
         sizes = [array.size for array in arrays]
 
         # initialising the voltage array
-        Vd = np.zeros(shape=sizes + [self.n_dot])
+        Vd = np.zeros(shape=sizes + [self.n_dot + self.n_sensor])
 
         # creating the meshgrid
         V = np.meshgrid(*arrays)
