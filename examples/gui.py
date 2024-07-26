@@ -19,6 +19,7 @@ Cgd = [
 model = DotArray(
     Cdd=Cdd,
     Cgd=Cgd,
+    charge_carrier='h',
 )
 
 # with the optimal gate voltage formula we can center the scans on any charge state we wish.

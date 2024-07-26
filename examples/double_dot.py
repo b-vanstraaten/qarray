@@ -22,7 +22,7 @@ model = DotArray(
         [1., 0.2],
         [0.2, 1]
     ]),
-    charge_carrier='h'  # setting the charge carrier to holes
+    charge_carrier='e'  # setting the charge carrier to holes
 )
 
 # choosing the gates to scan, for our double dot system we have physical gate 'P1' and 'P2'

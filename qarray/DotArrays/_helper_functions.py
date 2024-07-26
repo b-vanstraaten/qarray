@@ -1,6 +1,7 @@
 """
 This module contains helper functions used in the DotArrays module.
 """
+from typing import Tuple
 
 import numpy as np
 
@@ -39,24 +40,42 @@ def _convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxw
     return convert_to_maxwell(cdd_non_maxwell_full, cgd_non_maxwell_full)
 
 
-def convert_to_maxwell(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell) -> (
-        Cdd, CddInv, NegativeValuedMatrix):
+def convert_to_maxwell(
+        cdd_non_maxwell: np.ndarray,
+        cgd_non_maxwell: np.ndarray
+) -> Tuple['Cdd', 'CddInv', 'NegativeValuedMatrix']:
     """
-    Function to convert the non Maxwell capacitance matrices to their maxwell form.
-    :param cdd_non_maxwell:
-    :param cgd_non_maxwell:
-    :return:
+    Converts the non-Maxwell capacitance matrices to their Maxwell form.
+
+    Parameters:
+    cdd_non_maxwell (np.ndarray): The non-Maxwell capacitance matrix Cdd.
+    cgd_non_maxwell (np.ndarray): The non-Maxwell capacitance matrix Cgd.
+
+    Returns:
+    Tuple[Cdd, CddInv, NegativeValuedMatrix]: A tuple containing the converted Maxwell form of Cdd,
+                                              its inverse, and the negative valued matrix of Cgd.
     """
+    cdd_non_maxwell = np.copy(cdd_non_maxwell)
+    cgd_non_maxwell = np.copy(cgd_non_maxwell)
+
+    # Summing the rows of the non-Maxwell matrices
     cdd_sum = cdd_non_maxwell.sum(axis=1)
     cgd_sum = cgd_non_maxwell.sum(axis=1)
 
-    # setting the diagonal elements of the cdd matrix to zero
+    # Setting the diagonal elements of the cdd_non_maxwell matrix to zero
     np.fill_diagonal(cdd_non_maxwell, 0)
 
-    cdd = Cdd(np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell)
-    cdd_inv = CddInv(np.linalg.inv(cdd))
-    cgd = NegativeValuedMatrix(-cgd_non_maxwell)
-    return cdd, cdd_inv, cgd
+    # Constructing the Maxwell form of the Cdd matrix
+    cdd_maxwell = np.diag(cdd_sum + cgd_sum) - cdd_non_maxwell
+
+    # Creating the Cdd and CddInv instances
+    cdd = Cdd(cdd_maxwell)
+    cdd_inv = CddInv(np.linalg.inv(cdd_maxwell))
+
+    # Creating the NegativeValuedMatrix instance
+    cgd_negative = NegativeValuedMatrix(-cgd_non_maxwell)
+
+    return cdd, cdd_inv, cgd_negative
 
 
 def lorentzian(x, x0, gamma):
