@@ -16,8 +16,8 @@ class TestGUI(unittest.TestCase):
                 [0.1, 0.]
             ]),
             Cgd=np.array([
-                [1., 0., 0.],
-                [0., 1, 0.]
+                [1., 0],
+                [0., 1]
             ]),
             algorithm='thresholded',
             implementation='rust', charge_carrier='h', T=0., threshold=0.5

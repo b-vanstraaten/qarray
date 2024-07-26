@@ -1,3 +1,13 @@
+"""
+GUI for the DotArray model.
+
+This module provides a GUI for the DotArray model. The GUI allows the user to interactively change the capacitance
+matrices and the gate voltages. The GUI also allows the user to plot the charge stability diagram and the charge state
+for different gate voltages.
+
+%TODO deal with the cases where there are more or less gates than dots
+"""
+
 from time import perf_counter
 
 import dash
@@ -47,7 +57,7 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, initial_dac_v
 
     virtual_gate_matrix = model.compute_optimal_virtual_gate_matrix()
     virtual_gate_matrix = np.round(virtual_gate_matrix, 3)
-    virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float, columns=[f'vP{i + 1}' for i in range(n_gate)])
+    virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float, columns=[f'vP{i + 1}' for i in range(n_dot)])
 
     if initial_dac_values is None:
         initial_dac_values = np.zeros(n_gate)
@@ -201,6 +211,17 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, initial_dac_v
                         {'label': 'False', 'value': 'False'}
                     ],
                     value='True'
+                ),
+
+                html.H4("Print charge state"),
+                dcc.Dropdown(
+                    id='print_charge_state',
+                    placeholder='Print charge state True or False',
+                    options=[
+                        {'label': 'True', 'value': 'True'},
+                        {'label': 'False', 'value': 'False'}
+                    ],
+                    value='True'
                 )
             ], style={'width': '20%', 'margin-right': '2%'}),
 
@@ -222,10 +243,11 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, initial_dac_v
          Input('dropdown-menu-n-charges', 'value'),
          Input('plot-options', 'value'),
          Input('automatically-update-virtual-gate-matrix', 'value'),
+         Input('print_charge_state', 'value'),
          *[Input(f'dac_{i}', 'value') for i in range(model.n_gate)]]
     )
     def update(Cdd, Cgd, virtual_gate_matrix, x_gate, x_amplitude, x_resolution, y_gate, y_amplitude, y_resolution,
-               n_charges, plot_options, automatically_update_virtual_gate_matrix, *dac_values):
+               n_charges, plot_options, automatically_update_virtual_gate_matrix, print_charge_state, *dac_values):
         """
         Update the heatmap based on the input values.
         """
@@ -259,11 +281,10 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, initial_dac_v
         model.update_capacitance_matrices(Cdd=cdd_matrix, Cgd=Cgd.to_numpy())
 
         if automatically_update_virtual_gate_matrix == 'True':
-
             virtual_gate_matrix = model.compute_optimal_virtual_gate_matrix()
             virtual_gate_matrix = np.round(virtual_gate_matrix, 3)
             virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float,
-                                               columns=[f'vP{i + 1}' for i in range(n_gate)])
+                                               columns=[f'vP{i + 1}' for i in range(n_dot)])
         else:
             virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix)
 
@@ -313,9 +334,13 @@ def run_gui(model, port=27182, run=True, print_compute_time=False, initial_dac_v
         fig.update_yaxes(title_text=y_gate, ticktext=y_text, tickvals=y_tickvals)
 
         charge_states = unique_last_axis(n)
+
+        if print_charge_state == 'False':
+            return fig, virtual_gate_matrix.to_dict('records')
+
         if charge_states.shape[0] > 100:
             print(f'Attempting to label {charge_states.shape[0]} charge states. This is too many.')
-            return fig
+            return fig, virtual_gate_matrix.to_dict('records')
 
         # the code below only runs if the number of charge states is less than 100
         for charge_state in charge_states:

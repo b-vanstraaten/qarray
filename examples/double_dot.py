@@ -8,60 +8,63 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from qarray import (DotArray, dot_occupation_changes)
 
-# setting up the constant capacitance model_threshold_1
+# setting up the constant capacitance model for a double dot. Where
+# the plunger gates couple to their repsective dots with capacitance 1. and to the other dot
+# with capacitance 0.1. And finally the interdot capacitance are 0.1 between the dots.
 model = DotArray(
     Cdd=np.array([
-        [0., 10],
-        [10, 0.]
+        [0., 0.1],
+        [0.1, 0.]
     ]),
     Cgd=np.array([
-        [1., 0.],
-        [0., 1]
+        [1., 0.2],
+        [0.2, 1]
     ]),
-    algorithm='thresholded',
-    implementation='rust', charge_carrier='h', T=0., threshold=0.5
+    charge_carrier='e'  # setting the charge carrier to holes
 )
 
-# creating the dot voltage composer, which helps us to create the dot voltage array
-# for sweeping in 1d and 2d
-voltage_composer = GateVoltageComposer(n_gate=model.n_gate, n_dot=model.n_dot)
-voltage_composer.virtual_gate_matrix = np.linalg.pinv(model.cdd_inv @ model.cgd)
-voltage_composer.virtual_gate_origin = np.zeros(model.n_gate)
+# choosing the gates to scan, for our double dot system we have physical gate 'P1' and 'P2'
+# however, we can also sweep over perfectly virtualised gates 'vP1' and 'vP2'. And finally, we can also sweep over
+# detuning e_1_2 = vP1 - vP2 and onsite energy U1_2 = (vP2 + vP1) / 2. Try any combination of these out...
+x_gate = 'P1'
+y_gate = 'P2'
 
-# defining the functions to compute the ground state for the different cases
+# defining the scan parameters
+x_min, x_max, x_res = -5, 5, 200
+y_min, y_max, y_res = -5, 5, 200
+
+# defining the functions so that we can sweep over and open quntaum dot system and closed quantum dot systems
+# with 1, 2 and 3 charges. The open system is defined by the function do2d_open and the closed systems are defined
+# by the function do2d_closed. The closed systems require the number of charges to be specified, which we do now so
+# that we don't have to do it later using the partical function using
+# partial functions.
 ground_state_funcs = [
-    model.ground_state_open,
-    partial(model.ground_state_closed, n_charges=1),
-    partial(model.ground_state_closed, n_charges=2),
-    partial(model.ground_state_closed, n_charges=3),
+    model.do2d_open,  # open
+    partial(model.do2d_closed, n_charges=1),  # n_charge = 1
+    partial(model.do2d_closed, n_charges=2),  # n_charge = 2
+    partial(model.do2d_closed, n_charges=3)  # n_charge = 3
 ]
-
-# defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -5, 5
-vy_min, vy_max = -5, 5
-# using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d('vP1', vy_min, vx_max, 500, 'vP2', vy_min, vy_max, 500)
 
 # creating the figure and axes
 fig, axes = plt.subplots(2, 2, sharex=True, sharey=True)
 fig.set_size_inches(3, 3)
 # looping over the functions and axes, computing the ground state and plot the results
-for (func, ax) in zip(ground_state_funcs, axes.flatten()):
+for (do2d_open_or_closed, ax) in zip(ground_state_funcs, axes.flatten()):
     t0 = time.time()
-    n = func(vg)  # computing the ground state by calling the function
+    n = do2d_open_or_closed(x_gate, x_min, x_max, x_res, y_gate, y_min, y_max,
+                            y_res)  # computing the ground state by calling the function
     t1 = time.time()
     print(f'Computing took {t1 - t0: .3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
-    # the dot occupation changes
-    # z = (n * np.linspace(0.9, 1.1, n.shape[-1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
+
     z = dot_occupation_changes(n)
     # plotting the result
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     # z = np.gradient(z, axis=0)
 
-    ax.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap=cmap,
+    ax.imshow(z, extent=[x_min, x_max, y_min, y_max], origin='lower', aspect='auto', cmap=cmap,
               interpolation='antialiased')
     ax.set_aspect('equal')
 

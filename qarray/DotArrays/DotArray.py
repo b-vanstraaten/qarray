@@ -56,6 +56,7 @@ class DotArray:
     Cgd: CgdNonMaxwell | None = None  # an (n_dot, n_gate) the capacitive coupling between gates and dots
     cdd: CddType | None = None
     cgd: PositiveValuedMatrix | NegativeValuedMatrix | None = None
+    cdd_inv: np.ndarray | None = None
 
     algorithm: str | None = 'default'  # which algorithm to use
     implementation: str | None = 'rust'  # which implementation of the algorithm to use
@@ -83,6 +84,17 @@ class DotArray:
         self.Cdd = PositiveValuedMatrix(Cdd)
         self.Cgd = PositiveValuedMatrix(Cgd)
         self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.Cdd, self.Cgd)
+        self._process_capacitance_matricies()
+
+    def _process_capacitance_matricies(self):
+        """
+        Processes the capacitance matrices of the dot array
+
+        :return: None
+        """
+
+        if self.cdd_inv is None:
+            self.cdd_inv = np.linalg.inv(self.cdd)
 
         # by now in the code, the cdd and cgd matrices have been initialized as their specified types. These
         # types enforce most of the constraints on the matrices like positive-definitness for cdd for example,
@@ -94,31 +106,6 @@ class DotArray:
         self.gate_voltage_composer = GateVoltageComposer(n_gate=self.n_gate, n_dot=self.n_dot)
         self.gate_voltage_composer.virtual_gate_origin = np.zeros(self.n_gate)
         self.gate_voltage_composer.virtual_gate_matrix = -np.linalg.pinv(self.cdd_inv @ self.cgd)
-
-
-    def __post_init__(self):
-        """
-        This function is called after the initialization of the dataclass. It checks that the capacitance matrices
-        are valid and sets the cdd_inv attribute as the inverse of cdd.
-        """
-
-        # checking that either cdd and cgd or cdd and cgd are specified
-        non_maxwell_pair_passed = not both_none(self.Cdd, self.Cgd)
-        maxwell_pair_passed = not both_none(self.cdd, self.cgd)
-        assertion_message = 'Either cdd and cgd or cdd and cgd must be specified'
-        assert (non_maxwell_pair_passed or maxwell_pair_passed), assertion_message
-
-
-        # if the non maxwell pair is passed, convert it to maxwell
-        if non_maxwell_pair_passed:
-            self.update_capacitance_matrices(self.Cdd, self.Cgd)
-        else:
-            self.cdd = CddType(self.cdd)
-            self.cgd = np.array(self.cgd)
-
-        self.n_dot = self.cdd.shape[0]
-        self.n_gate = self.cgd.shape[1]
-        assert self.cgd.shape[0] == self.n_dot, 'The number of dots must be the same as the number of rows in cgd'
 
         # setting the cdd_inv attribute as the inverse of cdd
         self.cdd_inv = np.linalg.inv(self.cdd)
@@ -139,6 +126,26 @@ class DotArray:
                 self.cgd = Cgd_holes(-np.abs(self.cgd))
             case _:
                 raise ValueError(f'charge_carrier must be either "electrons" or "holes {self.charge_carrier}"')
+
+    def __post_init__(self):
+        """
+        This function is called after the initialization of the dataclass. It checks that the capacitance matrices
+        are valid and sets the cdd_inv attribute as the inverse of cdd.
+        """
+
+        # checking that either cdd and cgd or cdd and cgd are specified
+        non_maxwell_pair_passed = not both_none(self.Cdd, self.Cgd)
+        maxwell_pair_passed = not both_none(self.cdd, self.cgd)
+        assertion_message = 'Either cdd and cgd or cdd and cgd must be specified'
+        assert (non_maxwell_pair_passed or maxwell_pair_passed), assertion_message
+
+        # if the non maxwell pair is passed, convert it to maxwell
+        if non_maxwell_pair_passed:
+            self.update_capacitance_matrices(self.Cdd, self.Cgd)
+        else:
+            self.cdd = CddType(self.cdd)
+            self.cgd = np.array(self.cgd)
+            self._process_capacitance_matricies()
 
         # type casting the temperature to a float
         self.T = float(self.T)
@@ -205,75 +212,75 @@ class DotArray:
         """
         return compute_threshold(self.cdd)
 
-    def do1d_open(self, gate: int | str, min: float, max: float, points: int) -> np.ndarray:
+    def do1d_open(self, gate: int | str, min: float, max: float, res: int) -> np.ndarray:
         """
         Performs a 1D sweep of the dot array with the gate
 
         :param gate: the gate to sweep
         :param min: the minimum value of the gate to sweep
         :param max: the maximum value of the gate to sweep
-        :param points: the number of points to sweep the gate over
+        :param res: the number of res to sweep the gate over
 
-        returns the ground state of the dot array which is a np.ndarray of shape (points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (res, n_dot)
         """
 
-        vg = self.gate_voltage_composer.do1d(gate, min, max, points)
+        vg = self.gate_voltage_composer.do1d(gate, min, max, res)
         return self.ground_state_open(vg)
 
-    def do1d_closed(self, gate: int | str, min: float, max: float, points: int, n_charges: int) -> np.ndarray:
+    def do1d_closed(self, gate: int | str, min: float, max: float, res: int, n_charges: int) -> np.ndarray:
         """
         Performs a 1D sweep of the dot array with the gate
 
         :param gate: the gate to sweep
         :param min: the minimum value of the gate to sweep
         :param max: the maximum value of the gate to sweep
-        :param points: the number of points to sweep the gate over
+        :param res: the number of res to sweep the gate over
         :param n_charges: the number of charges to be confined in the dot array
 
-        returns the ground state of the dot array which is a np.ndarray of shape (points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (res, n_dot)
         """
 
-        vg = self.gate_voltage_composer.do1d(gate, min, max, points)
+        vg = self.gate_voltage_composer.do1d(gate, min, max, res)
         return self.ground_state_closed(vg, n_charges)
 
-    def do2d_open(self, x_gate: int | str, x_min: float, x_max: float, x_points: int,
-                  y_gate: int | str, y_min: float, y_max: float, y_points: int) -> np.ndarray:
+    def do2d_open(self, x_gate: int | str, x_min: float, x_max: float, x_res: int,
+                  y_gate: int | str, y_min: float, y_max: float, y_res: int) -> np.ndarray:
         """
         Performs a 2D sweep of the dot array with the gates x_gate and y_gate
 
         :param x_gate: the gate to sweep in the x direction
         :param x_min: the minimum value of the gate to sweep
         :param x_max: the maximum value of the gate to sweep
-        :param x_points: the number of points to sweep the gate over
+        :param x_res: the number of res to sweep the gate over
         :param y_gate: the gate to sweep in the y direction
         :param y_min: the minimum value of the gate to sweep
         :param y_max: the maximum value of the gate to sweep
-        :param y_points: the number of points to sweep the
+        :param y_res: the number of res to sweep the
 
-        returns the ground state of the dot array which is a np.ndarray of shape (x_points, y_points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (x_res, y_res, n_dot)
         """
 
-        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_points, y_gate, y_min, y_max, y_points)
+        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_res, y_gate, y_min, y_max, y_res)
         return self.ground_state_open(vg)
 
-    def do2d_closed(self, x_gate: int | str, x_min: float, x_max: float, x_points: int,
-                    y_gate: int | str, y_min: float, y_max: float, y_points: int, n_charges: int) -> np.ndarray:
+    def do2d_closed(self, x_gate: int | str, x_min: float, x_max: float, x_res: int,
+                    y_gate: int | str, y_min: float, y_max: float, y_res: int, n_charges: int) -> np.ndarray:
         """
         Performs a 2D sweep of the dot array with the gates x_gate and y_gate
 
         :param x_gate: the gate to sweep in the x direction
         :param x_min: the minimum value of the gate to sweep
         :param x_max: the maximum value of the gate to sweep
-        :param x_points: the number of points to sweep the gate over
+        :param x_res: the number of res to sweep the gate over
         :param y_gate: the gate to sweep in the y direction
         :param y_min: the minimum value of the gate to sweep
         :param y_max: the maximum value of the gate to sweep
-        :param y_points: the number of points to sweep the gate over
+        :param y_res: the number of res to sweep the gate over
         :param n_charges: the number of charges to be confined in the dot array
 
-        returns the ground state of the dot array which is a np.ndarray of shape (x_points, y_points, n_dot)
+        returns the ground state of the dot array which is a np.ndarray of shape (x_res, y_res, n_dot)
         """
-        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_points, y_gate, y_min, y_max, y_points)
+        vg = self.gate_voltage_composer.do2d(x_gate, x_min, x_max, x_res, y_gate, y_min, y_max, y_res)
         return self.ground_state_closed(vg, n_charges)
 
     def compute_optimal_virtual_gate_matrix(self):

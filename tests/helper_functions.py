@@ -11,7 +11,7 @@ from qarray.qarray_types import CddInv, Cgd_holes, Cdd
 def too_different(n1, n2):
     different = np.any(np.logical_not(np.isclose(n1, n2)), axis=-1)
     number_of_different = different.sum()
-    return number_of_different > 0.001 * different.size
+    return number_of_different > 1e-6 * different.size
 
 
 def randomly_generate_matrices(n_dot, n_gates=None):

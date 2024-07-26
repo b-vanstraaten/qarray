@@ -5,7 +5,11 @@ Introduction
 
 |PyPI| |arXiv| |GitHub Workflow Status| |image1| |image2|
 
-`QArray: a GPU-accelerated constant capacitance model simulator for large quantum dot arrays; Barnaby van Straaten, Joseph Hickie, Lucas Schorling, Jonas Schuff, Federico Fedele, Natalia Ares; <https://arxiv.org/abs/2404.04994>`__
+
+Documentation:`https://qarray.readthedocs.io/en/latest/introduction.html <https://qarray.readthedocs.io/en/latest/introduction.html>`__
+
+Paper: `QArray: a GPU-accelerated constant capacitance model simulator for large quantum dot arrays; Barnaby van Straaten, Joseph Hickie, Lucas Schorling, Jonas Schuff, Federico Fedele, Natalia Ares; <https://arxiv.org/abs/2404.04994>`__
+
 
 |capacitance_model|
 
@@ -21,9 +25,6 @@ not require the user to specify the maximum number of charge carriers `a priori`
 QArray includes a graphical user interface (GUI) that allows users to interact with the simulation in real-time.
 
 |GUI|
-
-
-.. |GUI| image:: ./figures/GUI.jpg
 
 
 
@@ -56,6 +57,7 @@ figure_4b.py and figure_4d.py respectively.
     :width: 500
 .. |structure| image:: ./figures/structure.png
 .. |capacitance_model| image:: ./figures/capacitance_model.png
+.. |GUI| image:: ./figures/GUI.jpg
 
 
 References

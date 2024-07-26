@@ -15,14 +15,11 @@ Cgd = [
 ]
 
 
-
 # setting up the constant capacitance model_threshold_1
 model = DotArray(
     Cdd=Cdd,
     Cgd=Cgd,
-    algorithm='thresholded',
-    implementation='rust', charge_carrier='h', T=0., threshold=1.,
-    max_charge_carriers=4,
+    charge_carrier='h',
 )
 
 # with the optimal gate voltage formula we can center the scans on any charge state we wish.
