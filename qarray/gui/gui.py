@@ -23,7 +23,7 @@ from qarray import DotArray, dot_occupation_changes, charge_state_to_scalar
 from .helper_functions import create_gate_options, n_charges_options, unique_last_axis, plot_options
 
 
-def run_gui(model, port=27182, run=True, print_compute_time=False, initial_dac_values=None):
+def run_gui(model, port=9000, run=True, print_compute_time=False, initial_dac_values=None):
     """
     Create the GUI for the DotArray model.
 

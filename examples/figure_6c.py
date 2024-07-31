@@ -1,9 +1,13 @@
+from pathlib import Path
 from time import perf_counter_ns
 
 import matplotlib.pyplot as plt
 import numpy as np
+from tqdm import tqdm
 
 from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
+
+save_folder = Path(__file__).parent / 'figures'
 
 cdd = [
     [1., -0., -0.004, -0.0],
@@ -36,16 +40,20 @@ vy_min, vy_max = -1, 1
 vg = voltage_composer.do2d(1, vy_min, vx_max, 200, 4, vy_min, vy_max, 200)
 vg += model.optimal_Vg(np.array([0.7, 0.57, 0.52, 1]))
 
+t0 = perf_counter_ns()
 ground_truth = model.ground_state_open(vg)
+t1 = perf_counter_ns()
+
+t_ground_truth = t1 - t0
 
 csd = []
 times = []
 
-n_average = 2
+n_average = 10
 
-thresholds = np.linspace(0, 0.2, 100)
+thresholds = np.linspace(0, 1., 100)
 
-for threshold in thresholds:
+for threshold in tqdm(thresholds):
     model.threshold = threshold
 
     for _ in range(n_average):
@@ -57,7 +65,7 @@ for threshold in thresholds:
     csd.append(result)
 
 csd = np.array(csd)
-times = np.array(times).reshape(-1, n_average)
+times = np.array(times).reshape(-1, n_average) / t_ground_truth
 diff = csd != ground_truth
 
 diff = np.any(diff, axis=-1)
@@ -73,9 +81,11 @@ plt.axvline(model.compute_threshold_estimate(), color='red', linestyle='--')
 plt.twinx()
 
 # plot this error as a shaded region
-plt.errorbar(thresholds, times.mean(axis=-1) / 1e6, 2 * times.std(axis=-1) / 1e6, color='red')
+plt.errorbar(thresholds, 1 / times.mean(axis=-1), 2 * times.std(axis=-1) / (np.sqrt(n_average)), color='red',
+             linestyle='-')
 
-plt.ylabel('Time (ms)')
+plt.ylabel('Time fraction')
+plt.savefig(save_folder / 'threshold_error.pdf')
 
 # making a gif out of the csds
 import imageio
@@ -92,4 +102,4 @@ for i, csd in enumerate(csd):
     plt.close()
 
 images = [imageio.imread(f'csd/{i}.png') for i in range(len(thresholds))]
-imageio.mimsave('csd.gif', images)
+imageio.mimsave(save_folder / 'csd.gif', images)

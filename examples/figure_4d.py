@@ -33,9 +33,10 @@ cgd_non_maxwell = np.array([
 model = DotArray(
     Cdd=cdd_non_maxwell,
     Cgd=cgd_non_maxwell,
-    algorithm='default',
+    algorithm='thresholded',
     implementation='rust',
     T=300.,
+    threshold=1.
 )
 
 # creating the dot voltage composer, which helps us to create the dot voltage array
