@@ -83,6 +83,8 @@ axes[0].set_title('$z$')
 
 axes[1].imshow(charge_state_changes(np.round(n)), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
                aspect='auto', cmap='hot')
+plt.tight_layout()
+
 
 from pathlib import Path
 

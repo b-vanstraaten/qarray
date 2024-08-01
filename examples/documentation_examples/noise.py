@@ -61,5 +61,10 @@ axes[0, 0].set_title('No Noise')
 axes[0, 1].set_title('White Noise')
 axes[1, 0].set_title('Telegraph Noise')
 axes[1, 1].set_title('White + Telegraph Noise')
+plt.tight_layout()
 
+from pathlib import Path
+
+folder = Path(__file__).parent.parent.parent / 'docs' / 'source' / 'figures'
+plt.savefig(folder / 'charge_sensing_noise.jpg', dpi=1000)
 plt.tight_layout()
