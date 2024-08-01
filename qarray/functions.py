@@ -2,6 +2,8 @@
 This file contains functions that are used elesewhere in the code.
 """
 
+from warnings import warn
+
 import numpy as np
 import scipy.linalg
 
@@ -54,7 +56,8 @@ def charge_state_to_scalar(n: Tetrad | np.ndarray) -> int:
 
     return np.sum(2 ** np.arange(n.shape[-1])[np.newaxis, np.newaxis] * n, axis = -1)
 
-def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
+
+def charge_state_dot_product(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -> VectorList:
     """
     Function which computes the dot product between the dot change state and the
     values in "values", thereby assigning a scalar value to each charge state.
@@ -75,15 +78,16 @@ def charge_state_contrast(n: Tetrad | np.ndarray, values: Vector | np.ndarray) -
     return (n * values).sum(axis=-1)
 
 
-
-
-def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
+def charge_state_changes(n: Tetrad | np.ndarray) -> np.ndarray:
     """
-    This function is used to compute the number of dot occupation changes.
+    If the user passes the np.ndarray n array of shape (Nx, Ny, N_dot) which is outputted from a do2d funciton
+    then this function will return a boolean array of shape (Nx-1, Ny-1, N_dot) which will be true if the
+    charge state of the dot changes between in either the x or y direction.
 
     :param n: the dot occupation rank 3 tensor of shape (res_y, res_x, n_dot)
 
-    :return: the number of dot occupation changes (rank 2 tensor of shape (res_y - 1, res_x - 1))
+    :return: the boolean array of whether the charge state changes (rank 2 tensor of shape (res_y - 1, res_x - 1))
+
     """
 
     # ensure n is of rank three
@@ -95,10 +99,25 @@ def dot_occupation_changes(n: Tetrad | np.ndarray) -> VectorList:
     return np.logical_or(change_in_x, change_in_y)
 
 
+def dot_occupation_changes(n: Tetrad | np.ndarray) -> np.ndarray:
+    """
+
+    If the user passes the np.ndarray n array of shape (Nx, Ny, N_dot) which is outputted from a do2d funciton
+    then this function will return a boolean array of shape (Nx-1, Ny-1, N_dot) which will be true if the
+    charge state of the dot changes between in either the x or y direction.
+
+    :param n: the dot occupation rank 3 tensor of shape (res_y, res_x, n_dot)
+
+    :return: the boolean array of whether the charge state changes (rank 2 tensor of shape (res_y - 1, res_x - 1))
+
+    """
+    warn("This function is deprecated, use charge_state_changes instead", DeprecationWarning)
+    return charge_state_changes(n)
+
+
 def _optimal_Vg(cdd_inv: CddInv, cgd: Cgd_holes, n_charges: VectorList, rcond: float = 1e-3):
     '''
     calculate voltage that minimises charge state's energy
-
 
     :param cdd_inv: the inverse of the dot to dot capacitance matrix
     :param cgd: the dot to gate capacitance matrix

@@ -1,10 +1,9 @@
 """
 An example demonstrating the use of the latching models
 """
-import numpy as np
 from matplotlib import pyplot as plt
 
-from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, LatchingModel, TelegraphNoise
+from qarray import ChargeSensedDotArray, WhiteNoise, LatchingModel, TelegraphNoise
 
 # defining the capacitance matrices
 Cdd = [[0., 0.2], [0.2, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
@@ -49,22 +48,13 @@ model = ChargeSensedDotArray(
     noise_model=combined_noise
 )
 
-# creating the voltage composer
-voltage_composer = GateVoltageComposer(n_gate=model.n_gate, n_dot = model.n_dot + model.n_sensor)
-
-
-virtual_gate_matrix = np.linalg.pinv(model.cdd_inv_full @ model.cgd_full)
-virtual_gate_matrix[2, 0] += 0.02
-virtual_gate_matrix[2, 1] += 0.02
-print(virtual_gate_matrix)
-
-voltage_composer.virtual_gate_matrix = virtual_gate_matrix
+voltage_composer = model.gate_voltage_composer
 
 # defining the min and max values for the dot voltage sweep
 vx_min, vx_max = -0.5, 0.5
 vy_min, vy_max = -0.5, 0.5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = voltage_composer.do2d(2, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
+vg = voltage_composer.do2d('P1', vy_min, vx_max, 100, 'P2', vy_min, vy_max, 100)
 vg += model.optimal_Vg([0.5, 0.5, 0.6])
 
 # creating the figure and axes

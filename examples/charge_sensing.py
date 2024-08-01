@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from qarray import ChargeSensedDotArray
+from qarray.noise_models import WhiteNoise, TelegraphNoise, NoNoise
 
 # defining the capacitance matrices
 Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
@@ -25,7 +26,7 @@ model = ChargeSensedDotArray(
 vx_min, vx_max = -2, 2
 vy_min, vy_max = -2, 2
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = model.gate_voltage_composer.do2d('vP1', vy_min, vx_max, 100, 'vP2', vy_min, vy_max, 100)
+vg = model.gate_voltage_composer.do2d('P1', vy_min, vx_max, 100, 'P2', vy_min, vy_max, 100)
 
 # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
 vg += model.optimal_Vg([0.5, 0.5, 0.6])
@@ -53,7 +54,6 @@ axes[1].set_title('$\\frac{dz}{dVx} + \\frac{dz}{dVy}$')
 plt.savefig('../docs/source/figures/charge_sensing.jpg', dpi=300)
 plt.show()
 
-from qarray.noise_models import WhiteNoise, TelegraphNoise, NoNoise
 
 # defining a white noise model with an amplitude of 1e-2
 white_noise = WhiteNoise(amplitude=1e-2)

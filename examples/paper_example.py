@@ -3,7 +3,7 @@ from pathlib import Path
 import matplotlib.pyplot as plt
 
 from qarray import DotArray
-from qarray import dot_occupation_changes
+from qarray import charge_state_changes
 
 save_folder = Path(__file__).parent / 'figures'
 
@@ -36,28 +36,28 @@ fig, ax = plt.subplots(2, 2, figsize=(5, 5))
 extent = (min, max, min, max)
 
 ax[0, 0].set_title("Open")
-ax[0, 0].imshow(dot_occupation_changes(n), origin="lower", cmap='Greys', extent=extent)
+ax[0, 0].imshow(charge_state_changes(n), origin="lower", cmap='Greys', extent=extent)
 ax[0, 0].set_xlabel("P1")
 ax[0, 0].set_ylabel("P2")
 ax[0, 0].set_xticks([min, 0, max])
 ax[0, 0].set_yticks([min, 0, max])
 
 ax[0, 1].set_title("Virtual gates")
-ax[0, 1].imshow(dot_occupation_changes(n_virtual), origin="lower", cmap='Greys', extent=extent)
+ax[0, 1].imshow(charge_state_changes(n_virtual), origin="lower", cmap='Greys', extent=extent)
 ax[0, 1].set_xlabel("vP1")
 ax[0, 1].set_ylabel("vP2")
 ax[0, 1].set_xticks([min, 0, max])
 ax[0, 1].set_yticks([min, 0, max])
 
 ax[1, 0].set_title("Detuning - on-site energy")
-ax[1, 0].imshow(dot_occupation_changes(n_detuning_U), origin="lower", cmap='Greys', extent=extent)
+ax[1, 0].imshow(charge_state_changes(n_detuning_U), origin="lower", cmap='Greys', extent=extent)
 ax[1, 0].set_xlabel("$e_{12}$")
 ax[1, 0].set_ylabel("$U_{12}$")
 ax[1, 0].set_xticks([min, 0, max])
 ax[1, 0].set_yticks([min, 0, max])
 
 ax[1, 1].set_title("Closed (2 holes)")
-ax[1, 1].imshow(dot_occupation_changes(n_closed), origin="lower", cmap='Greys', extent=extent)
+ax[1, 1].imshow(charge_state_changes(n_closed), origin="lower", cmap='Greys', extent=extent)
 ax[1, 1].set_xlabel("P1")
 ax[1, 1].set_ylabel("P2")
 ax[1, 1].set_xticks([min, 0, max])

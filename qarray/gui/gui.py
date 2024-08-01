@@ -19,7 +19,7 @@ from dash import dash_table
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-from qarray import DotArray, dot_occupation_changes, charge_state_to_scalar
+from qarray import DotArray, charge_state_to_scalar, charge_state_changes
 from .helper_functions import create_gate_options, n_charges_options, unique_last_axis, plot_options
 
 
@@ -310,7 +310,7 @@ def run_gui(model, port=9000, run=True, print_compute_time=False, initial_dac_va
             z = np.log2(z + 1)
             cmap = plot_options
         elif plot_options == 'changes':
-            z = dot_occupation_changes(n).astype(float)
+            z = charge_state_changes(n).astype(float)
             cmap = 'greys'
         else:
             raise ValueError(

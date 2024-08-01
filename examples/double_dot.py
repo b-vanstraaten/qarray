@@ -8,7 +8,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (DotArray, dot_occupation_changes)
+from qarray import (DotArray, charge_state_changes)
 
 # setting up the constant capacitance model for a double dot. Where
 # the plunger gates couple to their repsective dots with capacitance 1. and to the other dot
@@ -59,7 +59,7 @@ for (do2d_open_or_closed, ax) in zip(ground_state_funcs, axes.flatten()):
     print(f'Computing took {t1 - t0: .3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
 
-    z = dot_occupation_changes(n)
+    z = charge_state_changes(n)
     # plotting the result
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
     # z = np.gradient(z, axis=0)

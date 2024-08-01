@@ -1,9 +1,13 @@
+"""
+This example demonstrates the simulation of a double quantum dot with a charge sensor.
+"""
+
 from time import perf_counter
 
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import ChargeSensedDotArray, WhiteNoise, TelegraphNoise, dot_occupation_changes, LatchingModel
+from qarray import ChargeSensedDotArray, WhiteNoise, TelegraphNoise, charge_state_changes, LatchingModel
 
 np.random.seed(1)
 
@@ -79,7 +83,7 @@ axes[0].set_xlabel('$Vx$')
 axes[0].set_ylabel('$Vy$')
 axes[0].set_title('$z$')
 
-axes[1].imshow(dot_occupation_changes(np.round(n)), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
+axes[1].imshow(charge_state_changes(np.round(n)), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
                aspect='auto', cmap='hot')
 
 np.savez('./double_dot.npz', z=z, n=n)

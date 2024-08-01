@@ -74,15 +74,15 @@ With the calculations handled, we can now plot the output. We encode the change 
 .. code:: python
 
     # importing a function which dots the charge occupation with the charge state contrast to yield a z value for plotting by imshow.
-    from qarray import charge_state_contrast
+    from qarray import charge_state_to_scalar
 
     # plot the results
     fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-    ax[0].imshow(z_open, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[0].imshow(charge_state_to_scalar(n_open), extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
     ax[0].set_title('Open Dot Array')
     ax[0].set_xlabel('e1_2')
     ax[0].set_ylabel('U1_2')
-    ax[1].imshow(z_closed, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[1].imshow(charge_state_to_scalar(n_closed), extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
     ax[1].set_title('Closed Dot Array')
     ax[1].set_xlabel('e1_2')
     ax[1].set_ylabel('U1_2')
@@ -108,8 +108,8 @@ This is shown below:
     charge_state_contrast_array = [0.8, 1.2]
 
     # creating arrays that encode when the dot occupation changes
-    z_open = charge_state_contrast(n_open, charge_state_contrast_array)
-    z_closed = charge_state_contrast(n_closed, charge_state_contrast_array)
+    z_open = charge_state_to_scalar(n_open, charge_state_contrast_array)
+    z_closed = charge_state_to_scalar(n_closed, charge_state_contrast_array)
 
     fig, ax = plt.subplots(1, 2, figsize=(10, 5))
     ax[0].imshow(z_open, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')

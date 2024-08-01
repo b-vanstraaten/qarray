@@ -7,7 +7,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import (DotArray, GateVoltageComposer, dot_occupation_changes)
+from qarray import (DotArray, GateVoltageComposer, charge_state_changes)
 
 # logger.add(sys.stdout, level="TRACE")
 
@@ -60,7 +60,7 @@ for (func, ax) in zip(ground_state_funcs, axes.flatten()):
     print(f'{t1 - t0:.3f} seconds')
     # passing the ground state to the dot occupation changes function to compute when
     # the dot occupation changes
-    z = dot_occupation_changes(n)
+    z = charge_state_changes(n)
     # plotting the result
 
     cmap = matplotlib.colors.LinearSegmentedColormap.from_list("", ["white", "black"])
