@@ -1,17 +1,11 @@
 from pathlib import Path
 
-import matplotlib
 import matplotlib.pyplot as plt
 
 from qarray import DotArray
+from qarray import dot_occupation_changes
 
 save_folder = Path(__file__).parent / 'figures'
-
-matplotlib.rc('font', size=11)
-plt.style.use(['science', 'no-latex'])
-
-import matplotlib.pyplot as plt
-from qarray import dot_occupation_changes
 
 model = DotArray(
 	Cdd=[
