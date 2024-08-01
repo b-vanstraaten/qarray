@@ -35,7 +35,7 @@ Running this code will produce the terminal output:
 
 .. code:: bash
 
-    Starting the server at http://localhost:27182
+    Starting the server at http://localhost:9000
 
 Simply click on the link to open the GUI in your browser. The GUI will allow you to interact with the DotArray class and explore the charge stability diagram of a quadruple quantum dot.
 

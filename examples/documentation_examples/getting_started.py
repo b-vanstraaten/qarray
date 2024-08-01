@@ -39,6 +39,7 @@ ax[1].imshow(charge_state_to_scalar(n_closed), extent=extent, origin='lower', cm
 ax[1].set_title('Closed Dot Array')
 ax[1].set_xlabel('P1')
 ax[1].set_ylabel('P2')
+plt.tight_layout()
 plt.show()
 
 n_open_detuning = model.do2d_open(
