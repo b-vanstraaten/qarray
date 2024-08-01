@@ -7,6 +7,8 @@ from tqdm import tqdm
 from qarray.functions import dot_occupation_changes
 from qarray.jax_implementations.brute_force_jax import ground_state_open_brute_force_jax, \
     ground_state_closed_brute_force_jax
+from qarray.python_implementations import ground_state_open_default_or_thresholded_python, \
+    ground_state_closed_default_or_thresholded_python
 from qarray.rust_implemenations import ground_state_open_default_or_thresholded_rust, \
     ground_state_closed_default_or_thresholded_rust
 from .GLOBAL_OPTIONS import disable_tqdm, N_ITERATIONS, N_VOLTAGES
@@ -26,6 +28,8 @@ class BruteForceTests(unittest.TestCase):
             vg = np.stack([np.linspace(-5, 5, N_VOLTAGES), np.linspace(-5, 5, N_VOLTAGES)], axis=-1)
 
             n_rust = ground_state_open_default_or_thresholded_rust(vg, cgd, cdd_inv, 1)
+
+            n_python = ground_state_open_default_or_thresholded_python(vg, cgd, cdd_inv, 1)
 
             max_number_of_changes = int(n_rust.max())
             n_brute_force = ground_state_open_brute_force_jax(vg, cgd, cdd_inv, max_number_of_changes, T=0.0)
@@ -52,6 +56,9 @@ class BruteForceTests(unittest.TestCase):
                                                                          threshold=1, n_charge=1, T=0.0)
                 n_brute_force = ground_state_closed_brute_force_jax(vg, cgd=cgd, cdd_inv=cdd_inv, cdd=cdd, n_charge=1,
                                                                     T=0.0)
+
+                n_python = ground_state_closed_default_or_thresholded_python(vg, cdd=cdd, cdd_inv=cdd_inv, cgd=cgd,
+                                                                             threshold=1, n_charge=1, T=0.0)
 
                 if too_different(n_rust, n_brute_force):
                     fig, ax = plt.subplots(3)

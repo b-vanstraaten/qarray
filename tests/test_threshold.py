@@ -14,6 +14,100 @@ from .helper_functions import randomly_generate_model
 
 
 class ThresholdTests(TestCase):
+
+    def test_threshold_double_dot_open_python(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+
+        n_dot = 2
+        n_gate = 2
+
+        models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
+        voltage_composer = GateVoltageComposer(n_gate=n_gate)
+
+        for model in models:
+            model.implementation = 'python'
+            model.algorithm = 'thresholded'
+            vg = voltage_composer.do2d(1, -5, 5, N_VOLTAGES, 2, -5, 5, N_VOLTAGES)
+            n_threshold_not_of_1 = model.ground_state_open(vg)
+
+            model.threshold = 1.
+            n_threshold_of_1 = model.ground_state_open(vg)
+            self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
+
+    def test_threshold_double_dot_closed_python(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+
+        n_dot = 2
+        n_gate = 2
+
+        models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
+        voltage_composer = GateVoltageComposer(n_gate=n_gate)
+
+        for model in models:
+            model.implementation = 'python'
+            model.algorithm = 'thresholded'
+            vg = voltage_composer.do2d(1, -10, 5, N_VOLTAGES, 2, -10, 5, N_VOLTAGES)
+            n_threshold_not_of_1 = model.ground_state_closed(vg, n_charges=5)
+
+            model.threshold = 1.
+            n_threshold_of_1 = model.ground_state_closed(vg, n_charges=5)
+            self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
+
+    def test_threshold_double_dot_open_jax(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+
+        n_dot = 2
+        n_gate = 2
+
+        models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
+        voltage_composer = GateVoltageComposer(n_gate=n_gate)
+
+        for model in models:
+            model.implementation = 'jax'
+            model.algorithm = 'default'
+            vg = voltage_composer.do2d(1, -5, 5, N_VOLTAGES, 2, -5, 5, N_VOLTAGES)
+            n_threshold_not_of_1 = model.ground_state_open(vg)
+
+            model.threshold = 1.
+            n_threshold_of_1 = model.ground_state_open(vg)
+            self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
+
+    def test_threshold_double_dot_closed_jax(self):
+        """
+        Test that the python and rust open double dot ground state functions return the same result.
+
+        The threshold is set to 1, so every nearest neighbour change state is considered
+        """
+
+        n_dot = 2
+        n_gate = 2
+
+        models = randomly_generate_model(n_dot, n_gate, N_ITERATIONS)
+        voltage_composer = GateVoltageComposer(n_gate=n_gate)
+
+        for model in models:
+            model.implementation = 'jax'
+            model.algorithm = 'default'
+            vg = voltage_composer.do2d(1, -10, 5, N_VOLTAGES, 2, -10, 5, N_VOLTAGES)
+            n_threshold_not_of_1 = model.ground_state_closed(vg, n_charges=5)
+
+            model.threshold = 1.
+            n_threshold_of_1 = model.ground_state_closed(vg, n_charges=5)
+            self.assertTrue(np.allclose(n_threshold_of_1, n_threshold_not_of_1))
+
+
     def test_threshold_double_dot_open(self):
         """
         Test that the python and rust open double dot ground state functions return the same result.
@@ -49,7 +143,6 @@ class ThresholdTests(TestCase):
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
         for model in models:
-            model.core = 'python'
             vg = voltage_composer.do2d(1, -10, 5, N_VOLTAGES, 2, -10, 5, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_closed(vg, n_charges=5)
 
@@ -101,7 +194,6 @@ class ThresholdTests(TestCase):
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
         for model in models:
-            model.core = 'python'
             vg = voltage_composer.do2d(1, -20, 5, N_VOLTAGES, 3, -20, 5, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_closed(vg, n_charges=2)
 
@@ -161,7 +253,6 @@ class ThresholdTests(TestCase):
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
         for model in models:
-            model.core = 'python'
             vg = voltage_composer.do2d(1, -4, 0, N_VOLTAGES, 4, -4, 0, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_closed(vg, 4)
 
@@ -226,7 +317,6 @@ class ThresholdTests(TestCase):
         voltage_composer = GateVoltageComposer(n_gate=n_gate)
 
         for model in models:
-            model.core = 'python'
             print(model.threshold)
             vg = voltage_composer.do2d(1, -20, 0, N_VOLTAGES, 5, -20, 0, N_VOLTAGES)
             n_threshold_not_of_1 = model.ground_state_closed(vg, 4)

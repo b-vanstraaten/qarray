@@ -296,7 +296,7 @@ class DotArray:
         self.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix
         return virtual_gate_matrix
 
-    def run_gui(self, port=27182, print_compute_time: bool = False, initial_dac_values=None):
+    def run_gui(self, port=9000, print_compute_time: bool = False, initial_dac_values=None):
         """
         Creates a GUI for the dot array
 
