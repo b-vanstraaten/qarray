@@ -1,5 +1,5 @@
 """
-This example demonstrates the simulation of a double quantum dot with a charge sensor.
+This example demonstrates the simulation of a double quantum dot with a charge sensor, with noise and latching.
 """
 
 from time import perf_counter
@@ -57,18 +57,16 @@ model = ChargeSensedDotArray(
     noise_model=noise,
     latching_model=latching_model,
 )
-model.cgd = -model.cgd
-model.cgd_full = -model.cgd_full
 
 # creating the voltage composer
 voltage_composer = model.gate_voltage_composer
 
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -5, 20
-vy_min, vy_max = -5, 20
+vx_min, vx_max = -20, 5
+vy_min, vy_max = -20, 5
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
 vg = voltage_composer.do2d(1, vy_min, vx_max, 200, 2, vy_min, vy_max, 200)
-vg += np.array([0, 0, 5.05])
+vg += np.array([0, 0, -5.05])
 
 t0 = perf_counter()
 z, n = model.charge_sensor_open(vg)
@@ -85,5 +83,12 @@ axes[0].set_title('$z$')
 
 axes[1].imshow(charge_state_changes(np.round(n)), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
                aspect='auto', cmap='hot')
+plt.tight_layout()
 
-np.savez('./double_dot.npz', z=z, n=n)
+
+from pathlib import Path
+
+folder = Path(__file__).parent.parent.parent / 'docs' / 'source' / 'figures'
+
+plt.savefig(folder / 'latching.jpg', dpi=300)
+plt.show()

@@ -4,7 +4,7 @@ import numpy as np
 import scipy
 from matplotlib import pyplot as plt
 
-from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
+from qarray import DotArray, GateVoltageComposer, charge_state_changes
 
 cdd = [
     [1., -0., -0.004, -0.0],
@@ -26,7 +26,7 @@ model = DotArray(
     implementation='rust',
     charge_carrier='electron',
     T=150,
-    threshold=0.05
+    threshold=1.
 )
 
 voltage_composer = GateVoltageComposer(n_gate=model.n_gate, n_dot=model.n_dot)
@@ -43,7 +43,7 @@ n = model.ground_state_open(vg)
 t1 = time.time()
 print('Time taken:', t1 - t0)
 
-z = dot_occupation_changes(n)
+z = charge_state_changes(n)
 
 coupling = np.array([0.03, 0.03, 0.01, 0.004])
 v_sensor = (n * coupling[np.newaxis, np.newaxis, :]).sum(axis=-1)

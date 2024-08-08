@@ -8,19 +8,15 @@ Getting Started
 Simulating charge stability diagrams
 +++++++++
 
-To get started with QArray all you need is two classes: The `DotArray` and the `GateVoltageComposer` class.
-
-- The `DotArray` class stores the capacitance matrices that define your simulated system. It also provides the functionality to calculate the charge configuration of the quantum dot system with the lowest energy given a set of gate voltages.
-
-- The `GateVoltageComposer` class generates the arrays of gate voltages necessary to perform 1D, 2D or higher scans of the quantum dot system. You can also pass it a virtual gate matrix, so that it can perform 1D, 2D or higher virtual gate scans of the quantum dot system.
-
+To get started with QArray all you need is the `DotArray` class. This class stores the capacitance matrices that define your simulated system. It also provides the functionality to calculate the charge configuration of the quantum dot system with the lowest energy given a set of gate voltages.
 Here we will be outlining how to use QArray to produce the stability diagram of a double quantum dot.
 
 Firstly, we import the DotArray and GateComposer classes:
 
 .. code:: python
 
-    from qarray import DotArray, GateVoltageComposer
+    from qarray import DotArray
+    import matplotlib.pyplot as plt
 
 
 Upon initialising the DotArray class, we specify the system’s capacitance matrices:
@@ -39,53 +35,57 @@ Upon initialising the DotArray class, we specify the system’s capacitance matr
 Here, :code:`Cdd` encodes the capacitive couplings between dots (the :code:`dd` subscript meaning dot-to-dot), and :code:`Cgd` encodes the capacitive couplings between the dots and the gates (:code:`dg` being dot-to-gate). These capacitance matrices can also be passed in their Maxwell format, using the keyword arguments :code:`cdd` and :code:`cgd`.
 
 
-Next we initialise the GateVoltageComposer class, which will generate the gate voltage arrays necessary
-to perform a scan of the quantum dot system. These arrays contain the simulated gate voltage for every gate in the system at each point in the measurement.
+Now to compute the charge stablitiy diagram of an open (reservior mode) double dot when we sweep the plunger gates from -5 to 5 in both the x and y directions, with 100 points in each direction.
 
-.. code:: python
-
-        # initialising the gate voltage composer class
-        voltage_composer = GateVoltageComposer(n_gates = model.n_gates))
-
-        # using the dot voltage composer to create the dot voltage array for the 2d sweep
-        vg = voltage_composer.do2d(
-            x_gate = 'P1', x_min = -5, x_max = 5 , x_res = 100,
-            y_gate = 'P2', y_min = -5, y_max = 5 , y_res = 100
-        )
-This scan sweeps the gate voltages of the quantum dot system from -5 to 5 in both the x and y directions, with 100 points in each direction. The :code:`do2d` method returns a (100, 100, 2) array encoding the gate voltage for each gate at each point in the measurement. To
-sweep over the virtualised plunger gates simply use the arguments 'vP1' and 'vP2' instead of 'P1' and 'P2'. To sweep over the detuning and onsite energy
+We do this by calling the :code:`do2d_open` method of the :code:`DotArray` class. This method returns a (100, 100, 2) array encoding the gate voltage for each gate at each point in the measurement. To
+To sweep over the virtualised plunger gates simply use the arguments 'vP1' and 'vP2' instead of 'P1' and 'P2'. To sweep over the detuning and onsite energy
 use the
 
-Now that we have the gate voltage arrays, we can calculate the charge configuration of the quantum dot system at each of these voltage configurations. We can do this for an open dot array (where the array is able freely exchange charge carriers with the reservoir) or a closed dot array (where the number of charge carriers is fixed).
 
 .. code:: python
 
         # run the simulation in the open regime
-        n_open = model.ground_state_open(vg)
+        n_open = model.do2d_open(
+            x_gate = 'P1', x_min = -5, x_max = 5 , x_res = 100,
+            y_gate = 'P2', y_min = -5, y_max = 5 , y_res = 100
+        )
 
-        # run the simulation with the quantum dot array closed such that the
-        # number of charge carriers is fixed to 2
-        n_closed = model.ground_state_closed(vg, n_charges=2)
 
-Here, :code:`n_open` is a (100, 100, 2) array encoding the number of charge carriers in each dot for each gate voltage configuration in the measurement. :code:`n_closed` is the same, but with the number of charge carriers in the system fixed to two.
+To sweep compute the same charge stability diagram in the closed (isolation model) regime we simply call the :code:`do2d_closed` method of the :code:`DotArray` class.
+This method returns a (100, 100, 2) again encoding the lowest energy charge configuration for each gate voltage configuration in the measurement. However,
+this time the number of charge carriers in the system is fixed to two.
+
+.. code:: python
+
+        # run the simulation in the open regime
+        n_closed = model.do2d_closed(
+            x_gate = 'P1', x_min = -5, x_max = 5 , x_res = 100,
+            y_gate = 'P2', y_min = -5, y_max = 5 , y_res = 100,
+            n_charges = 2
+        )
 
 With the calculations handled, we can now plot the output. We encode the change in output value due to a dot occupation change in the :code:`charge_state_contrast_array`.
+
 
 .. code:: python
 
     # importing a function which dots the charge occupation with the charge state contrast to yield a z value for plotting by imshow.
-    from qarray import charge_state_contrast
+    from qarray import charge_state_to_scalar
+
 
     # plot the results
+    extent =(-5, 5, -5, 5)
+
     fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-    ax[0].imshow(z_open, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[0].imshow(charge_state_to_scalar(n_open), extent=extent, origin='lower', cmap='Blues')
     ax[0].set_title('Open Dot Array')
-    ax[0].set_xlabel('e1_2')
-    ax[0].set_ylabel('U1_2')
-    ax[1].imshow(z_closed, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[0].set_xlabel('P1')
+    ax[0].set_ylabel('P2')
+    ax[1].imshow(charge_state_to_scalar(n_closed), extent=extent, origin='lower', cmap='Blues')
     ax[1].set_title('Closed Dot Array')
-    ax[1].set_xlabel('e1_2')
-    ax[1].set_ylabel('U1_2')
+    ax[1].set_xlabel('P1')
+    ax[1].set_ylabel('P2')
+    plt.show()
 
 
 |getting_started_example_plunger_plunger|
@@ -96,31 +96,28 @@ This is shown below:
 
 .. code:: python
 
-    # using the dot voltage composer to create the dot voltage array for the 2d sweep
-            vg = voltage_composer.do2d(
-                x_gate = 'e1_2', x_min = -5, x_max = 5 , x_res = 100,
-                y_gate = 'U1_2', y_min = -5, y_max = 5 , y_res = 100
-            )
+    n_open_detuning = model.do2d_open(
+        x_gate = 'e1_2', x_min = -5, x_max = 5 , x_res = 100,
+        y_gate = 'U1_2', y_min = -5, y_max = 5 , y_res = 100
+    )
 
-    # importing a function which dots the charge occupation with the charge state contrast to yield a z value for plotting by imshow.
-    from qarray import charge_state_contrast
-
-    charge_state_contrast_array = [0.8, 1.2]
-
-    # creating arrays that encode when the dot occupation changes
-    z_open = charge_state_contrast(n_open, charge_state_contrast_array)
-    z_closed = charge_state_contrast(n_closed, charge_state_contrast_array)
+    n_closed_detuning = model.do2d_closed(
+        x_gate = 'e1_2', x_min = -5, x_max = 5 , x_res = 100,
+        y_gate = 'U1_2', y_min = -5, y_max = 5 , y_res = 100,
+        n_charges = 2
+    )
 
     fig, ax = plt.subplots(1, 2, figsize=(10, 5))
-    ax[0].imshow(z_open, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[0].imshow(charge_state_to_scalar(n_open_detuning), extent = extent, origin='lower', cmap='Blues')
     ax[0].set_title('Open Dot Array')
     ax[0].set_xlabel('e1_2')
     ax[0].set_ylabel('U1_2')
-    ax[1].imshow(z_closed, extent=(vx_min, vx_max, vy_min, vy_max), origin='lower', cmap='binary')
+    ax[1].imshow(charge_state_to_scalar(n_closed_detuning), extent=extent, origin='lower', cmap='Blues')
     ax[1].set_title('Closed Dot Array')
     ax[1].set_xlabel('e1_2')
     ax[1].set_ylabel('U1_2')
     plt.tight_layout()
+    plt.show()
 
 |getting_started_example_detuning_onsight|
 
@@ -144,11 +141,14 @@ The snippet below is an example of how we can use these classes to generate a ch
 
 .. code:: python
 
-    from qarray import ChargeSensedDotArray, GateVoltageComposer
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    from qarray import ChargeSensedDotArray
 
     # defining the capacitance matrices
     Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
-    Cgd = [[1., 0.2, 0.05], [0.2, 1., 0.05], ]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
+    Cgd = [[1., 0.6, 0.05], [0.2, 1., 0.05], ]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
     Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
     Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
 
@@ -158,11 +158,13 @@ The snippet below is an example of how we can use these classes to generate a ch
         coulomb_peak_width=0.05, T=100
     )
 
+
 It is important to note that for the double dot there are now three gates,
 one for each dot and one for the charge sensor. The index 0 corresponds to the first dot,
-index 1 to the second dot and index 2 to the charge sensor. This is important when using the :code:`GateVoltageComposer` with the :code:`ChargeSensedDotArray`.
-
-As before, we can use the :code:`GateVoltageComposer` to create a gate voltage sweep. However, this time we will use
+index 1 to the second dot and index 2 to the charge sensor. For this example we will sweep the plunger gates of the double dot,
+however, this time we will do it in a slightly different way, using the gate voltage composer calss to create the gate voltage sweep.
+This class is used behind the scenes in the :code:`do2d_open` and :code:`do2d_closed` methods of the :code:`DotArray` class. However,
+using it explicitly allows us to create more complex sweeps, such as the one we will do here. We will make use of
 an addition piece of functionality, provided by both the :code:`DotArray` and :code:`ChargeSensedDotArray` classes, which is the
 :code:`optimal_Vg` method. This method returns the optimal gate voltages which minimise the free energy of a given charge state.
 For example, if we have a charge state of `[1., 1., 1.]` (in the case of two array dots and one charge sensing dot), the `optimal_Vg` method will return the gate voltages that configure the simulated device to be in the middle of the [1, 1] charge state and directly on top of the first Coloumb peak in the charge sensor. If the user passes `[0.5, 0.5, 0.5]`, the
@@ -170,16 +172,15 @@ method will return the gate voltages corresponding to the middle of the [0, 1] -
 
 .. code:: python
 
-    voltage_composer = GateVoltageComposer(model.n_gate)
-
     # defining the min and max values for the dot voltage sweep
-    vx_min, vx_max = -5, 5
-    vy_min, vy_max = -5, 5
+    vx_min, vx_max = -2, 2
+    vy_min, vy_max = -2, 2
     # using the dot voltage composer to create the dot voltage array for the 2d sweep
-    vg = voltage_composer.do2d('P1', vy_min, vx_max, 200, 'P2', vy_min, vy_max, 200)
+    vg = model.gate_voltage_composer.do2d('P1', vy_min, vx_max, 100, 'P2', vy_min, vy_max, 100)
 
     # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
     vg += model.optimal_Vg([0.5, 0.5, 0.6])
+
 
     # calculating the output of the charge sensor and the charge state for each gate voltage
     z, n = model.charge_sensor_open(vg)
@@ -189,19 +190,17 @@ We can plot the output of the charge sensor and its gradient with respect to the
 
 .. code:: python
 
-    import matplotlib.pyplot as plt
-    import numpy as np
-
     fig, axes = plt.subplots(1, 2, sharex=True, sharey=True)
+    fig.set_size_inches(10, 5)
 
-    # plotting the charge stability diagram measured via the charge sensor
-    axes[0].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap = 'hot')
+    # plotting the charge stability diagram
+    axes[0].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
     axes[0].set_xlabel('$Vx$')
     axes[0].set_ylabel('$Vy$')
     axes[0].set_title('$z$')
 
-    # plotting the gradient of the charge sensor output
-    axes[1].imshow(dz_dV1, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap = 'hot')
+    # plotting the charge sensor output
+    axes[1].imshow(dz_dV1, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
     axes[1].set_xlabel('$Vx$')
     axes[1].set_ylabel('$Vy$')
     axes[1].set_title('$\\frac{dz}{dVx} + \\frac{dz}{dVy}$')

@@ -59,7 +59,7 @@ install directly from the repository use the command below:
 ## Getting started - double quantum dot example
 
 ```python
-    from qarray import DotArray
+from qarray import DotArray
 
 Cdd = [
     [0., 0.2, 0.05, 0.01],

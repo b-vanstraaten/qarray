@@ -21,12 +21,15 @@ so we can combine them to create more complex noise models.
 
 .. code:: python
 
-    from qarray import ChargeSensedDotArray, GateVoltageComposer
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    from qarray import ChargeSensedDotArray
     from qarray.noise_models import WhiteNoise, TelegraphNoise, NoNoise
 
     # defining the capacitance matrices
     Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
-    Cgd = [[1., 0.2, 0.05], [0.2, 1., 0.05], ]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
+    Cgd = [[1., 0.6, 0.05], [0.2, 1., 0.05], ]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
     Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
     Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
 
@@ -35,6 +38,16 @@ so we can combine them to create more complex noise models.
         Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
         coulomb_peak_width=0.05, T=100
     )
+
+
+    # defining the min and max values for the dot voltage sweep
+    vx_min, vx_max = -2, 2
+    vy_min, vy_max = -2, 2
+    # using the dot voltage composer to create the dot voltage array for the 2d sweep
+    vg = model.gate_voltage_composer.do2d('P1', vy_min, vx_max, 100, 'P2', vy_min, vy_max, 100)
+
+    # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
+    vg += model.optimal_Vg([0.5, 0.5, 0.6])
 
     # defining a white noise model with an amplitude of 1e-2
     white_noise = WhiteNoise(amplitude=1e-2)
@@ -47,10 +60,10 @@ so we can combine them to create more complex noise models.
 
     # defining the noise models
     noise_models = [
-        NoNoise(), # no noise
-        white_noise, # white noise
-        random_telegraph_noise, # telegraph noise
-        combined_noise, # white + telegraph noise
+        NoNoise(),  # no noise
+        white_noise,  # white noise
+        random_telegraph_noise,  # telegraph noise
+        combined_noise,  # white + telegraph noise
     ]
 
     # plotting
@@ -97,39 +110,67 @@ takes three arguments:
 
 
 .. code:: python
-
     """
-    An example demonstrating the use of the latching models
+    This example demonstrates the simulation of a double quantum dot with a charge sensor, with noise and latching.
     """
-    from matplotlib import pyplot as plt
 
-    from qarray import ChargeSensedDotArray, GateVoltageComposer, WhiteNoise, LatchingModel
+    from time import perf_counter
 
-    # defining the capacitance matrices
-    Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
-    Cgd = [[1., 0.2, 0.05], [0.2, 1., 0.05], ]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
-    Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
-    Cgs = [[0.06, 0.02, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    from qarray import ChargeSensedDotArray, WhiteNoise, TelegraphNoise, charge_state_changes, LatchingModel
+
+    np.random.seed(1)
+
+    Cdd = [
+        [0.12, 0.08],
+        [0.08, 0.12]
+    ]
+
+    Cgd = [
+        [0.12, 0.00, 0.001],
+        [0.00, 0.12, 0.001]
+    ]
+    # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
+    Cds = [[0.01, 0.00]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
+    Cgs = [[0.001, 0.002, 0.1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
+
+    # creating white noise model
+    white_noise = WhiteNoise(
+        amplitude=1e-2
+    )
+
+    # creating telegraph noise model
+    telegraph_noise = TelegraphNoise(
+        amplitude=4e-3,
+        p01=1e-4,
+        p10=1e-2,
+    )
+    # combining the noise models via addition
+    noise = white_noise + telegraph_noise
 
     # a latching model which simulates latching on the transitions to the leads and inter-dot transitions
     latching_model = LatchingModel(
         n_dots=2,
-        p_leads=[0.25, 0.25],
+        p_leads=[0.5, 0.1],
         p_inter=[
-            [0., 1.],
-            [1., 0.],
+            [0., 0.9],
+            [0.9, 0.],
         ]
     )
 
     # creating the model
     model = ChargeSensedDotArray(
         Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-        coulomb_peak_width=0.05, T=5,
+        coulomb_peak_width=0.2, T=0,
         algorithm='default',
         implementation='rust',
-        noise_model=WhiteNoise(amplitude=1e-3),
+        noise_model=noise,
         latching_model=latching_model,
     )
+
+
 
 Alternatively, we can use the Pauli spin blockade latching model via :code:`PSBLatchingModel`. This model only has one parameter, which is the probability of latching when moving from the (1, 1) to (0, 2) charge states as indicative of PSB.
 
@@ -146,22 +187,30 @@ With our array and latching models defined, we use the :code:`GateVoltageCompose
 .. code:: python
 
     # creating the voltage composer
-    voltage_composer = GateVoltageComposer(n_gate=model.n_gate)
+    voltage_composer = model.gate_voltage_composer
 
     # defining the min and max values for the dot voltage sweep
-    vx_min, vx_max = -0.1, 0.1
-    vy_min, vy_max = -0.1, 0.1
+    vx_min, vx_max = -20, 5
+    vy_min, vy_max = -20, 5
     # using the dot voltage composer to create the dot voltage array for the 2d sweep
-    vg = voltage_composer.do2d(0, vy_min, vx_max, 100, 1, vy_min, vy_max, 100)
-    vg += model.optimal_Vg([0.5, 1.5, 0.7])
+    vg = voltage_composer.do2d(1, vy_min, vx_max, 200, 2, vy_min, vy_max, 200)
+    vg += np.array([0, 0, -5.05])
 
-    # creating the figure and axes
+    t0 = perf_counter()
     z, n = model.charge_sensor_open(vg)
+    print(f"Elapsed time: {perf_counter() - t0:.2f} s")
 
-    plt.imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
-    plt.xlabel('Vx')
-    plt.ylabel('Vy')
-    plt.title('Latching')
+    fig, axes = plt.subplots(1, 2, sharex=True, sharey=True)
+    fig.set_size_inches(10, 5)
+
+    # plotting the charge stability diagram
+    axes[0].imshow(z, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto', cmap='hot')
+    axes[0].set_xlabel('$Vx$')
+    axes[0].set_ylabel('$Vy$')
+    axes[0].set_title('$z$')
+
+    axes[1].imshow(charge_state_changes(np.round(n)), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower',
+                   aspect='auto', cmap='hot')
     plt.show()
 
 |latching|
@@ -169,4 +218,4 @@ With our array and latching models defined, we use the :code:`GateVoltageCompose
 
 .. |charge_sensing| image:: ./figures/charge_sensing.jpg
 .. |charge_sensing_noise| image:: ./figures/charge_sensing_noise.jpg
-.. |latching| image:: ./figures/latching.png
+.. |latching| image:: ./figures/latching.jpg

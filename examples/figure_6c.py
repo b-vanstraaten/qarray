@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from tqdm import tqdm
 
-from qarray import DotArray, GateVoltageComposer, dot_occupation_changes
+from qarray import DotArray, GateVoltageComposer, charge_state_changes
 
 save_folder = Path(__file__).parent / 'figures'
 
@@ -96,7 +96,7 @@ os.makedirs('csd', exist_ok=True)
 for i, csd in enumerate(csd):
     plt.figure()
     plt.title(f'Threshold: {thresholds[i]:.3f}')
-    plt.imshow(dot_occupation_changes(csd).T, origin='lower', aspect='equal', extent=[vx_min, vx_max, vy_min, vy_max],
+    plt.imshow(charge_state_changes(csd).T, origin='lower', aspect='equal', extent=[vx_min, vx_max, vy_min, vy_max],
                cmap='Greys', interpolation='none')
     plt.savefig(f'csd/{i}.png')
     plt.close()
