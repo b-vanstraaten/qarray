@@ -3,7 +3,8 @@ from itertools import combinations
 import matplotlib.pyplot as plt
 import numpy as np
 
-from qarray import ChargeSensedDotArray, charge_state_changes
+from qarray import ChargeSensedDotArray, charge_state_changes, TelegraphNoise, \
+    WhiteNoise, LatchingModel
 from qarray.gui import unique_last_axis
 
 
@@ -23,6 +24,7 @@ def compute_triple_point(model, vg, charge_states):
     x = pinv @ c
     error = np.eye(3) - pinv @ a
 
+    virtual_gate_matrix = -np.linalg.pinv(model.cdd_inv_full @ model.cgd_full)
     # Calculate the direction vector l
     l = error @ virtual_gate_matrix[:, -1]
     l = l / np.linalg.norm(l)
@@ -60,24 +62,49 @@ def point_of_intersection(plane_normal, d, x, n):
 
 # defining the capacitance matrices
 Cdd = [[0., 0.3], [0.3, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
-Cgd = [[1., 0.6, 0.05], [0.2, 1., 0.05]]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
-Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
+Cgd = [[1., 0.1, 0.02], [0.2, 1., 0.05]]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
+Cds = [[0.1, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
 Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
+
+# defining a white noise model with an amplitude of 1e-2
+white_noise = WhiteNoise(amplitude=1e-2)
+
+# defining a telegraph noise model with p01 = 5e-4, p10 = 5e-3 and an amplitude of 1e-2
+random_telegraph_noise = TelegraphNoise(p01=5e-5, p10=5e-3, amplitude=1e-2)
+
+# combining the white and telegraph noise models
+combined_noise = white_noise + random_telegraph_noise
+
+latching_model = LatchingModel(
+    n_dots=2,
+    p_leads=[0.3, 0.1],
+    p_inter=[
+        [0., 0.9],
+        [0.9, 0.],
+    ]
+)
 
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.05, T=10
+    coulomb_peak_width=0.05, T=0, noise_model=combined_noise, latching_model=latching_model
 )
 
+
 # defining the min and max values for the dot voltage sweep
-vx_min, vx_max = -2, 5
-vy_min, vy_max = -2, 5
+vx_min, vx_max = -2, 2
+vy_min, vy_max = -2, 2
+
+model.gate_voltage_composer.virtual_gate_matrix = np.array([
+    [1, -0.0, 0],
+    [-0.0, 1, 0],
+    [-0.1, -0.05, 0]
+])
 # using the dot voltage composer to create the dot voltage array for the 2d sweep
-vg = model.gate_voltage_composer.do2d('P1', vy_min, vx_max, 400, 'P2', vy_min, vy_max, 400)
+vg = model.gate_voltage_composer.do2d('vP1', vy_min, vx_max, 400, 'vP2', vy_min, vy_max, 400)
 
 # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
-vg += model.optimal_Vg([0.5, 0.5, 0.2])
+vg += model.optimal_Vg([0.5, 0.5, 0.5])
 
 # calculating the output of the charge sensor and the charge state for each gate voltage
 z, n = model.charge_sensor_open(vg)
