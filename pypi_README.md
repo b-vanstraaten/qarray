@@ -75,7 +75,7 @@ Cgd = [
     [0, 0, 0, 1]
 ]
 
-# setting up the constant capacitance model_threshold_1
+# setting up the constant capacitance
 model = DotArray(
     Cdd=Cdd,
     Cgd=Cgd,
