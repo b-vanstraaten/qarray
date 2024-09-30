@@ -29,7 +29,7 @@ def _batched_vmap(f: Callable, Vg: VectorList, n_dot: int, batch_size: int) -> V
             remainder = vg_size % batch_size
             if remainder != 0:
                 N = N + 1
-                Vg = jnp.concatenate([Vg, jnp.zeros((batch_size - remainder, n_dot))], axis=0)
+                Vg = jnp.concatenate([Vg, jnp.zeros((batch_size - remainder, n_gate))], axis=0)
 
             # reshaping into the batches along the first axis
             Vg = Vg.reshape(N, batch_size, n_gate)
