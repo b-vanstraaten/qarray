@@ -37,7 +37,7 @@ Here, :code:`Cdd` encodes the capacitive couplings between dots (the :code:`dd` 
 
 Now to compute the charge stablitiy diagram of an open (reservior mode) double dot when we sweep the plunger gates from -5 to 5 in both the x and y directions, with 100 points in each direction.
 
-We do this by calling the :code:`do2d_open` method of the :code:`DotArray` class. This method returns a (100, 100, 2) array encoding the gate voltage for each gate at each point in the measurement. To
+We do this by calling the :code:`do2d_open` method of the :code:`DotArray` class. This method returns a (100, 100, 2) array encoding the lowest-energy charge configuration for each combination of gate voltages in the measurement. To
 To sweep over the virtualised plunger gates simply use the arguments 'vP1' and 'vP2' instead of 'P1' and 'P2'. To sweep over the detuning and onsite energy
 use the
 
