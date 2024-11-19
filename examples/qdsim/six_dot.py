@@ -87,5 +87,5 @@ axes[0].set_title('$z$')
 
 axes[1].imshow(dot_occupation_changes(n), extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto',
                cmap='hot')
-
+plt.show()
 np.savez('./six_dot.npz', z=z, n=n)

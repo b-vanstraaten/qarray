@@ -294,6 +294,10 @@ class DotArray:
         """
         virtual_gate_matrix = compute_optimal_virtual_gate_matrix(self.cdd_inv, self.cgd)
         self.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix
+
+        if self.charge_carrier == 'electrons':
+            virtual_gate_matrix = -virtual_gate_matrix
+
         return virtual_gate_matrix
 
     def run_gui(self, port=9000, print_compute_time: bool = False, initial_dac_values=None):

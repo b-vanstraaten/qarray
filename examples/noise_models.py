@@ -67,3 +67,4 @@ z_latched = (n * np.array([0.9, 1.1])[np.newaxis, np.newaxis, :]).sum(axis=-1)
 ax[2].imshow(z_latched, extent=[vx_min, vx_max, vy_min, vy_max], origin='lower', aspect='auto',
              cmap='Greys',
              interpolation='none')
+plt.show()

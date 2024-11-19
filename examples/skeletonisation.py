@@ -77,7 +77,7 @@ combined_noise = white_noise + random_telegraph_noise
 
 latching_model = LatchingModel(
     n_dots=2,
-    p_leads=[0.3, 0.1],
+    p_leads=[0.9, 0.9],
     p_inter=[
         [0., 0.9],
         [0.9, 0.],
@@ -167,13 +167,23 @@ axes[1].set_title('$n$')
 upper_triple_point_locations = np.array(upper_triple_point_locations)
 lower_triple_point_locations = np.array(lower_triple_point_locations)
 
-axes[0].scatter(upper_triple_point_locations[:, 0], upper_triple_point_locations[:, 1], color='yellow')
-axes[1].scatter(upper_triple_point_locations[:, 0], upper_triple_point_locations[:, 1], color='yellow')
 
-axes[0].scatter(lower_triple_point_locations[:, 0], lower_triple_point_locations[:, 1], color='red')
-axes[1].scatter(lower_triple_point_locations[:, 0], lower_triple_point_locations[:, 1], color='red')
+
+axes[0].scatter(upper_triple_point_locations[:, 0], upper_triple_point_locations[:, 1], color='blue')
+axes[1].scatter(upper_triple_point_locations[:, 0], upper_triple_point_locations[:, 1], color='blue')
+
+axes[0].scatter(lower_triple_point_locations[:, 0], lower_triple_point_locations[:, 1], color='green')
+axes[1].scatter(lower_triple_point_locations[:, 0], lower_triple_point_locations[:, 1], color='green')
 
 plt.xlim(*extent_x)
 plt.ylim(*extent_y)
 
 plt.show()
+
+
+import h5py
+
+with h5py.File('triple_points.h5', 'w') as f:
+
+    dset = f.create_dataset('vg', shape = (100, *z.shape))
+    dset[0] = z

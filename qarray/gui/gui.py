@@ -23,7 +23,7 @@ from qarray import DotArray, charge_state_to_scalar, charge_state_changes
 from .helper_functions import create_gate_options, n_charges_options, unique_last_axis, plot_options
 
 
-def run_gui(model, port=9000, run=True, print_compute_time=False, initial_dac_values=None):
+def run_gui(model, port=9000, run=True, print_compute_time=True, initial_dac_values=None):
     """
     Create the GUI for the DotArray model.
 
@@ -289,7 +289,6 @@ def run_gui(model, port=9000, run=True, print_compute_time=False, initial_dac_va
             virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix)
 
         model.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix.to_numpy()[:, :n_dot]
-
 
         vg = model.gate_voltage_composer.do2d(
             x_gate, -x_amplitude / 2, x_amplitude / 2, x_resolution,
