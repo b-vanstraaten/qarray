@@ -223,6 +223,21 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
                         {'label': 'False', 'value': 'False'}
                     ],
                     value='True'
+                ),
+
+                html.H4("Plot gradient"),
+                dcc.Dropdown(
+                    id='plot gradient',
+                    placeholder='Whether to plot the gradient of the charge sensor signal',
+                    options=[
+                        {'label': 'True', 'value': 'True'},
+                        {'label': 'False', 'value': 'False'},
+                        {'label': 'Along x axis', 'value': 'Along x'},
+                        {'label': 'Along y axis', 'value': 'Along y'},
+                        {'label': 'Along detuning axis', 'value': 'Along detuning axis'},
+                        {'label': 'Magnitude', 'value': 'Magnitude'},
+                    ],
+                    value='False'
                 )
             ], style={'width': '20%', 'margin-right': '2%'}),
 
@@ -245,17 +260,14 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
          Input('plot-options', 'value'),
          Input('automatically-update-virtual-gate-matrix', 'value'),
          Input('print_charge_state', 'value'),
+         Input('plot gradient', 'value'),
          *[Input(f'dac_{i}', 'value') for i in range(model.n_gate)]]
     )
     def update(Cdd, Cgd, virtual_gate_matrix, x_gate, x_amplitude, x_resolution, y_gate, y_amplitude, y_resolution,
-               n_charges, plot_options, automatically_update_virtual_gate_matrix, print_charge_state, *dac_values):
+               n_charges, plot_options, automatically_update_virtual_gate_matrix, print_charge_state, plot_gradient, *dac_values):
         """
         Update the heatmap based on the input values.
         """
-
-        if model.T != 0:
-            print('Warning the GUI plotting currently only works for T=0. The temperature is set to 0.')
-            model.T = 0
 
         dac_values = np.array(dac_values)
 
@@ -305,6 +317,10 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
             z, n = model.charge_sensor_open(vg)
         else:
             z, n = model.charge_sensor_closed(vg, n_charge=n_charges)
+
+        #if T> 0, we need to round the charge state
+        n = np.round(n).astype(int)
+
         t1 = perf_counter()
         if print_compute_time:
             print(f'Time taken to compute the charge state: {t1 - t0:.3f}s')
@@ -312,6 +328,21 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
         if plot_options in px.colors.named_colorscales():
             cmap = plot_options
             z = z.squeeze()
+
+            match plot_gradient:
+                case 'False':
+                    pass
+                case 'Along x':
+                    z = np.gradient(z, axis=1)
+                case 'Along y':
+                    z = np.gradient(z, axis=0)
+                case 'Magnitude':
+                    z = np.sqrt(np.gradient(z, axis=0) ** 2 + np.gradient(z, axis=1) ** 2)
+                case 'Along detuning axis':
+                    z = np.gradient(z, axis=0) - np.gradient(z, axis=1)
+                case _:
+                    raise ValueError(f'Plot gradient {plot_gradient} is not recognized the options are "False", "Along x", "Along y" or "magnitude"')
+
         elif plot_options == 'changes':
             z = charge_state_changes(n).astype(float)
             cmap = 'greys'
@@ -336,7 +367,7 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
         fig.update_xaxes(title_text=x_gate, ticktext=x_text, tickvals=x_tickvals)
         fig.update_yaxes(title_text=y_gate, ticktext=y_text, tickvals=y_tickvals)
 
-        charge_states = unique_last_axis(n)
+        charge_states = unique_last_axis(np.round(n).astype(int))
 
         if print_charge_state == 'False':
             return fig, virtual_gate_matrix.to_dict('records')

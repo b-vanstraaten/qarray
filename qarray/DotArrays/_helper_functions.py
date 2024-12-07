@@ -8,6 +8,23 @@ import numpy as np
 from qarray.functions import compute_threshold
 from ..qarray_types import (CddInv, Cdd, VectorList, CddNonMaxwell, CgdNonMaxwell, NegativeValuedMatrix)
 
+import sys
+from contextlib import contextmanager
+from io import StringIO
+
+@contextmanager
+def suppress_output():
+    """Context manager to suppress all output to the terminal."""
+    original_stdout = sys.stdout
+    original_stderr = sys.stderr
+    try:
+        sys.stdout = StringIO()  # Redirect stdout to a dummy buffer
+        sys.stderr = StringIO()  # Redirect stderr to a dummy buffer
+        yield
+    finally:
+        sys.stdout = original_stdout
+        sys.stderr = original_stderr
+
 
 def _convert_to_maxwell_with_sensor(cdd_non_maxwell: CddNonMaxwell, cgd_non_maxwell: CgdNonMaxwell,
                                     cds_non_maxwell: CddNonMaxwell, cgs_non_maxwell: CgdNonMaxwell):

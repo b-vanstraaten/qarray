@@ -10,7 +10,7 @@ from ..functions import compute_optimal_virtual_gate_matrix
 
 from .GateVoltageComposer import GateVoltageComposer
 from ._helper_functions import check_algorithm_and_implementation, \
-    check_and_warn_user, lorentzian, convert_to_maxwell, _convert_to_maxwell_with_sensor
+    check_and_warn_user, lorentzian, convert_to_maxwell, _convert_to_maxwell_with_sensor, suppress_output
 from .ground_state import _ground_state_open, _ground_state_closed
 from ..functions import _optimal_Vg, compute_threshold
 from ..latching_models import LatchingBaseModel
@@ -18,6 +18,7 @@ from ..noise_models import BaseNoiseModel
 from ..python_implementations.helper_functions import free_energy
 from ..qarray_types import CddNonMaxwell, CgdNonMaxwell, VectorList, CdsNonMaxwell, CgsNonMaxwell, Vector, \
     PositiveValuedMatrix
+
 
 
 @dataclass
@@ -60,9 +61,9 @@ class ChargeSensedDotArray:
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
     max_charge_carriers: int | None = None  # need if using a brute_force algorithm
     batch_size: int | None = None  # needed if using jax implementation
-    charge_carrier = 'h'
+    charge_carrier: str = 'h'
 
-    T: float | int = 0.  # the temperature of the system
+    T: float | int = 0.  # the temperature of the system in mK
     n_peak: int = 5
 
     coulomb_peak_width: float = 0.1  # the width of the lorentzian peaks
@@ -142,6 +143,7 @@ class ChargeSensedDotArray:
         A function to open the GUI for the ChargeSensedDotArray class
         """
         from ..gui.gui_charge_sensor import run_gui_charge_sensor
+
         run_gui_charge_sensor(self, port = port, run = run, print_compute_time = print_compute_time, initial_dac_values = initial_dac_values)
 
     def compute_optimal_virtual_gate_matrix(self):
