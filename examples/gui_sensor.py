@@ -7,17 +7,14 @@ from qarray import ChargeSensedDotArray
 from qarray.noise_models import WhiteNoise, TelegraphNoise, NoNoise
 
 
-
-
-
-# # # defining the capacitance matrices for a double dot
-# Cdd = [[0., 0.1],
-#        [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
-# Cgd = [[1., 0.1, 0.05],
-#        [0.1, 1., 0.05]]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
-# Cds = [[0.05, 0.03]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
-# Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
-# initial_dac_values = [0, 0.0, 0.5]
+# # defining the capacitance matrices for a double dot
+Cdd = [[0., 0.1],
+       [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
+Cgd = [[1., 0.1, 0.05],
+       [0.1, 1., 0.05]]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
+Cds = [[0.05, 0.03]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
+Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
+initial_dac_values = [0, 0.0, 0.5]
 
 
 # # defining the capacitance matrices for a linear array of 4 dots, uncomment this block and comment the previous block to switch
