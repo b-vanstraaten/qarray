@@ -6,10 +6,11 @@ and the charge sensor output for both open and closed dot arrays.
 from dataclasses import dataclass
 
 import numpy as np
+from ..functions import compute_optimal_virtual_gate_matrix
 
 from .GateVoltageComposer import GateVoltageComposer
 from ._helper_functions import check_algorithm_and_implementation, \
-    check_and_warn_user, lorentzian, _convert_to_maxwell_with_sensor
+    check_and_warn_user, lorentzian, convert_to_maxwell, _convert_to_maxwell_with_sensor
 from .ground_state import _ground_state_open, _ground_state_closed
 from ..functions import _optimal_Vg, compute_threshold
 from ..latching_models import LatchingBaseModel
@@ -59,6 +60,7 @@ class ChargeSensedDotArray:
     polish: bool = True  # a bool specifying whether to polish the result of the ground state computation
     max_charge_carriers: int | None = None  # need if using a brute_force algorithm
     batch_size: int | None = None  # needed if using jax implementation
+    charge_carrier = 'h'
 
     T: float | int = 0.  # the temperature of the system
     n_peak: int = 5
@@ -80,13 +82,12 @@ class ChargeSensedDotArray:
         self.n_gate = self.Cgd.shape[1]
         self._assert_shape()
 
-        self.cdd_full, self.cdd_inv_full, self.cgd_full = _convert_to_maxwell_with_sensor(self.Cdd,
-                                                                                          self.Cgd,
-                                                                                          self.Cds,
-                                                                                          self.Cgs)
-        self.cdd = self.cdd_full[:self.n_dot, :self.n_dot]
-        self.cdd_inv = self.cdd_inv_full[:self.n_dot, :self.n_dot]
-        self.cgd = self.cgd_full[:self.n_dot, :]
+        self.cdd, self.cdd_inv, self.cgd = convert_to_maxwell(self.Cdd, self.Cgd)
+        self.cdd_full, self.cdd_inv_full, self.cgd_full = _convert_to_maxwell_with_sensor(self.Cdd, self.Cgd, self.Cds, self.Cgs)
+
+        self.cgs = self.Cgs
+        self.cds = self.Cds
+
 
     def __post_init__(self):
 
@@ -118,7 +119,7 @@ class ChargeSensedDotArray:
             check_and_warn_user(self)
 
         self.gate_voltage_composer = GateVoltageComposer(n_gate=self.n_gate, n_dot=self.n_dot, n_sensor=self.n_sensor)
-        self.gate_voltage_composer.virtual_gate_matrix = -np.linalg.pinv(self.cdd_inv_full @ self.cgd_full)
+        self.gate_voltage_composer.virtual_gate_matrix = -np.linalg.pinv(self.cdd_inv @ self.cgd)
         self.gate_voltage_composer.virtual_gate_origin = np.zeros(self.n_gate)
 
     def do1d_open(self, gate: int | str, min: float, max: float, points: int) -> np.ndarray:
@@ -135,6 +136,30 @@ class ChargeSensedDotArray:
 
         vg = self.gate_voltage_composer.do1d(gate, min, max, points)
         return self.charge_sensor_open(vg)
+
+    def gui(self, port=9001, run=True, print_compute_time=True, initial_dac_values=None):
+        """
+        A function to open the GUI for the ChargeSensedDotArray class
+        """
+        from ..gui.gui_charge_sensor import run_gui_charge_sensor
+        run_gui_charge_sensor(self, port = port, run = run, print_compute_time = print_compute_time, initial_dac_values = initial_dac_values)
+
+    def compute_optimal_virtual_gate_matrix(self):
+        """
+        Computes the optimal virtual gate matrix for the dot array and sets it as the virtual gate matrix
+        in the gate voltage composer.
+
+        The virtual gate matrix is computed as the pseudo inverse of the dot to dot capacitance matrix times the dot to gate capacitance matrix.
+
+        returns np.ndarray: the virtual gate matrix
+        """
+        virtual_gate_matrix = compute_optimal_virtual_gate_matrix(self.cdd_inv_full, self.cgd_full)
+        self.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix
+
+        if self.charge_carrier == 'electrons':
+            virtual_gate_matrix = -virtual_gate_matrix
+
+        return virtual_gate_matrix
 
     def do1d_closed(self, gate: int | str, min: float, max: float, points: int, n_charge: int) -> np.ndarray:
         """
@@ -220,7 +245,6 @@ class ChargeSensedDotArray:
         Noise is added according to the noise model passed to the ChargeSensedDotArray class.
         """
 
-        # computing the charge state of the dots to be sensed
         n_open = self.ground_state_open(vg)
 
         # computing the continuous minimum charge state (open)
@@ -231,7 +255,6 @@ class ChargeSensedDotArray:
 
         # computing the noise to be added to the charge sensor potential before it is used in as the input to the lorentzian
         input_noise = self.noise_model.sample_input_noise(N_sensor.shape)
-        # iterating over the nearest transitions and adding a lorentizan at each
 
         F = np.zeros(shape=(2 * self.n_peak + 1, *N_sensor.shape))
         for sensor in range(self.n_sensor):
@@ -243,7 +266,6 @@ class ChargeSensedDotArray:
 
         signal = lorentzian(np.diff(F, axis=0), 0, self.coulomb_peak_width).sum(axis=0)
         output_noise = self.noise_model.sample_output_noise(N_sensor.shape)
-
         return signal + output_noise, n_open
 
     def ground_state_closed(self, vg: VectorList | np.ndarray, n_charge: int) -> np.ndarray:

@@ -19,11 +19,11 @@ from dash import dash_table
 from dash import dcc, html
 from dash.dependencies import Input, Output
 
-from qarray import charge_state_to_scalar, charge_state_changes
+from qarray import ChargeSensedDotArray, charge_state_to_scalar, charge_state_changes
 from .helper_functions import create_gate_options, n_charges_options, unique_last_axis, plot_options
 
 
-def run_gui(model, port=9000, run=True, print_compute_time=True, initial_dac_values=None):
+def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, initial_dac_values=None):
     """
     Create the GUI for the DotArray model.
 
@@ -40,6 +40,7 @@ def run_gui(model, port=9000, run=True, print_compute_time=True, initial_dac_val
 
     n_dot = model.n_dot
     n_gate = model.n_gate
+    n_sensor = model.n_sensor
 
     # Create the gate options
     gate_options = create_gate_options(model.n_gate, model.n_dot)
@@ -57,7 +58,8 @@ def run_gui(model, port=9000, run=True, print_compute_time=True, initial_dac_val
 
     virtual_gate_matrix = model.compute_optimal_virtual_gate_matrix()
     virtual_gate_matrix = np.round(virtual_gate_matrix, 3)
-    virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float, columns=[f'vP{i + 1}' for i in range(n_dot)])
+
+    virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float, columns=[f'vP{i + 1}' for i in range(n_dot + n_sensor)])
 
     if initial_dac_values is None:
         initial_dac_values = np.zeros(n_gate)
@@ -143,7 +145,7 @@ def run_gui(model, port=9000, run=True, print_compute_time=True, initial_dac_val
                     id='dropdown-menu-y',
                     placeholder='Y gate',
                     options=gate_options,
-                    value=f"P{model.n_gate}"
+                    value=f"P{model.n_gate - model.n_sensor}"
                 ),
                 dcc.Input(
                     id='input-scalar1',
@@ -200,7 +202,7 @@ def run_gui(model, port=9000, run=True, print_compute_time=True, initial_dac_val
                     id='plot-options',
                     placeholder='Select plot options',
                     options=plot_options,
-                    value='changes'
+                    value='viridis'
                 ),
                 html.H4("Automatically update virtual gate matrix"),
                 dcc.Dropdown(
@@ -278,13 +280,13 @@ def run_gui(model, port=9000, run=True, print_compute_time=True, initial_dac_val
             print('Warning: Cdd matrix is not symmetric. Taking the average of the upper and lower triangle.')
             cdd_matrix = (cdd_matrix + cdd_matrix.T) / 2
 
-        model.update_capacitance_matrices(Cdd=cdd_matrix, Cgd=Cgd.to_numpy())
+        model.update_capacitance_matrices(Cdd=cdd_matrix, Cgd=Cgd.to_numpy(), Cgs = model.Cgs, Cds = model.Cds)
 
         if automatically_update_virtual_gate_matrix == 'True':
             virtual_gate_matrix = model.compute_optimal_virtual_gate_matrix()
             virtual_gate_matrix = np.round(virtual_gate_matrix, 3)
             virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float,
-                                               columns=[f'vP{i + 1}' for i in range(n_dot)])
+                                               columns=[f'vP{i + 1}' for i in range(n_dot + n_sensor)])
         else:
             virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix)
 
@@ -297,17 +299,17 @@ def run_gui(model, port=9000, run=True, print_compute_time=True, initial_dac_val
 
         t0 = perf_counter()
         if n_charges == 'any':
-            n = model.ground_state_open(vg)
+            z, n = model.charge_sensor_open(vg)
         else:
-            n = model.ground_state_closed(vg, n_charges=n_charges)
+            z, n = model.charge_sensor_closed(vg, n_charge=n_charges)
         t1 = perf_counter()
         if print_compute_time:
             print(f'Time taken to compute the charge state: {t1 - t0:.3f}s')
 
+
         if plot_options in px.colors.named_colorscales():
-            z = charge_state_to_scalar(n).astype(float)
-            z = np.log2(z + 1)
             cmap = plot_options
+            z = z.squeeze()
         elif plot_options == 'changes':
             z = charge_state_changes(n).astype(float)
             cmap = 'greys'

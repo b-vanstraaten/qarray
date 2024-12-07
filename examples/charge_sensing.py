@@ -6,15 +6,15 @@ from qarray.noise_models import WhiteNoise, TelegraphNoise, NoNoise
 from time import perf_counter
 
 # defining the capacitance matrices
-Cdd = [[0., 0.3], [0.3, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
-Cgd = [[1., 0.1, 0.05], [0.1, 1., 0.05], ]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
-Cds = [[0.02, 0.01]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
+Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
+Cgd = [[1., 0.1, 0.05], [0.1, 1., 0.05]]  # an (n_dot, n_gate) array of the capacitive coupling between gates and dots
+Cds = [[0.05, 0.00]]  # an (n_sensor, n_dot) array of the capacitive coupling between dots and sensors
 Cgs = [[0.06, 0.05, 1]]  # an (n_sensor, n_gate) array of the capacitive coupling between gates and sensor dots
 
 # creating the model
 model = ChargeSensedDotArray(
     Cdd=Cdd, Cgd=Cgd, Cds=Cds, Cgs=Cgs,
-    coulomb_peak_width=0.15, T=10,
+    coulomb_peak_width=0.05, T=10,
     implementation='rust', algorithm='default'
 )
 
@@ -26,7 +26,7 @@ vy_min, vy_max = -2, 2
 vg = model.gate_voltage_composer.do2d('P1', vy_min, vx_max, 100, 'P2', vy_min, vy_max, 100)
 
 # centering the voltage sweep on the [0, 1] - [1, 0] interdot charge transition on the side of a charge sensor coulomb peak
-vg += model.optimal_Vg([0.5, 0.5, 0.52])
+vg += model.optimal_Vg([0.5, 0.5, 0.5])
 
 
 # calculating the output of the charge sensor and the charge state for each gate voltage
