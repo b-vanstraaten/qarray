@@ -56,10 +56,9 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
     Cdd = Cdd[[''] + [col for col in Cdd.columns if col != '']]
     Cgd = Cgd[[''] + [col for col in Cgd.columns if col != '']]
 
-    virtual_gate_matrix = model.compute_optimal_virtual_gate_matrix()
-    virtual_gate_matrix = np.round(virtual_gate_matrix, 3)
-
-    virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float, columns=[f'vP{i + 1}' for i in range(n_dot + n_sensor)])
+    virtual_gate_matrix = np.eye(n_dot + n_sensor)
+    virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float,
+                                       columns=[f'vP{i + 1}' for i in range(n_dot + n_sensor)])
 
     if initial_dac_values is None:
         initial_dac_values = np.zeros(n_gate)
@@ -212,7 +211,7 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
                         {'label': 'True', 'value': 'True'},
                         {'label': 'False', 'value': 'False'}
                     ],
-                    value='True'
+                    value='False'
                 ),
 
                 html.H4("Print charge state"),
@@ -280,17 +279,21 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
             print('Warning: Cdd matrix is not symmetric. Taking the average of the upper and lower triangle.')
             cdd_matrix = (cdd_matrix + cdd_matrix.T) / 2
 
-        model.update_capacitance_matrices(Cdd=cdd_matrix, Cgd=Cgd.to_numpy(), Cgs = model.Cgs, Cds = model.Cds)
+        model.update_capacitance_matrices(Cdd=cdd_matrix, Cgd=Cgd.to_numpy(), Cgs=model.Cgs, Cds=model.Cds)
 
         if automatically_update_virtual_gate_matrix == 'True':
             virtual_gate_matrix = model.compute_optimal_virtual_gate_matrix()
-            virtual_gate_matrix = np.round(virtual_gate_matrix, 3)
-            virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix, dtype=float,
+            virtual_gate_matrix_numpy = np.round(virtual_gate_matrix, 3)
+            virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix_numpy, dtype=float,
                                                columns=[f'vP{i + 1}' for i in range(n_dot + n_sensor)])
         else:
             virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix)
-
-        model.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix.to_numpy()[:, :n_dot + n_sensor]
+            # the to_numpy()[:, 1:n_dot + n_sensor + 1] is to remove the index column
+            if virtual_gate_matrix.shape[1] != n_dot + n_sensor:
+                virtual_gate_matrix_numpy = virtual_gate_matrix.to_numpy()[:, 1:n_dot + n_sensor + 1]
+            else:
+                virtual_gate_matrix_numpy = virtual_gate_matrix.to_numpy()
+        model.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix_numpy
 
         vg = model.gate_voltage_composer.do2d(
             x_gate, -x_amplitude / 2, x_amplitude / 2, x_resolution,
@@ -305,7 +308,6 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
         t1 = perf_counter()
         if print_compute_time:
             print(f'Time taken to compute the charge state: {t1 - t0:.3f}s')
-
 
         if plot_options in px.colors.named_colorscales():
             cmap = plot_options

@@ -3,12 +3,8 @@ Author: b-vanstraaten
 Date: 07/12/2024
 """
 
-import matplotlib.pyplot as plt
-import numpy as np
-
 from qarray import ChargeSensedDotArray
 from qarray.noise_models import WhiteNoise, TelegraphNoise, NoNoise
-from time import perf_counter
 
 # defining the capacitance matrices
 Cdd = [[0., 0.1], [0.1, 0.]]  # an (n_dot, n_dot) array of the capacitive coupling between dots
