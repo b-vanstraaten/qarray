@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "qarray"
 authors = [
-    { name = "Barnaby van Straaten", email = "barnaby.vanstraaten@kellogg.ox.ac.uk" },
+    { name = "Barnaby van Straaten", email = "b.l.vanstraaten@tudelft.nl" },
     { name = "Joseph Hickie", email = "joseph.hickie@trinity.ox.ac.uk" },
     { name = "Jonas Schuff", email = "jonas.schuffn@materials.ox.ac.uk" },
     { name = "Cornelius Carlsson", email = "cornelius.carlsson@eng.ox.ac.uk" }
@@ -17,7 +17,7 @@ classifiers = [
     "Intended Audience :: Science/Research",
     "Intended Audience :: Developers",
     "Topic :: Scientific/Engineering",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
 ]
