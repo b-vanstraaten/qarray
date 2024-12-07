@@ -119,7 +119,7 @@ class ChargeSensedDotArray:
             check_and_warn_user(self)
 
         self.gate_voltage_composer = GateVoltageComposer(n_gate=self.n_gate, n_dot=self.n_dot, n_sensor=self.n_sensor)
-        self.gate_voltage_composer.virtual_gate_matrix = -np.linalg.pinv(self.cdd_inv @ self.cgd)
+        self.gate_voltage_composer.virtual_gate_matrix = -np.linalg.pinv(self.cdd_inv_full @ self.cgd_full)
         self.gate_voltage_composer.virtual_gate_origin = np.zeros(self.n_gate)
 
     def do1d_open(self, gate: int | str, min: float, max: float, points: int) -> np.ndarray:

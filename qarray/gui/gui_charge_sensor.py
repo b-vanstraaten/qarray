@@ -290,7 +290,7 @@ def run_gui_charge_sensor(model, port=9000, run=True, print_compute_time=True, i
         else:
             virtual_gate_matrix = pd.DataFrame(virtual_gate_matrix)
 
-        model.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix.to_numpy()[:, :n_dot]
+        model.gate_voltage_composer.virtual_gate_matrix = virtual_gate_matrix.to_numpy()[:, :n_dot + n_sensor]
 
         vg = model.gate_voltage_composer.do2d(
             x_gate, -x_amplitude / 2, x_amplitude / 2, x_resolution,
